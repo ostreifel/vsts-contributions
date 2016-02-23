@@ -36,4 +36,4 @@ The VSTS framework is setup to initalize the requirejs AMD loader, so just use `
 
 #### VS Code ####
 
-The includes `.vscode` config allows you to open 
+The included `.vscode` config allows you to open and build the project using [VS Code](https://code.visualstudio.com/).
