@@ -1,5 +1,4 @@
-﻿// Register context menu action
-VSS.register("vsts-extension-ts-seed-simple-action", {
+var actionProvider =  {
     getMenuItems: (context) => {
         return [<IContributedMenuItem>{
             title: "Work Item Menu Action",
@@ -14,4 +13,8 @@ VSS.register("vsts-extension-ts-seed-simple-action", {
             }
         }];
     }
-});
+};
+
+// Register context menu action provider
+VSS.register("<your-publisher>.vsts-extension-ts-seed-simple.vsts-extension-ts-seed-simple-action", actionProvider);
+VSS.register("vsts-extension-ts-seed-simple-action", actionProvider);
