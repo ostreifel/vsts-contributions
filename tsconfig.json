@@ -3,7 +3,18 @@
         "module": "amd",
         "sourceMap": false
     },
+    "filesGlob": [
+        "src/**/*.ts",
+        "typings/browser.d.ts",
+        "node_modules/vss-web-extension-sdk/**/*.d.ts"
+    ],
     "exclude": [
         "node_modules"
+    ],
+    "files": [
+        "typings/browser.d.ts",
+        "node_modules/vss-web-extension-sdk/typings/rmo.d.ts",
+        "node_modules/vss-web-extension-sdk/typings/tfs.d.ts",
+        "node_modules/vss-web-extension-sdk/typings/vss.d.ts"
     ]
 }

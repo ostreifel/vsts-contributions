@@ -2,7 +2,7 @@
     grunt.initConfig({
         ts: {
             build: {
-                src: ["scripts/**/*.ts"],
+                src: ["scripts/**/*.ts", "typings/browser.d.ts"],
                 tsconfig: true
             },
             options: {

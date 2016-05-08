@@ -1,6 +1,4 @@
-﻿/// <reference path='../typings/tsd.d.ts' />
-
-// Register context menu action
+﻿// Register context menu action
 VSS.register("vsts-extension-ts-seed-simple-action", {
     getMenuItems: (context) => {
         return [<IContributedMenuItem>{
