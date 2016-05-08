@@ -2,6 +2,7 @@
   "ambientDependencies": {
     "jquery": "registry:dt/jquery#1.10.0+20160316155526",
     "knockout": "registry:dt/knockout#0.0.0+20160409112158",
-    "q": "registry:dt/q#0.0.0+20160323171452"
+    "q": "registry:dt/q#0.0.0+20160323171452",
+    "vss-web-extension-sdk": "npm:vss-web-extension-sdk/typings/vss.d.ts"
   }
 }
