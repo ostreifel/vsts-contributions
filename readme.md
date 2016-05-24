@@ -17,7 +17,8 @@ vss-extension.json  - Extension manifest
 ### Usage ###
 
 1. Clone the repository
-1. `npm install` to install required dependencies
+1. `npm install` to install required local dependencies
+2. `npm install -g grunt` to install a global copy of grunt (unless it's already installed)
 2. `grunt` to build and package the application
 
 #### Grunt ####
