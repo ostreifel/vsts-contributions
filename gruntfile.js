@@ -2,8 +2,6 @@
     grunt.initConfig({
         ts: {
             build: {
-                src: ["scripts/**/*.ts", "typings/browser.d.ts"],
-                outDir: "dist",
                 tsconfig: true
             },
             options: {

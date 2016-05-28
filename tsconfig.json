@@ -1,13 +1,12 @@
 {
     "compilerOptions": {
         "module": "amd",
-        "sourceMap": false
+        "sourceMap": false,
+        "rootDir": "./scripts",
+        "outDir": "./dist"
     },
     "filesGlob": [
-        "src/**/*.ts",
-        "typings/browser.d.ts"
-    ],
-    "files": [
-        "typings/browser.d.ts"
+        "./scripts/**/*.ts",
+        "./typings/index.d.ts"
     ]
 }
