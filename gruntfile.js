@@ -3,6 +3,7 @@
         ts: {
             build: {
                 src: ["scripts/**/*.ts", "typings/browser.d.ts"],
+                outDir: "dist",
                 tsconfig: true
             },
             options: {
@@ -27,13 +28,13 @@
                     expand: true, 
                     flatten: true, 
                     src: ["node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js"], 
-                    dest: "scripts",
+                    dest: "dist",
                     filter: "isFile" 
                 }]
             }
         },
         
-        clean: ["scripts/**/*.js", "*.vsix"]
+        clean: ["scripts/**/*.js", "*.vsix", "dist"]
     });
     
     grunt.loadNpmTasks("grunt-ts");
