@@ -5,8 +5,9 @@
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-copy": "~1.0.0",
     "grunt-exec": "~0.4.6",
-    "grunt-ts": "^5.5.0-beta.2",
+    "grunt-ts": "^5.5.1",
     "tfx-cli": "^0.3.13",
+    "typescript": "^1.8.10",
     "typings": "^0.8.1",
     "vss-web-extension-sdk": "^1.98.1"
   },
