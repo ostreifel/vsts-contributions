@@ -29,7 +29,7 @@ Three basic `grunt` tasks are defined:
 * `package` - Builds the vsix package
 * `publish` - Publishes the extension to the marketplace using `tfx-cli`
 
-Note: To avoid `tfx` prompting for your token when publishing, login in beforehand using `tfx login` and the service uri of ` https://app.market.visualstudio.com`.
+Note: To avoid `tfx` prompting for your token when publishing, login in beforehand using `tfx login` and the service uri of ` https://market.visualstudio.com`.
 
 #### Including framework modules ####
 
