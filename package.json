@@ -9,7 +9,7 @@
     "tfx-cli": "^0.3.13",
     "typescript": "^1.8.10",
     "typings": "^1.0.4",
-    "vss-web-extension-sdk": "^1.98.1"
+    "vss-web-extension-sdk": "^1.100.0"
   },
   "name": "vsts-extension-ts-seed-simple",
   "private": true,
