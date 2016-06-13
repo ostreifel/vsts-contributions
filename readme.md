@@ -31,7 +31,7 @@ Three basic `grunt` tasks are defined:
 * `publish-dev` - Publishes the development version of the extension to the marketplace using `tfx-cli`
 * `publish-release` - Publishes the release version of the extension to the marketplace using `tfx-cli`
 
-Note: To avoid `tfx` prompting for your token when publishing, login in beforehand using `tfx login` and the service uri of ` https://market.visualstudio.com`.
+Note: To avoid `tfx` prompting for your token when publishing, login in beforehand using `tfx login` and the service uri of ` https://marketplace.visualstudio.com`.
 
 #### Including framework modules ####
 
