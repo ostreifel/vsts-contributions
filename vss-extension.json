@@ -6,7 +6,6 @@
     "scopes": [ "vso.work", "vso.work_write" ],
     "description": "Describe your extension.",
     "publisher": "<your-publisher>",
-    "public": false,
     "icons": {
         "default": "img/logo.png"
     },
@@ -53,7 +52,7 @@
             "addressable": true
         },
         {
-            "path": "dist",
+            "path": "scripts",
             "addressable": true
         },
         {
