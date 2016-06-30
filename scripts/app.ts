@@ -1,3 +1,5 @@
+import { MessageHelper } from "./logic/messageHelper";
+
 var actionProvider =  {
     getMenuItems: (context) => {
         return [<IContributedMenuItem>{
@@ -8,7 +10,8 @@ var actionProvider =  {
                     || (actionContext.workItemIds && actionContext.workItemIds.length > 0 && actionContext.workItemIds[0]);
                     
                 if (workItemId) {
-                    alert(`Selected work item ${workItemId}`);
+                    let messageHelper = new MessageHelper();
+                    alert(messageHelper.format([workItemId]));
                 }
             }
         }];

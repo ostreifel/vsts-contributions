@@ -40,3 +40,11 @@ The VSTS framework is setup to initalize the requirejs AMD loader, so just use `
 #### VS Code ####
 
 The included `.vscode` config allows you to open and build the project using [VS Code](https://code.visualstudio.com/).
+
+#### Unit Testing ####
+
+The project is setup for unit testing using `mocha`, `chai`, and the `karma` test runner. A simple exampe unit test is included in `scripts/logic/messageHelper.tests.ts`, to run tests just execute:
+
+```
+grunt test
+```
