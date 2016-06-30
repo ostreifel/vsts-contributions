@@ -43,7 +43,7 @@ The included `.vscode` config allows you to open and build the project using [VS
 
 #### Unit Testing ####
 
-The project is setup for unit testing using `mocha`, `chai`, and the `karma` test runner. A simple exampe unit test is included in `scripts/logic/messageHelper.tests.ts`, to run tests just execute:
+The project is setup for unit testing using `mocha`, `chai`, and the `karma` test runner. A simple example unit test is included in `scripts/logic/messageHelper.tests.ts`. To run tests just execute:
 
 ```
 grunt test
