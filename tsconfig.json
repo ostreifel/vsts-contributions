@@ -2,8 +2,7 @@
     "compilerOptions": {
         "module": "amd",
         "sourceMap": false,
-        "rootDir": "./scripts",
-        "outDir": "./build"
+        "rootDir": "./scripts"
     },
     "filesGlob": [
         "./scripts/**/*.ts",

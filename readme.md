@@ -14,6 +14,12 @@ index.html          - Main entry point
 vss-extension.json  - Extension manifest
 ```
 
+### Version History ###
+
+```
+0.1.1 - Automatically increase extension's minor version when packaging.
+```
+
 ### Usage ###
 
 1. Clone the repository

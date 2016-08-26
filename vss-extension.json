@@ -5,7 +5,7 @@
     "name": "vsts-extension-ts-seed-simple",
     "scopes": [ "vso.work", "vso.work_write" ],
     "description": "Describe your extension.",
-    "publisher": "<your-publisher>",
+    "publisher": "your-publisher",
     "icons": {
         "default": "img/logo.png"
     },

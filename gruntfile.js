@@ -3,11 +3,11 @@
         ts: {
             build: {
                 tsconfig: true,
-                "outDir": "./dist/scripts"
+                "outDir": "./build"
             },
             buildTest: {
                 tsconfig: true,
-                "outDir": "./test/scripts",
+                "outDir": "./test/",
                 src: ["./scripts/**/*.tests.ts"]
             },
             options: {
