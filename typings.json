@@ -1,7 +1,9 @@
 {
   "globalDependencies": {
-    "jquery": "registry:dt/jquery#1.10.0+20160620094458",
+    "chai": "registry:dt/chai#3.4.0+20160601211834",
+    "jquery": "registry:dt/jquery#1.10.0+20160628074423",
     "knockout": "registry:dt/knockout#0.0.0+20160512130947",
+    "mocha": "registry:dt/mocha#2.2.5+20160619032855",
     "q": "registry:dt/q#0.0.0+20160613154756",
     "tfs": "npm:vss-web-extension-sdk/typings/tfs.d.ts",
     "vss": "npm:vss-web-extension-sdk/typings/vss.d.ts"
