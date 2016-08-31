@@ -18,7 +18,7 @@
     "requirejs": "^2.2.0",
     "typescript": "^1.8.10",
     "typings": "^1.0.4",
-    "vss-web-extension-sdk": "^1.100.0"
+    "vss-web-extension-sdk": "^1.104.0"
   },
   "name": "vsts-extension-ts-seed-simple",
   "private": true,

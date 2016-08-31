@@ -5,6 +5,7 @@
     "knockout": "registry:dt/knockout#0.0.0+20160512130947",
     "mocha": "registry:dt/mocha#2.2.5+20160619032855",
     "q": "registry:dt/q#0.0.0+20160613154756",
+    "require": "registry:dt/require#2.1.20+20160316155526",
     "tfs": "npm:vss-web-extension-sdk/typings/tfs.d.ts",
     "vss": "npm:vss-web-extension-sdk/typings/vss.d.ts"
   }
