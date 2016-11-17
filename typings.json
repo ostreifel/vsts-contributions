@@ -1,11 +1,13 @@
 {
   "globalDependencies": {
     "chai": "registry:dt/chai#3.4.0+20160601211834",
-    "jquery": "registry:dt/jquery#1.10.0+20160628074423",
-    "knockout": "registry:dt/knockout#0.0.0+20160512130947",
-    "mocha": "registry:dt/mocha#2.2.5+20160619032855",
-    "q": "registry:dt/q#0.0.0+20160613154756",
-    "require": "registry:dt/require#2.1.20+20160316155526",
+    "jquery": "registry:dt/jquery#1.10.0+20160929162922",
+    "knockout": "registry:dt/knockout#0.0.0+20160914182733",
+    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
+    "q": "registry:dt/q#0.0.0+20161004185634",
+    "react": "registry:dt/react#0.14.0+20161024223416",
+    "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
+    "require": "registry:dt/require#2.1.20+20160919185614",
     "tfs": "npm:vss-web-extension-sdk/typings/tfs.d.ts",
     "vss": "npm:vss-web-extension-sdk/typings/vss.d.ts"
   }
