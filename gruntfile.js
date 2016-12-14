@@ -6,7 +6,7 @@
                 "outDir": "./build"
             },
             buildTest: {
-                tsconfig: true,
+                tsconfig: "testTsConfig.json",
                 "outDir": "./test/",
                 src: ["./scripts/**/*.tests.ts"]
             },

@@ -3,3 +3,5 @@ scripts/*.js
 typings
 dist
 build
+test
+.baseDir.ts

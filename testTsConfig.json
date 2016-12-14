@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "sourceMap": false,
+        "rootDir": "./scripts"
+    },
+    "filesGlob": [
+        "./scripts/**/*.ts",
+        "!**/*.tests.ts",
+        "./typings/index.d.ts"
+    ]
+}
