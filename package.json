@@ -2,8 +2,6 @@
   "devDependencies": {
     "@types/jquery": "^2.0.41",
     "@types/knockout": "^3.4.40",
-    "@types/q": "^1.0.0",
-    "@types/react": "^15.0.20",
     "@types/requirejs": "^2.1.28",
     "chai": "^3.5.0",
     "grunt": "^1.0.1",
@@ -21,13 +19,9 @@
     "mocha": "^2.5.3",
     "requirejs": "^2.3.2",
     "typescript": "^2.0.7",
-    "typings": "^1.5.0",
-    "vss-web-extension-sdk": "^1.106.0"
+    "vss-web-extension-sdk": "2.117.0"
   },
   "name": "vsts-extension-ts-seed-simple",
   "private": true,
-  "version": "0.6.0",
-  "scripts": {
-    "postinstall": "typings install"
-  }
+  "version": "0.7.0"
 }

@@ -17,6 +17,7 @@ vss-extension.json  - Extension manifest
 ### Version History ###
 
 ```
+0.7.0 - Updated VSS SDK, moved from `typings` to `@types`
 0.6.0 - Updated VSS SDK to M104
 0.1.1 - Automatically increase extension's minor version when packaging.
 ```

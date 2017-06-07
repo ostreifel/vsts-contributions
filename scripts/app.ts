@@ -1,6 +1,8 @@
+///<reference types="vss-web-extension-sdk" />
+
 import { MessageHelper } from "./logic/messageHelper";
 
-var actionProvider =  {
+var actionProvider = {
     getMenuItems: (context) => {
         return [<IContributedMenuItem>{
             title: "Work Item Menu Action",
@@ -8,7 +10,7 @@ var actionProvider =  {
                 let workItemId = actionContext.id
                     || (actionContext.ids && actionContext.ids.length > 0 && actionContext.ids[0])
                     || (actionContext.workItemIds && actionContext.workItemIds.length > 0 && actionContext.workItemIds[0]);
-                    
+
                 if (workItemId) {
                     let messageHelper = new MessageHelper();
                     alert(messageHelper.format([workItemId]));

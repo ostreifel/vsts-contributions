@@ -2,11 +2,15 @@
     "compilerOptions": {
         "module": "amd",
         "sourceMap": false,
-        "rootDir": "./scripts"
+        "rootDir": "./scripts",
+        "moduleResolution": "node"
     },
     "filesGlob": [
         "./scripts/**/*.ts",
-        "!**/*.tests.ts",
-        "./typings/index.d.ts"
+        "!**/*.tests.ts"
+    ],
+    "files": [
+        "scripts/app.ts",
+        "scripts/logic/messageHelper.ts"
     ]
 }
