@@ -8,9 +8,5 @@
     "filesGlob": [
         "./scripts/**/*.ts",
         "!**/*.tests.ts"
-    ],
-    "files": [
-        "scripts/app.ts",
-        "scripts/logic/messageHelper.ts"
     ]
 }
