@@ -1,8 +1,8 @@
 {
     "manifestVersion": 1,
     "id": "vsts-extension-ts-seed-simple",
-    "version": "0.1.1",
-    "name": "vsts-extension-ts-seed-simple",
+    "version": "0.1.12",
+    "name": "VSTS Seed Extension",
     "scopes": [ "vso.work", "vso.work_write" ],
     "description": "Describe your extension.",
     "publisher": "your-publisher",
@@ -52,7 +52,7 @@
             "addressable": true
         },
         {
-            "path": "build",
+            "path": "scripts",
             "addressable": true
         },
         {

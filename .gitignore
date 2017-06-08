@@ -5,3 +5,5 @@ dist
 build
 test
 .baseDir.ts
+js
+*.vsix
