@@ -1,11 +1,11 @@
 {
     "manifestVersion": 1,
-    "id": "vsts-extension-ts-seed-simple",
-    "version": "0.1.12",
-    "name": "VSTS Seed Extension",
+    "id": "contributions",
+    "version": "0.1.14",
+    "name": "Contributions Graph",
     "scopes": [ "vso.work", "vso.work_write" ],
-    "description": "Describe your extension.",
-    "publisher": "your-publisher",
+    "description": "View account contributions per user.",
+    "publisher": "ottostreifel",
     "icons": {
         "default": "img/logo.png"
     },
@@ -22,26 +22,6 @@
             "path": "details.md"
         }
     },
-    "links": {
-        "home": {
-            "uri": "https://bit.ly"
-        },
-        "getstarted": {
-            "uri": "https://bit.ly"
-        },
-        "learn": {
-            "uri": "https://bit.ly"
-        },
-        "support": {
-            "uri": "https://bit.ly"
-        },
-        "repository": {
-            "uri": "https://bit.ly"
-        },
-        "issues": {
-            "uri": "https://bit.ly"
-        }
-    },
     "branding": {
         "color": "rgb(220, 235, 252)",
         "theme": "light"
@@ -56,7 +36,7 @@
             "addressable": true
         },
         {
-            "path": "index.html",
+            "path": "contributions.html",
             "addressable": true
         }
     ],
@@ -65,15 +45,16 @@
     ],
     "contributions": [
         {
-            "id": "vsts-extension-ts-seed-simple-action",
-            "type": "ms.vss-web.action-provider",
-            "description": "",
+            "id": "contributions-hub",
+            "type": "ms.vss-web.hub",
+            "description": "View code and work item contributions.",
             "targets": [
-                "ms.vss-work-web.work-item-context-menu"
-            ],
+                "ms.vss-work-web.work-hub-group"
+                ],
             "properties": {
                 "group": "contributed",
-                "uri": "index.html"
+                "name": "Contributions",
+                "uri": "contributions.html"
             }
         }
     ]

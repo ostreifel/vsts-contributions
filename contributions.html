@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <script src="build/VSS.SDK.min.js"></script>
+    <script src="dist/VSS.SDK.min.js"></script>
 </head>
 <body>
     <script type="text/javascript">
@@ -15,7 +15,7 @@
         });
         
         // Load main entry point for extension
-        VSS.require(["build/app"], function () {
+        VSS.require(["dist/contributions"], function () {
             // Loading succeeded
             VSS.notifyLoadSucceeded();
         });

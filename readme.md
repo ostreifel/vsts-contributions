@@ -1,4 +1,4 @@
-## vsts-extension-ts-seed-simple ##
+## contributions ##
 
 Very simple seed project for developing VSTS extensions using Typescript. Utilizes Typescript, grunt, and tsd. Detailed explanation how to get started can be found at https://cschleiden.wordpress.com/2016/02/24/extending-vsts-setup/.
 
@@ -49,10 +49,3 @@ The VSTS framework is setup to initalize the requirejs AMD loader, so just use `
 
 The included `.vscode` config allows you to open and build the project using [VS Code](https://code.visualstudio.com/).
 
-#### Unit Testing ####
-
-The project is setup for unit testing using `mocha`, `chai`, and the `karma` test runner. A simple example unit test is included in `scripts/logic/messageHelper.tests.ts`. To run tests just execute:
-
-```
-grunt test
-```
