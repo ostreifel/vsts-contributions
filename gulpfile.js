@@ -1,5 +1,6 @@
 const path = require("path");
 const gulp = require('gulp');
+const webpack = require('gulp-webpack');
 const ts = require("gulp-typescript");
 const clean = require("gulp-clean");
 const yargs = require("yargs");
@@ -9,7 +10,8 @@ const sass = require('gulp-sass');
 
 const args =  yargs.argv;
 
-const jsFolder = 'dist';
+const jsFolder = 'js';
+const contentFolder = 'dist';
 
 const tsProject = ts.createProject('tsconfig.json', {
     typescript: require('typescript')
@@ -27,10 +29,20 @@ gulp.task('build', ['clean'], () => {
 
 gulp.task('copy', ['build'], () => {
     gulp.src('node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js')
-        .pipe(gulp.dest(jsFolder));
+        .pipe(gulp.dest(`${contentFolder}/scripts`));
 });
 
-gulp.task('package', ['copy'], () => {
+
+gulp.task('webpack', ['copy'], () => {
+    if (yargs.argv.nobundle) {
+        return gulp.src(`${jsFolder}/**/*js`).pipe(gulp.dest(`${contentFolder}/scripts`));
+    } else {
+        return webpack(require('./webpack.config.js'))
+            .pipe(gulp.dest(`${contentFolder}/scripts`));
+    }
+});
+
+gulp.task('package', ['webpack'], () => {
     const overrides = {}
     if (yargs.argv.release) {
         overrides.public = true;
