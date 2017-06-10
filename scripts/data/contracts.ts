@@ -1,5 +1,12 @@
 import { GitQueryCommitsCriteria, GitCommitRef, GitRepository } from "TFS/VersionControl/Contracts";
 
+
+export interface IContributionFilter {
+    username: string;
+    allProjects: boolean;
+    selectedDate?: Date;
+}
+
 export interface IUserContributions {
     [day: number]: UserContribution[];
 }

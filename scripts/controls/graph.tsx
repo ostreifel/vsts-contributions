@@ -3,8 +3,9 @@ import * as ReactDOM from "react-dom";
 import { Callout } from "OfficeFabric/components/Callout";
 import { renderTimeWindow } from "./timeWindow";
 import { getContributions } from "../data/provider";
-import { IUserContributions, UserContribution } from "../data/contracts";
+import { IUserContributions, UserContribution, IContributionFilter } from "../data/contracts";
 import { toDateString, toCountString } from "./messageFormatting";
+import { updateSelectedDate } from "./filters";
 
 class Day extends React.Component<{ date: Date, selectedDate?: Date, contributions?: UserContribution[] }, { showCallout: boolean }> {
     private dayElem: HTMLDivElement;
@@ -62,11 +63,9 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
     }
     private toggleSelect() {
         if (this.isSelected()) {
-            renderGraph();
-            renderTimeWindow();
+            updateSelectedDate();
         } else {
-            renderGraph(this.props.date);
-            renderTimeWindow(this.props.date);
+            updateSelectedDate(this.props.date);
         }
     }
 }
@@ -107,13 +106,13 @@ class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserC
     }
 }
 let firstTime = true;
-export function renderGraph(selectedDate?: Date) {
+export function renderGraph(filter: IContributionFilter) {
     const graphParent = $(".graph-container")[0];
     if (firstTime) {
         ReactDOM.render(<div>{"Loading commits..."}</div>, graphParent);
         firstTime = false;
     }
-    getContributions().then(contributions => {
-        ReactDOM.render(<Graph selectedDate={selectedDate} contributions={contributions} />, graphParent);
+    getContributions(filter).then(contributions => {
+        ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={contributions} />, graphParent);
     })
 }

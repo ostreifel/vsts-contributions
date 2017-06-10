@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { IconButton } from "OfficeFabric/components/Button";
 import { getContributions } from "../data/provider";
 import { toDateString, toCountString } from "./messageFormatting";
-import { IUserContributions, UserContribution, RepoCommit } from "../data/contracts";
+import { IUserContributions, UserContribution, RepoCommit, IContributionFilter } from "../data/contracts";
 
 class Commit extends React.Component<{ commit: RepoCommit }, {}> {
     render() {
@@ -83,9 +83,10 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
     }
 }
 
-export function renderTimeWindow(date?: Date) {
+export function renderTimeWindow(filter: IContributionFilter) {
     const graphParent = $(".time-window-container")[0];
-    getContributions().then(contributions => {
+    getContributions(filter).then(contributions => {
+        const date = filter.selectedDate;
         if (date) {
             const end = new Date(date);
             end.setDate(end.getDate() + 1);

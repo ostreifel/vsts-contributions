@@ -6,7 +6,7 @@ import * as Q from "q";
 import { CachedValue } from "./CachedValue";
 import { repositories } from "./repositories";
 import { yearStart } from "./dates";
-import { RepoCommit } from "./contracts";
+import { RepoCommit, IContributionFilter } from "./contracts";
 
 const commits: {
     [userName: string]: {
@@ -30,7 +30,7 @@ function commitsForReprository(username: string, repoId: string, skip = 0): Q.IP
     });
 }
 
-export function getCommits(username: string, allProjects: boolean) {
+export function getCommits({ username, allProjects }: IContributionFilter) {
     return repositories.getValue().then(repositories => {
         const currentProject = VSS.getWebContext().project.id;
         if (!allProjects) {

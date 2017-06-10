@@ -1,5 +1,5 @@
 import * as Q from "q";
-import { UserContribution, IUserContributions } from "./contracts";
+import { UserContribution, IUserContributions, IContributionFilter } from "./contracts";
 import { getCommits } from "./commits";
 import { yearStart, yearEnd } from "./dates";
 
@@ -20,11 +20,8 @@ function sortContributions(contributions: IUserContributions) {
     }
 }
 
-export function getContributions(
-    username: string = VSS.getWebContext().user.name,
-    allProjects: boolean = false
-): Q.IPromise<IUserContributions> {
-    return Q.all([getCommits(username, allProjects)]).then(([commits]) => {
+export function getContributions(filter: IContributionFilter): Q.IPromise<IUserContributions> {
+    return Q.all([getCommits(filter)]).then(([commits]) => {
         const contributions: IUserContributions = {};
         addContributions(commits, contributions);
         sortContributions(contributions);
