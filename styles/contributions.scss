@@ -42,8 +42,14 @@ body {
 }
 .time-window-container {
     .time-window {
-        h4 {
-            margin-bottom: 0px;
+        .contribution-type-header {
+            h4 {
+                margin-bottom: 0px;
+                display: inline-block;
+            }
+            button.toggle-button {
+                vertical-align: sub;
+            }
         }
     }
 }

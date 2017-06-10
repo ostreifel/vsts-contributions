@@ -1,10 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { IconButton } from "OfficeFabric/components/Button";
 import { getContributions } from "../data/provider";
 import { dateToString, toCountString } from "./messageFormatting";
 import { IUserContributions, UserContribution, RepoCommit } from "../data/contracts";
 
-class Commit extends React.Component<{commit: RepoCommit}, {}> {
+class Commit extends React.Component<{ commit: RepoCommit }, {}> {
     render() {
         const { repo, commit } = this.props.commit;
         return <div>{`${commit.comment}`}</div>;
@@ -19,17 +20,35 @@ class Commits extends React.Component<{ allContributions: UserContribution[] }, 
                 commits.push(contribution);
             }
         }
-        return <Contributions title={toCountString(commits.length, "commit")}>
-            {commits.map(c => <Commit commit={c}/>)}
+        return <Contributions count={commits.length} noun={"commit"}>
+            {commits.map(c => <Commit commit={c} />)}
         </Contributions>;
     }
 }
 
-class Contributions extends React.Component<{ title: string }, {}> {
+class Contributions extends React.Component<{ count: number, noun: string }, { showChildren: boolean }> {
+    constructor() {
+        super();
+        this.state = { showChildren: false };
+    }
     render() {
+        const { count, noun } = this.props;
+        const { showChildren } = this.state;
+        const label = count === 1 ? noun : noun + "s";
         return <div>
-            <h4>{this.props.title}</h4>
-            <div>{this.props.children}</div>
+            <div className="contribution-type-header">
+                <IconButton
+                    className="toggle-button"
+                    iconProps={{ iconName: showChildren ? 'ChevronDownSmall' : "ChevronRightSmall" }}
+                    title={`${showChildren ? "Hide" : "Show"} ${label}`}
+                    onClick={e => this.setState({showChildren: !this.state.showChildren})}
+                />
+                <h4>{toCountString(this.props.count, this.props.noun)}</h4>
+            </div>
+            {showChildren ?
+                <div>{this.props.children}</div>
+                : null
+            }
         </div>
     }
 }
