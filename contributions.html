@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <script src="scripts/VSS.SDK.min.js"></script>
+    <script src="dist/VSS.SDK.min.js"></script>
 </head>
 <body>
     <div class="graph-container"></div>
@@ -17,7 +17,7 @@
         });
         
         // Load main entry point for extension
-        VSS.require(["scripts/contributions"], function () {
+        VSS.require(["dist/contributions"], function () {
             // Loading succeeded
             VSS.notifyLoadSucceeded();
         });

@@ -11,13 +11,13 @@ const sass = require('gulp-sass');
 const args =  yargs.argv;
 
 const jsFolder = 'js';
-const contentFolder = 'dist';
+const distFolder = 'dist';
 
 const tsProject = ts.createProject('tsconfig.json', {
     typescript: require('typescript')
 });
 gulp.task('clean', () => {
-    return gulp.src([jsFolder, contentFolder, '*.vsix'])
+    return gulp.src([jsFolder, distFolder, '*.vsix'])
         .pipe(clean());
 });
 
@@ -29,16 +29,16 @@ gulp.task('build', ['clean'], () => {
 
 gulp.task('copy', ['build'], () => {
     gulp.src('node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js')
-        .pipe(gulp.dest(`${contentFolder}/scripts`));
+        .pipe(gulp.dest(`${distFolder}`));
 });
 
 
 gulp.task('webpack', ['copy'], () => {
     if (yargs.argv.nobundle) {
-        return gulp.src(`${jsFolder}/**/*js`).pipe(gulp.dest(`${contentFolder}/scripts`));
+        return gulp.src(`${jsFolder}/**/*js`).pipe(gulp.dest(`${distFolder}`));
     } else {
         return webpack(require('./webpack.config.js'))
-            .pipe(gulp.dest(`${contentFolder}/scripts`));
+            .pipe(gulp.dest(`${distFolder}`));
     }
 });
 
