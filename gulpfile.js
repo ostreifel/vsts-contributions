@@ -17,9 +17,9 @@ const tsProject = ts.createProject('tsconfig.json', {
     typescript: require('typescript')
 });
 gulp.task('clean', () => {
-    return gulp.src([jsFolder, '*.vsix'])
+    return gulp.src([jsFolder, contentFolder, '*.vsix'])
         .pipe(clean());
-})
+});
 
 gulp.task('build', ['clean'], () => {
     return tsProject.src()

@@ -2,6 +2,7 @@
   "devDependencies": {
     "@types/jquery": "^2.0.41",
     "@types/knockout": "^3.4.40",
+    "@types/react-dom": "^15.5.0",
     "@types/requirejs": "^2.1.28",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",

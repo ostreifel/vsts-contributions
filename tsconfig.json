@@ -3,7 +3,9 @@
         "module": "amd",
         "sourceMap": false,
         "rootDir": "./scripts",
-        "moduleResolution": "node"
+        "jsx": "react",
+        "moduleResolution": "node",
+        "strictNullChecks": true
     },
     "filesGlob": [
         "./scripts/**/*.ts",

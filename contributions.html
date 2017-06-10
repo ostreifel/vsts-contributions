@@ -3,9 +3,11 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <script src="dist/VSS.SDK.min.js"></script>
+    <script src="scripts/VSS.SDK.min.js"></script>
 </head>
 <body>
+    <div class="graph-container"></div>
+    <div class="time-window-container"></div>
     <script type="text/javascript">
         // Initialize framework 
         VSS.init({
@@ -15,7 +17,7 @@
         });
         
         // Load main entry point for extension
-        VSS.require(["dist/contributions"], function () {
+        VSS.require(["scripts/contributions"], function () {
             // Loading succeeded
             VSS.notifyLoadSucceeded();
         });
