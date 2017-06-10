@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Callout } from "OfficeFabric/components/Callout";
+import { renderTimeWindow } from "./timeWindow";
 
 class Day extends React.Component<{ date: Date, selectedDate?: Date }, { showCallout: boolean }> {
     private dayElem: HTMLDivElement;
@@ -45,6 +46,7 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date }, { showCal
     }
     private select() {
         renderGraph(this.props.date);
+        renderTimeWindow(this.props.date);
     }
 }
 
