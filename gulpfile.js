@@ -7,6 +7,7 @@ const yargs = require("yargs");
 const exec = require('child_process').exec;
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
+const tslint = require('gulp-tslint');
 
 const args =  yargs.argv;
 
@@ -21,14 +22,21 @@ gulp.task('clean', () => {
         .pipe(clean());
 });
 
-
 gulp.task('styles', ['clean'], () => {
     return gulp.src("styles/**/*scss")
         .pipe(sass())
         .pipe(gulp.dest(distFolder));
-})
+});
 
-gulp.task('build', ['styles'], () => {
+gulp.task('tslint', () => {
+    return gulp.src(["scripts/**/*ts", "scripts/**/*tsx"])
+        .pipe(tslint({
+            formatter: "verbose"
+        }))
+        .pipe(tslint.report());
+});
+
+gulp.task('build', ['tslint', 'styles'], () => {
     return tsProject.src()
         .pipe(tsProject()).js.pipe(gulp.dest(jsFolder));
 });

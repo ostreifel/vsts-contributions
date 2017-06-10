@@ -1,5 +1,5 @@
 import { } from "TFS/VersionControl/Contracts";
-import { GitQueryCommitsCriteria, GitCommitRef, GitRepository } from "TFS/VersionControl/Contracts";
+import { GitQueryCommitsCriteria, GitCommitRef } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
 import { format } from "VSS/Utils/Date"
 import * as Q from "q";

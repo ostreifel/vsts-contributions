@@ -7,3 +7,4 @@ test
 .baseDir.ts
 js
 *.vsix
+file.tslint

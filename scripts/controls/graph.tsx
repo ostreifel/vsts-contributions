@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Callout } from "OfficeFabric/components/Callout";
-import { renderTimeWindow } from "./timeWindow";
 import { getContributions } from "../data/provider";
 import { IUserContributions, UserContribution, IContributionFilter } from "../data/contracts";
 import { toDateString, toCountString } from "./messageFormatting";
@@ -18,10 +17,10 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
         endDate.setDate(endDate.getDate() + 1);
         const contributions = this.props.contributions || [];
         return <div className="day-container"
-            onMouseEnter={(e) => this.showCallout()}
-            onMouseOver={(e) => this.showCallout()}
-            onMouseLeave={(e) => this.showCallout(false)}
-            onClick={(e) => this.toggleSelect()}
+            onMouseEnter={() => this.showCallout()}
+            onMouseOver={() => this.showCallout()}
+            onMouseLeave={() => this.showCallout(false)}
+            onClick={() => this.toggleSelect()}
         >
             <div className={this.getDayClasses(contributions.length)} ref={ref => this.dayElem = ref}></div>
             <div className={this.getDayFilterClasses()} />

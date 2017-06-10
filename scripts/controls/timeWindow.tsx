@@ -46,7 +46,7 @@ class Contributions extends React.Component<{ count: number, noun: string }, { s
                     className="toggle-button"
                     iconProps={{ iconName: showChildren ? 'ChevronDownSmall' : "ChevronRightSmall" }}
                     title={`${showChildren ? "Hide" : "Show"} ${label}`}
-                    onClick={e => this.setState({ showChildren: !this.state.showChildren })}
+                    onClick={() => this.setState({ showChildren: !this.state.showChildren })}
                 />
                 <h4>{toCountString(this.props.count, this.props.noun)}</h4>
             </div>

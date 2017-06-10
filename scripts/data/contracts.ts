@@ -1,4 +1,4 @@
-import { GitQueryCommitsCriteria, GitCommitRef, GitRepository } from "TFS/VersionControl/Contracts";
+import { GitCommitRef, GitRepository } from "TFS/VersionControl/Contracts";
 
 
 export interface IContributionFilter {

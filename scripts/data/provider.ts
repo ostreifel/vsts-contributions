@@ -1,7 +1,6 @@
 import * as Q from "q";
 import { UserContribution, IUserContributions, IContributionFilter } from "./contracts";
 import { getCommits } from "./commits";
-import { yearStart, yearEnd } from "./dates";
 
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
     for (const contribution of arr) {
