@@ -9,7 +9,7 @@ const dow = [
     "Friday",
     "Saturday",
 ];
-export function dateToString(date: Date) {
+export function toDateString(date: Date) {
     return `${dow[date.getDay()]} ${format(date, " yyyy-MM-dd")}`
 }
 

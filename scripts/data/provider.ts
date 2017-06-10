@@ -20,14 +20,7 @@ function sortContributions(contributions: IUserContributions) {
     }
 }
 
-export function getContributions(user?: string, start?: Date, end?: Date): Q.IPromise<IUserContributions> {
-    if (!start) {
-        start = yearStart;
-        end = yearEnd;
-    } else if (!end) {
-        end = new Date(start);
-        end.setDate(end.getDate() + 1);
-    }
+export function getContributions(user?: string, allProjects: boolean = false): Q.IPromise<IUserContributions> {
 
     return Q.all([commits.getValue()]).then(([commits]) => {
         const contributions: IUserContributions = {};

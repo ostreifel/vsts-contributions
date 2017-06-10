@@ -2,13 +2,18 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { IconButton } from "OfficeFabric/components/Button";
 import { getContributions } from "../data/provider";
-import { dateToString, toCountString } from "./messageFormatting";
+import { toDateString, toCountString } from "./messageFormatting";
 import { IUserContributions, UserContribution, RepoCommit } from "../data/contracts";
 
 class Commit extends React.Component<{ commit: RepoCommit }, {}> {
     render() {
         const { repo, commit } = this.props.commit;
-        return <div>{`${commit.comment}`}</div>;
+        return <div className="commit">
+            <a className="title" href={commit.remoteUrl} target="_blank">{`${commit.comment}`}</a>
+            {" in "}
+            <a className="repository" href={repo.remoteUrl} target="_blank">{repo.name}</a>
+            {` at ${commit.author.date.toLocaleTimeString()}`}
+        </div>;
     }
 }
 
@@ -41,7 +46,7 @@ class Contributions extends React.Component<{ count: number, noun: string }, { s
                     className="toggle-button"
                     iconProps={{ iconName: showChildren ? 'ChevronDownSmall' : "ChevronRightSmall" }}
                     title={`${showChildren ? "Hide" : "Show"} ${label}`}
-                    onClick={e => this.setState({showChildren: !this.state.showChildren})}
+                    onClick={e => this.setState({ showChildren: !this.state.showChildren })}
                 />
                 <h4>{toCountString(this.props.count, this.props.noun)}</h4>
             </div>
@@ -58,7 +63,7 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
         const { date } = this.props;
         const contributions = this.getContributions();
         return <div className="time-window">
-            <h3>{`${toCountString(contributions.length, "contribution")} ${date ? ` on ${dateToString(date)}` : " for the year"}`}</h3>
+            <h3>{`${toCountString(contributions.length, "contribution")} ${date ? ` on ${toDateString(date)}` : " for the year"}`}</h3>
             <div>
                 <Commits allContributions={contributions} />
             </div>

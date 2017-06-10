@@ -4,7 +4,7 @@ import { Callout } from "OfficeFabric/components/Callout";
 import { renderTimeWindow } from "./timeWindow";
 import { getContributions } from "../data/provider";
 import { IUserContributions, UserContribution } from "../data/contracts";
-import { dateToString, toCountString } from "./messageFormatting";
+import { toDateString, toCountString } from "./messageFormatting";
 
 class Day extends React.Component<{ date: Date, selectedDate?: Date, contributions?: UserContribution[] }, { showCallout: boolean }> {
     private dayElem: HTMLDivElement;
@@ -29,7 +29,7 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
                     targetElement={this.dayElem}
                 >
                     <div>{toCountString(contributions.length, "contribution")}</div>
-                    <div>{dateToString(this.props.date)}</div>
+                    <div>{toDateString(this.props.date)}</div>
                 </Callout>
                 : null
             }
