@@ -6,11 +6,29 @@ $day-size: 15px;
             display: flex;
             flex-direction: column;
             .day-container {
+                width: $day-size + 2;
+                height: $day-size + 2;
                 .day {
                     width: $day-size;
                     height: $day-size;
                     background-color: blue;
                     margin: 1px;
+                }
+                .day-filter {
+                    width: $day-size;
+                    height: $day-size;
+                    margin: 1px;
+                    position: relative;
+                    top: -  $day-size - 1;
+                    background-color: black;
+                    opacity: 0;
+                    cursor: pointer;
+                    &.hover:not(.selected) {
+                        opacity: 0.3;
+                    }
+                    &.selected {
+                        opacity: 0.8;
+                    }
                 }
             }
         }

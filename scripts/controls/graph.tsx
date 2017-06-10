@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Callout } from "OfficeFabric/components/Callout";
 
-class Day extends React.Component<{ date: number }, { showCallout: boolean }> {
+class Day extends React.Component<{ date: Date, selectedDate?: Date }, { showCallout: boolean }> {
     private dayElem: HTMLDivElement;
     constructor() {
         super();
@@ -13,12 +13,13 @@ class Day extends React.Component<{ date: number }, { showCallout: boolean }> {
             onMouseEnter={(e) => this.showCallout()}
             onMouseOver={(e) => this.showCallout()}
             onMouseLeave={(e) => this.showCallout(false)}
+            onClick={(e)=> this.select()}
         >
             <div className="day" ref={ref => this.dayElem = ref}></div>
+            <div className={this.getDayFilterClasses()}/>
             {this.state.showCallout ?
                 <Callout
                     targetElement={this.dayElem}
-                    onDismiss={() => this.showCallout(false)}
                     beakWidth={0}
                 >
                     {`Day ${this.props.date}`}
@@ -27,31 +28,54 @@ class Day extends React.Component<{ date: number }, { showCallout: boolean }> {
             }
         </div>;
     }
+    private getDayFilterClasses(): string {
+        let classes = "day-filter";
+        if (this.state.showCallout) {
+            classes += " hover";
+        }
+        if (this.props.selectedDate && this.props.date.getTime() === this.props.selectedDate.getTime()) {
+            classes += " selected";
+        }
+        return classes;
+    }
     private showCallout(show: boolean = true) {
-        this.setState({ ...this.state, showCallout: show });
+        if (this.state.showCallout !== show) {
+            this.setState({ ...this.state, showCallout: show });
+        }
+    }
+    private select() {
+        renderGraph(this.props.date);
     }
 }
 
-class Week extends React.Component<{}, {}> {
+class Week extends React.Component<{date: Date, selectedDate?: Date}, {}> {
     render() {
+        const date = this.props.date;
         const days: JSX.Element[] = [];
-        for (let i = 0; i < 10; i++) {
-            days.push(<Day date={i} />);
-        }
+        do {
+            days.push(<Day date={new Date(date.getTime())} selectedDate={this.props.selectedDate}/>);
+            date.setDate(date.getDate() + 1);
+        } while (date.getDay() > 0 && date < new Date());
         return <div className="week" >{days}</div>;
     }
 }
 
-class Graph extends React.Component<{}, {}> {
+
+class Graph extends React.Component<{selectedDate?: Date}, {}> {
     render() {
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        date.setDate(date.getDate() - date.getDay());
+
         const weeks: JSX.Element[] = [];
         for (let i = 0; i < 52; i++) {
-            weeks.push(<Week />);
+            weeks.unshift(<Week date={new Date(date.getTime())} selectedDate={this.props.selectedDate} />);
+            date.setDate(date.getDate() - 7);
         }
         return <div className={"year"}>{weeks}</div>;
     }
 }
-export function renderGraph() {
+export function renderGraph(selectedDate?: Date) {
     const graphParent = $(".graph-container")[0];
-    ReactDOM.render(<Graph />, graphParent);
+    ReactDOM.render(<Graph selectedDate={selectedDate} />, graphParent);
 }
