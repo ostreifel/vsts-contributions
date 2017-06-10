@@ -1,6 +1,7 @@
 import { } from "TFS/VersionControl/Contracts";
 import { GitQueryCommitsCriteria, GitCommitRef, GitRepository } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
+import { format } from "VSS/Utils/Date"
 import * as Q from "q";
 import { CachedValue } from "./CachedValue";
 import { repositories } from "./repositories";
@@ -11,10 +12,10 @@ export const commits = new CachedValue(getAllCommits);
 
 function commitsForReprository(repoId: string, skip = 0): Q.IPromise<GitCommitRef[]> {
     const criteria: Partial<GitQueryCommitsCriteria> = {
-        fromDate: yearStart.toString(),
+        fromDate: format(yearStart, "MM/dd/yyyy HH:mm:ss"),
         $skip: skip,
         $top: 100,
-        author: VSS.getWebContext().user.id,
+        author: VSS.getWebContext().user.name,
     };
     return getClient().getCommits(repoId, criteria as GitQueryCommitsCriteria).then(commits => {
         if (commits.length < 100) {

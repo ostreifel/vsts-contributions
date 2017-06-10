@@ -1,9 +1,9 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "0.1.64",
+    "version": "0.1.77",
     "name": "Contributions Graph",
-    "scopes": [ "vso.work", "vso.work_write" ],
+    "scopes": [ "vso.work", "vso.work_write", "vso.code" ],
     "description": "View account contributions per user.",
     "publisher": "ottostreifel",
     "icons": {
