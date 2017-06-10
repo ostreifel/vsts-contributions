@@ -11,8 +11,11 @@ $day-size: 15px;
                 .day {
                     width: $day-size;
                     height: $day-size;
-                    background-color: blue;
+                    background-color: lightblue;
                     margin: 1px;
+                    &.work {
+                        background-color: blue;
+                    }
                 }
                 .day-filter {
                     width: $day-size;

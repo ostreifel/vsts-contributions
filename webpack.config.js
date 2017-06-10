@@ -21,13 +21,13 @@ module.exports = {
         alias: { "OfficeFabric": path.join(process.cwd(), 'node_modules', 'office-ui-fabric-react', 'lib-amd') }
     },
     plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false,
-            },
-            output: {
-                comments: false,
-            },
-        }),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false,
+        //     },
+        //     output: {
+        //         comments: false,
+        //     },
+        // }),
     ]    
 };
