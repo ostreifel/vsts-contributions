@@ -1,0 +1,18 @@
+$day-size: 15px;
+.graph-container {
+    .year {
+        display: flex;
+        .week {
+            display: flex;
+            flex-direction: column;
+            .day-container {
+                .day {
+                    width: $day-size;
+                    height: $day-size;
+                    background-color: blue;
+                    margin: 1px;
+                }
+            }
+        }
+    }
+}

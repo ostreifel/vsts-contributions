@@ -21,7 +21,14 @@ gulp.task('clean', () => {
         .pipe(clean());
 });
 
-gulp.task('build', ['clean'], () => {
+
+gulp.task('styles', ['clean'], () => {
+    return gulp.src("styles/**/*scss")
+        .pipe(sass())
+        .pipe(gulp.dest(distFolder));
+})
+
+gulp.task('build', ['styles'], () => {
     return tsProject.src()
         .pipe(tsProject()).js.pipe(gulp.dest(jsFolder));
 });
@@ -42,7 +49,7 @@ gulp.task('webpack', ['copy'], () => {
     }
 });
 
-gulp.task('package', ['webpack'], () => {
+gulp.task('package', ['webpack', 'styles'], () => {
     const overrides = {}
     if (yargs.argv.release) {
         overrides.public = true;

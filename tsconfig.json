@@ -1,14 +1,16 @@
 {
     "compilerOptions": {
         "module": "amd",
-        "sourceMap": false,
-        "rootDir": "./scripts",
-        "jsx": "react",
         "moduleResolution": "node",
-        "strictNullChecks": true
-    },
-    "filesGlob": [
-        "./scripts/**/*.ts",
-        "!**/*.tests.ts"
-    ]
+        "target": "es5",
+        "noImplicitAny": false,
+        "jsx": "react",
+        "sourceMap": false,
+        "baseUrl": ".",
+        "rootDir": "./scripts",
+        "strictNullChecks": true,
+        "paths": {
+            "OfficeFabric/*": ["node_modules/office-ui-fabric-react/lib-amd/*"]
+        }
+    }
 }

@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require("path");
 
 module.exports = {
     entry: {
@@ -17,7 +18,7 @@ module.exports = {
         /^VSS\//  // Ignore VSS/* since they are coming from VSTS host
     ],
     resolve: {
-        alias: { "OfficeFabric": "../node_modules/office-ui-fabric-react/lib-amd" }
+        alias: { "OfficeFabric": path.join(process.cwd(), 'node_modules', 'office-ui-fabric-react', 'lib-amd') }
     },
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
