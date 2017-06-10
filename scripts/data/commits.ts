@@ -6,7 +6,7 @@ import * as Q from "q";
 import { CachedValue } from "./CachedValue";
 import { repositories } from "./repositories";
 import { yearStart } from "./dates";
-import { IContribution } from "./contracts";
+import { RepoCommit } from "./contracts";
 
 export const commits = new CachedValue(getAllCommits);
 
@@ -24,13 +24,6 @@ function commitsForReprository(repoId: string, skip = 0): Q.IPromise<GitCommitRe
             return commitsForReprository(repoId, skip + 100).then(moreCommits => [...commits, ...moreCommits]);
         }
     })
-}
-
-export class RepoCommit implements IContribution {
-    public readonly date: Date;
-    constructor(readonly repo: GitRepository, readonly commit: GitCommitRef) {
-        this.date = commit.author.date;
-    }
 }
 
 function getAllCommits() {

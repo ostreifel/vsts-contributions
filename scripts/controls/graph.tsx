@@ -3,10 +3,10 @@ import * as ReactDOM from "react-dom";
 import { Callout } from "OfficeFabric/components/Callout";
 import { renderTimeWindow } from "./timeWindow";
 import { getContributions } from "../data/provider";
-import { IContribution } from "../data/contracts";
-import {sliceContributions} from "./sliceContributions";
+import { IUserContributions, UserContribution } from "../data/contracts";
+import { dateToString, toCountString } from "./messageFormatting";
 
-class Day extends React.Component<{ date: Date, selectedDate?: Date, contributions: IContribution[] }, { showCallout: boolean }> {
+class Day extends React.Component<{ date: Date, selectedDate?: Date, contributions?: UserContribution[] }, { showCallout: boolean }> {
     private dayElem: HTMLDivElement;
     constructor() {
         super();
@@ -15,7 +15,7 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
     render() {
         const endDate = new Date(this.props.date);
         endDate.setDate(endDate.getDate() + 1);
-        const contributions = sliceContributions(this.props.contributions, this.props.date, endDate);
+        const contributions = this.props.contributions || [];
         return <div className="day-container"
             onMouseEnter={(e) => this.showCallout()}
             onMouseOver={(e) => this.showCallout()}
@@ -28,8 +28,8 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
                 <Callout
                     targetElement={this.dayElem}
                 >
-                    <div>{`${contributions.length} contributions`}</div>
-                    <div>{`Day ${this.props.date}`}</div>
+                    <div>{toCountString(contributions.length, "contribution")}</div>
+                    <div>{dateToString(this.props.date)}</div>
                 </Callout>
                 : null
             }
@@ -71,7 +71,7 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
     }
 }
 
-class Week extends React.Component<{ date: Date, selectedDate?: Date, contributions: IContribution[] }, {}> {
+class Week extends React.Component<{ date: Date, selectedDate?: Date, contributions: IUserContributions }, {}> {
     render() {
         const date = this.props.date;
         const days: JSX.Element[] = [];
@@ -79,7 +79,7 @@ class Week extends React.Component<{ date: Date, selectedDate?: Date, contributi
             days.push(<Day
                 date={new Date(date.getTime())}
                 selectedDate={this.props.selectedDate}
-                contributions={this.props.contributions}
+                contributions={this.props.contributions[date.getTime()]}
             />);
             date.setDate(date.getDate() + 1);
         } while (date.getDay() > 0 && date < new Date());
@@ -88,7 +88,7 @@ class Week extends React.Component<{ date: Date, selectedDate?: Date, contributi
 }
 
 
-class Graph extends React.Component<{ selectedDate?: Date, contributions: IContribution[] }, {}> {
+class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserContributions }, {}> {
     render() {
         const date = new Date();
         date.setHours(0, 0, 0, 0);

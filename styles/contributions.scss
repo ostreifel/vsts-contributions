@@ -1,4 +1,7 @@
 $day-size: 15px;
+body {
+    overflow: scroll;
+}
 .graph-container {
     .year {
         display: flex;
@@ -34,6 +37,13 @@ $day-size: 15px;
                     }
                 }
             }
+        }
+    }
+}
+.time-window-container {
+    .time-window {
+        h4 {
+            margin-bottom: 0px;
         }
     }
 }
