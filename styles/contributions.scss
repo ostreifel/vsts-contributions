@@ -24,7 +24,7 @@ body {
                 .day {
                     width: $day-size;
                     height: $day-size;
-                    background-color: lightblue;
+                    background-color: lightgray;
                     margin: 1px;
                     &.work {
                         background-color: blue;
@@ -47,6 +47,11 @@ body {
                     }
                 }
             }
+        }
+        .graph-spinner {
+            position: relative;
+            left: -480px;
+            top: 40px;
         }
     }
 }

@@ -5,6 +5,7 @@ import { getContributions } from "../data/provider";
 import { IUserContributions, UserContribution, IContributionFilter } from "../data/contracts";
 import { toDateString, toCountString } from "./messageFormatting";
 import { updateSelectedDate } from "./filters";
+import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
 
 class Day extends React.Component<{ date: Date, selectedDate?: Date, contributions?: UserContribution[] }, { showCallout: boolean }> {
     private dayElem: HTMLDivElement;
@@ -81,12 +82,12 @@ class Week extends React.Component<{ date: Date, selectedDate?: Date, contributi
             />);
             date.setDate(date.getDate() + 1);
         } while (date.getDay() > 0 && date < new Date());
-        return <div className="week" >{days}</div>;
+        return <div className="week">{days}</div>;
     }
 }
 
 
-class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserContributions }, {}> {
+class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserContributions, loading: boolean }, {}> {
     render() {
         const date = new Date();
         date.setHours(0, 0, 0, 0);
@@ -101,17 +102,18 @@ class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserC
             />)
             date.setDate(date.getDate() - 7);
         }
-        return <div className={"year"}>{weeks}</div>;
+        return <div className={"year"}>
+            {weeks}
+            {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
+        </div>;
     }
 }
-let firstTime = true;
+let previousContributons: IUserContributions = {};
 export function renderGraph(filter: IContributionFilter) {
     const graphParent = $(".graph-container")[0];
-    if (firstTime) {
-        ReactDOM.render(<div>{"Loading commits..."}</div>, graphParent);
-        firstTime = false;
-    }
+    ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={previousContributons} loading={true} />, graphParent);
     getContributions(filter).then(contributions => {
-        ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={contributions} />, graphParent);
+        previousContributons = contributions;
+        ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={contributions} loading={false} />, graphParent);
     })
 }
