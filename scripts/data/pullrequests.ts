@@ -28,7 +28,7 @@ export function getPullRequests(filter: IContributionFilter): Q.IPromise<GitPull
     return repositories.getValue().then(repositories => {
         const projId = VSS.getWebContext().project.id;
         if (!filter.allProjects) {
-            repositories = repositories.filter(r => r.project.id = projId);
+            repositories = repositories.filter(r => r.project.id === projId);
         }
         return Q.all(repositories.map(r => {
             const username = filter.username;
