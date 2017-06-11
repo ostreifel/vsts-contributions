@@ -57,5 +57,8 @@ body {
 }
 .time-window-container {
     .time-window {
+        .collapsible-header.hidden {
+            display: none;
+        }
     }
 }

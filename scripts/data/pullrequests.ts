@@ -1,6 +1,6 @@
 import { IContributionFilter, ClosePullRequestContribution, CreatePullRequestContribution, PullRequestContribution } from "./contracts";
 import { repositories } from "./repositories";
-import { GitPullRequestSearchCriteria, GitPullRequest } from "TFS/VersionControl/Contracts";
+import { GitPullRequestSearchCriteria, PullRequestStatus, GitPullRequest } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
 import * as Q from "q";
 import { CachedValue } from "./CachedValue";
@@ -15,6 +15,7 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
     const criteria = {
         creatorId: username,
         repositoryId: repoId,
+        status: PullRequestStatus.All,
     } as GitPullRequestSearchCriteria;
     return getClient().getPullRequests(repoId, criteria, undefined, undefined, skip, 100).then(pullrequests => {
         if (pullrequests.length < 100) {

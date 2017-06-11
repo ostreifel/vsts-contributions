@@ -2,7 +2,7 @@ import * as React from "react";
 import { IconButton } from "OfficeFabric/components/Button";
 
 
-export class CollapsibleHeader extends React.Component<{ title: string, name: string }, { showChildren: boolean }> {
+export class CollapsibleHeader extends React.Component<{ title: string, name: string, className?: string }, { showChildren: boolean }> {
     constructor() {
         super();
         this.state = { showChildren: false };
@@ -10,7 +10,7 @@ export class CollapsibleHeader extends React.Component<{ title: string, name: st
     render() {
         const { showChildren } = this.state;
         return <div>
-            <div className="collapsible-header">
+            <div className={`collapsible-header ${this.props.className}`}>
                 <IconButton
                     className="toggle-button"
                     iconProps={{ iconName: showChildren ? 'ChevronDownSmall' : "ChevronRightSmall" }}

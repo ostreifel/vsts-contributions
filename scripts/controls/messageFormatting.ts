@@ -9,11 +9,19 @@ const dow = [
     "Friday",
     "Saturday",
 ];
-export function toDateString(date: Date) {
+export function toDateString(date: Date): string {
     return `${dow[date.getDay()]} ${format(date, " yyyy-MM-dd")}`
 }
 
-export function toCountString(count: number, noun: string) {
+export function toTimeString(date: Date, showDay: boolean): string {
+    const timeString = date.toLocaleTimeString();
+    if (showDay) {
+        return `${toDateString(date)} ${timeString}`
+    }
+    return timeString;
+}
+
+export function toCountString(count: number, noun: string): string {
     if (count === 1) {
         return `1 ${noun}`;
     }
