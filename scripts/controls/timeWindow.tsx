@@ -1,11 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IconButton } from "OfficeFabric/components/Button";
 import { getContributions } from "../data/provider";
 import { toDateString, toCountString } from "./messageFormatting";
-import { IUserContributions, UserContribution, RepoCommit, IContributionFilter } from "../data/contracts";
+import { IUserContributions, UserContribution, CommitContribution, IContributionFilter } from "../data/contracts";
+import { CollapsibleHeader } from "./header";
 
-class Commit extends React.Component<{ commit: RepoCommit }, {}> {
+class Commit extends React.Component<{ commit: CommitContribution }, {}> {
     render() {
         const { repo, commit } = this.props.commit;
         return <div className="commit">
@@ -19,9 +19,9 @@ class Commit extends React.Component<{ commit: RepoCommit }, {}> {
 
 class Commits extends React.Component<{ allContributions: UserContribution[] }, {}> {
     render() {
-        const commits: RepoCommit[] = [];
+        const commits: CommitContribution[] = [];
         for (const contribution of this.props.allContributions) {
-            if (contribution instanceof RepoCommit) {
+            if (contribution instanceof CommitContribution) {
                 commits.push(contribution);
             }
         }
@@ -32,29 +32,12 @@ class Commits extends React.Component<{ allContributions: UserContribution[] }, 
 }
 
 class Contributions extends React.Component<{ count: number, noun: string }, { showChildren: boolean }> {
-    constructor() {
-        super();
-        this.state = { showChildren: false };
-    }
     render() {
-        const { count, noun } = this.props;
-        const { showChildren } = this.state;
+        const {count, noun} = this.props;
         const label = count === 1 ? noun : noun + "s";
-        return <div>
-            <div className="contribution-type-header">
-                <IconButton
-                    className="toggle-button"
-                    iconProps={{ iconName: showChildren ? 'ChevronDownSmall' : "ChevronRightSmall" }}
-                    title={`${showChildren ? "Hide" : "Show"} ${label}`}
-                    onClick={() => this.setState({ showChildren: !this.state.showChildren })}
-                />
-                <h4>{toCountString(this.props.count, this.props.noun)}</h4>
-            </div>
-            {showChildren ?
-                <div>{this.props.children}</div>
-                : null
-            }
-        </div>
+        return <CollapsibleHeader title={toCountString(count, noun)} name={label}>
+            {this.props.children}
+        </CollapsibleHeader>;
     }
 }
 

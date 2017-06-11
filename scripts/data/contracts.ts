@@ -19,7 +19,7 @@ export class UserContribution {
     }
 }
 
-export class RepoCommit extends UserContribution {
+export class CommitContribution extends UserContribution {
     constructor(readonly repo: GitRepository, readonly commit: GitCommitRef) {
         super(commit.author.date);
     }
