@@ -3,6 +3,8 @@ import * as ReactDOM from "react-dom";
 import { renderGraph } from "./graph";
 import { renderTimeWindow } from "./timeWindow";
 import { IContributionFilter } from "../data/contracts";
+import { CollapsibleHeader } from "./header";
+import { Toggle } from "OfficeFabric/components/toggle"
 
 let filters: Filters;
 class Filters extends React.Component<{}, IContributionFilter> {
@@ -15,7 +17,11 @@ class Filters extends React.Component<{}, IContributionFilter> {
         filters = this;
     }
     render() {
-        return <div/>;
+        return <CollapsibleHeader title="Activity Filters" name="Filters">
+            <Toggle defaultChecked={false} label={"All projects"} onChanged={checked => {
+                this.setState({...this.state, allProjects: checked});
+            }} />
+        </CollapsibleHeader>;
     }
     updateComponents(filter: IContributionFilter) {
         renderGraph(filter);
@@ -30,7 +36,7 @@ class Filters extends React.Component<{}, IContributionFilter> {
 }
 
 export function updateSelectedDate(date?: Date) {
-    const state: IContributionFilter = {...filters.state, selectedDate: date};
+    const state: IContributionFilter = { ...filters.state, selectedDate: date };
     filters.setState(state)
 }
 export function getState() {

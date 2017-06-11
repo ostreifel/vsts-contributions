@@ -2,6 +2,16 @@ $day-size: 15px;
 body {
     overflow: scroll;
 }
+
+.collapsible-header {
+    h1,h2,h3,h4,h5,h6 {
+        margin-bottom: 0px;
+        display: inline-block;
+    }
+    button.toggle-button {
+        vertical-align: sub;
+    }
+}
 .graph-container {
     .year {
         display: flex;
@@ -42,14 +52,5 @@ body {
 }
 .time-window-container {
     .time-window {
-        .collapsible-header {
-            h4 {
-                margin-bottom: 0px;
-                display: inline-block;
-            }
-            button.toggle-button {
-                vertical-align: sub;
-            }
-        }
     }
 }
