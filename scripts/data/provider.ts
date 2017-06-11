@@ -1,6 +1,7 @@
 import * as Q from "q";
 import { UserContribution, IUserContributions, IContributionFilter } from "./contracts";
-import { getCommits } from "./commits";
+import { getCommitContributions } from "./commits";
+import { getPullRequestContributions } from "./pullrequests";
 
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
     for (const contribution of arr) {
@@ -20,9 +21,14 @@ function sortContributions(contributions: IUserContributions) {
 }
 
 export function getContributions(filter: IContributionFilter): Q.IPromise<IUserContributions> {
-    return Q.all([getCommits(filter)]).then(([commits]) => {
+    return Q.all([
+        getCommitContributions(filter),
+        getPullRequestContributions(filter)
+    ]).then((contributionsArr) => {
         const contributions: IUserContributions = {};
-        addContributions(commits, contributions);
+        for (const arr of contributionsArr) {
+            addContributions(arr, contributions);
+        }
         sortContributions(contributions);
         return contributions;
     });

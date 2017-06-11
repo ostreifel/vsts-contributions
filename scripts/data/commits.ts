@@ -30,7 +30,7 @@ function commitsForReprository(username: string, repoId: string, skip = 0): Q.IP
     });
 }
 
-export function getCommits({ username, allProjects }: IContributionFilter) {
+export function getCommitContributions({ username, allProjects }: IContributionFilter) {
     return repositories.getValue().then(repositories => {
         const currentProject = VSS.getWebContext().project.id;
         if (!allProjects) {

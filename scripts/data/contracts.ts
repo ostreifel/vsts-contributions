@@ -1,4 +1,4 @@
-import { GitCommitRef, GitRepository } from "TFS/VersionControl/Contracts";
+import { GitCommitRef, GitRepository, GitPullRequest } from "TFS/VersionControl/Contracts";
 
 
 export interface IContributionFilter {
@@ -22,5 +22,22 @@ export class UserContribution {
 export class CommitContribution extends UserContribution {
     constructor(readonly repo: GitRepository, readonly commit: GitCommitRef) {
         super(commit.author.date);
+    }
+}
+
+export abstract class PullRequestContribution extends UserContribution {
+    constructor(readonly pullrequest: GitPullRequest, date: Date) {
+        super(date);
+    }
+}
+
+export class CreatePullRequestContribution extends PullRequestContribution {
+    constructor(pullrequest: GitPullRequest) {
+        super(pullrequest, pullrequest.creationDate);
+    }
+}
+export class ClosePullRequestContribution extends PullRequestContribution {
+    constructor(pullrequest: GitPullRequest) {
+        super(pullrequest, pullrequest.closedDate);
     }
 }
