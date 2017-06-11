@@ -9,8 +9,8 @@ export class CollapsibleHeader extends React.Component<{ title: string, name: st
     }
     render() {
         const { showChildren } = this.state;
-        return <div>
-            <div className={`collapsible-header ${this.props.className}`}>
+        return <div className={`collapsible-header ${this.props.className}`}>
+            <div className={`header`}>
                 <IconButton
                     className="toggle-button"
                     iconProps={{ iconName: showChildren ? 'ChevronDownSmall' : "ChevronRightSmall" }}

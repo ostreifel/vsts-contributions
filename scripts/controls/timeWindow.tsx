@@ -18,11 +18,12 @@ import { CollapsibleHeader } from "./header";
 class Commit extends React.Component<{ commit: CommitContribution, showDay: boolean }, {}> {
     render() {
         const { repo, commit } = this.props.commit;
+        const { showDay } = this.props;
         return <div className="commit">
             <a className="title" href={commit.remoteUrl} target="_blank">{`${commit.comment}`}</a>
             {" in "}
             <a className="repository" href={repo.remoteUrl} target="_blank">{repo.name}</a>
-            {` at ${toTimeString(commit.author.date, this.props.showDay)}`}
+            {` ${showDay ? "on" : "at"} ${toTimeString(commit.author.date, showDay)}`}
         </div>;
     }
 }
@@ -45,6 +46,7 @@ class PullRequest extends React.Component<{ pullrequest: PullRequestContribution
     render() {
         const { date, pullrequest } = this.props.pullrequest;
         const { title, repository } = pullrequest;
+        const { showDay } = this.props;
 
         const uri = VSS.getWebContext().host.uri;
         const project = repository.project.name;
@@ -54,7 +56,7 @@ class PullRequest extends React.Component<{ pullrequest: PullRequestContribution
             <a className="title" href={prUrl} target="_blank">{`${title}`}</a>
             {" in "}
             <a className="repository" href={repoUrl} target="_blank">{repository.name}</a>
-            {` at ${toTimeString(date, this.props.showDay)}`}
+            {` ${showDay ? "on" : "at"} ${toTimeString(date, this.props.showDay)}`}
         </div>;
     }
 }

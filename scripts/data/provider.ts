@@ -1,7 +1,12 @@
 import * as Q from "q";
-import { UserContribution, IUserContributions, IContributionFilter } from "./contracts";
-import { getCommitContributions } from "./commits";
-import { getPullRequestContributions } from "./pullrequests";
+import {
+    UserContribution,
+    IUserContributions,
+    IContributionFilter,
+    IContributionProvider,
+} from "./contracts";
+import { CommitContributionProvider } from "./commits";
+import { ClosePullRequestProvider, CreatePullRequestProvider } from "./pullrequests";
 
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
     for (const contribution of arr) {
@@ -20,11 +25,18 @@ function sortContributions(contributions: IUserContributions) {
     }
 }
 
+const providers: IContributionProvider[] = [
+    new ClosePullRequestProvider(),
+    new CreatePullRequestProvider(),
+    new CommitContributionProvider(),
+];
+
 export function getContributions(filter: IContributionFilter): Q.IPromise<IUserContributions> {
-    return Q.all([
-        getCommitContributions(filter),
-        getPullRequestContributions(filter)
-    ]).then((contributionsArr) => {
+    return Q.all(
+        providers
+            .filter(p => filter.enabledProviders[p.name])
+            .map(p => p.getContributions(filter))
+    ).then((contributionsArr) => {
         const contributions: IUserContributions = {};
         for (const arr of contributionsArr) {
             addContributions(arr, contributions);

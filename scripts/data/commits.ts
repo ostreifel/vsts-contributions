@@ -6,7 +6,12 @@ import * as Q from "q";
 import { CachedValue } from "./CachedValue";
 import { repositories } from "./repositories";
 import { yearStart } from "./dates";
-import { CommitContribution, IContributionFilter } from "./contracts";
+import {
+    CommitContribution,
+    IContributionFilter,
+    IContributionProvider,
+    ContributionName,
+} from "./contracts";
 
 const commits: {
     [userName: string]: {
@@ -30,32 +35,34 @@ function commitsForReprository(username: string, repoId: string, skip = 0): Q.IP
     });
 }
 
-export function getCommitContributions({ username, allProjects }: IContributionFilter) {
-    return repositories.getValue().then(repositories => {
-        const currentProject = VSS.getWebContext().project.id;
-        if (!allProjects) {
-            repositories = repositories.filter(r => r.project.id === currentProject);
-        }
-        return Q.all(
-            repositories.map(r => {
-                if (!(username in commits)) {
-                    commits[username] = {};
-                }
-                if (!(r.id in commits[username])) {
-                    commits[username][r.id] = new CachedValue(() => commitsForReprository(username, r.id).then(commits =>
-                        commits.map(c => (new CommitContribution(r, c))
-                        )
-                    ));
-                }
-                return commits[username][r.id].getValue();
-            })
-        ).then((commitsArr) => {
-            const commits: CommitContribution[] = [];
-            for (const arr of commitsArr) {
-                commits.push(...arr);
+export class CommitContributionProvider implements IContributionProvider {
+    public readonly name: ContributionName = "Commit";
+    public getContributions({ username, allProjects }: IContributionFilter) {
+        return repositories.getValue().then(repositories => {
+            const currentProject = VSS.getWebContext().project.id;
+            if (!allProjects) {
+                repositories = repositories.filter(r => r.project.id === currentProject);
             }
-            return commits;
-        })
+            return Q.all(
+                repositories.map(r => {
+                    if (!(username in commits)) {
+                        commits[username] = {};
+                    }
+                    if (!(r.id in commits[username])) {
+                        commits[username][r.id] = new CachedValue(() => commitsForReprository(username, r.id).then(commits =>
+                            commits.map(c => (new CommitContribution(r, c))
+                            )
+                        ));
+                    }
+                    return commits[username][r.id].getValue();
+                })
+            ).then((commitsArr) => {
+                const commits: CommitContribution[] = [];
+                for (const arr of commitsArr) {
+                    commits.push(...arr);
+                }
+                return commits;
+            })
+        });
     }
-    );
 }

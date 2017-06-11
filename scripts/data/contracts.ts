@@ -1,10 +1,23 @@
 import { GitCommitRef, GitRepository, GitPullRequest } from "TFS/VersionControl/Contracts";
 
+export type ContributionName = keyof IEnabledProviders;
+
+export interface IContributionProvider {
+    readonly name: ContributionName;
+    getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]>;
+}
+
+export interface IEnabledProviders {
+    Commit: boolean;
+    CreatePullRequest: boolean;
+    ClosePullRequest: boolean;
+}
 
 export interface IContributionFilter {
     username: string;
     allProjects: boolean;
     selectedDate?: Date;
+    enabledProviders: IEnabledProviders;
 }
 
 export interface IUserContributions {
@@ -39,5 +52,11 @@ export class CreatePullRequestContribution extends PullRequestContribution {
 export class ClosePullRequestContribution extends PullRequestContribution {
     constructor(pullrequest: GitPullRequest) {
         super(pullrequest, pullrequest.closedDate);
+    }
+}
+
+export abstract class WorkItemContribution extends UserContribution {
+    constructor(readonly wi: any, date: Date) {
+        super(date);
     }
 }

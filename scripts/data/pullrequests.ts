@@ -1,4 +1,11 @@
-import { IContributionFilter, ClosePullRequestContribution, CreatePullRequestContribution, PullRequestContribution } from "./contracts";
+import {
+    IContributionFilter,
+    ClosePullRequestContribution,
+    CreatePullRequestContribution,
+    IContributionProvider,
+    ContributionName,
+    UserContribution,
+} from "./contracts";
 import { repositories } from "./repositories";
 import { GitPullRequestSearchCriteria, PullRequestStatus, GitPullRequest } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
@@ -51,13 +58,21 @@ export function getPullRequests(filter: IContributionFilter): Q.IPromise<GitPull
     })
 }
 
-export function getPullRequestContributions(filter: IContributionFilter): Q.IPromise<PullRequestContribution[]> {
-    return getPullRequests(filter).then(pullrequests => [
-        ...pullrequests
-            .filter(pr => pr.creationDate)
-            .map(pr => new CreatePullRequestContribution(pr)),
-        ...pullrequests
-            .filter(pr => pr.closedDate)
-            .map(pr => new ClosePullRequestContribution(pr))
-    ])
+export class CreatePullRequestProvider implements IContributionProvider {
+    public readonly name: ContributionName = "CreatePullRequest";
+    public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
+        return getPullRequests(filter).then(pullrequests =>
+            pullrequests
+                .filter(pr => pr.creationDate)
+                .map(pr => new CreatePullRequestContribution(pr)));
+    }
+}
+export class ClosePullRequestProvider implements IContributionProvider {
+    public readonly name: ContributionName = "ClosePullRequest";
+    public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
+        return getPullRequests(filter).then(pullrequests =>
+            pullrequests
+                .filter(pr => pr.closedDate)
+                .map(pr => new ClosePullRequestContribution(pr)));
+    }
 }
