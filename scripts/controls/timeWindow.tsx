@@ -67,7 +67,7 @@ class CreatePullRequests extends React.Component<{ allContributions: UserContrib
                 prs.push(contribution);
             }
         }
-        return <Contributions count={prs.length} noun={"created pull request"}>
+        return <Contributions count={prs.length} noun={"Created # pull request"}>
             {prs.map(pr => <PullRequest pullrequest={pr} showDay={this.props.showDay} />)}
         </Contributions>;
     }
@@ -81,7 +81,7 @@ class ClosePullRequests extends React.Component<{ allContributions: UserContribu
                 prs.push(contribution);
             }
         }
-        return <Contributions count={prs.length} noun={"closed pull request"}>
+        return <Contributions count={prs.length} noun={"Closed # pull request"}>
             {prs.map(pr => <PullRequest pullrequest={pr} showDay={this.props.showDay} />)}
         </Contributions>;
     }
@@ -91,7 +91,8 @@ class Contributions extends React.Component<{ count: number, noun: string }, { s
     render() {
         const { count, noun } = this.props;
         const label = count === 1 ? noun : noun + "s";
-        return <CollapsibleHeader title={toCountString(count, noun)} name={label} className={count === 0 ? "hidden" : ""}>
+        const title = label.match(/#/) ? label.replace('#', "" + count) : count + " " + label;
+        return <CollapsibleHeader title={title} name={label.replace("# ", "").toLocaleLowerCase()} className={count === 0 ? "hidden" : ""}>
             {this.props.children}
         </CollapsibleHeader>;
     }
