@@ -17,6 +17,10 @@ class Filters extends React.Component<{}, IContributionFilter> {
                 Commit: true,
                 CreatePullRequest: true,
                 ClosePullRequest: true,
+                // TODO toggles for these
+                CloseWorkItem: true,
+                CreateWorkItem: true,
+                ResolveWorkItem: true,
             }
         };
         filters = this;

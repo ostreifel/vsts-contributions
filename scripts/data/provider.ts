@@ -7,6 +7,9 @@ import {
 } from "./contracts";
 import { CommitContributionProvider } from "./commits";
 import { ClosePullRequestProvider, CreatePullRequestProvider } from "./pullrequests";
+import {
+    CreateWorkItemContributionProvider,
+} from "./workitems";
 
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
     for (const contribution of arr) {
@@ -29,6 +32,7 @@ const providers: IContributionProvider[] = [
     new ClosePullRequestProvider(),
     new CreatePullRequestProvider(),
     new CommitContributionProvider(),
+    new CreateWorkItemContributionProvider(),
 ];
 
 export function getContributions(filter: IContributionFilter): Q.IPromise<IUserContributions> {

@@ -1,4 +1,5 @@
 import { GitCommitRef, GitRepository, GitPullRequest } from "TFS/VersionControl/Contracts";
+import { WorkItem } from "TFS/WorkItemTracking/Contracts";
 
 export type ContributionName = keyof IEnabledProviders;
 
@@ -11,6 +12,9 @@ export interface IEnabledProviders {
     Commit: boolean;
     CreatePullRequest: boolean;
     ClosePullRequest: boolean;
+    CreateWorkItem: boolean;
+    CloseWorkItem: boolean;
+    ResolveWorkItem: boolean;
 }
 
 export interface IContributionFilter {
@@ -56,7 +60,25 @@ export class ClosePullRequestContribution extends PullRequestContribution {
 }
 
 export abstract class WorkItemContribution extends UserContribution {
-    constructor(readonly wi: any, date: Date) {
-        super(date);
+    constructor(readonly wi: WorkItem, dateStr: string) {
+        super(new Date(dateStr));
+    }
+}
+
+export class CreateWorkItemContribution extends WorkItemContribution {
+    constructor(wi: WorkItem) {
+        super(wi, wi.fields["System.CreatedDate"]);
+    }
+}
+
+export class ResolveWorkItemContribution extends WorkItemContribution {
+    constructor(wi: WorkItem) {
+        super(wi, wi.fields["System.ResolvedDate"]);
+    }
+}
+
+export class CloseWorkItemContribution extends WorkItemContribution {
+    constructor(wi: WorkItem) {
+        super(wi, wi.fields["System.ClosedDate"]);
     }
 }
