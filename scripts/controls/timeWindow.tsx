@@ -14,17 +14,42 @@ import {
 import { CollapsibleHeader } from "./header";
 
 
+class ContributionItem extends React.Component<{
+    title: string,
+    titleUrl: string,
+    location: string,
+    locationUrl: string;
+    date: Date
+    showDay: boolean,
+    className?: string;
+}, {}> {
+    render() {
+        const { title, titleUrl, location, locationUrl, date, showDay, className } = this.props
+        return <div className={`contribution-item ${className}`} >
+            <a className="title" href={titleUrl} target="_blank">{title}</a>
+            <div className="location-time">
+                {" in "}
+                <a className="location" href={locationUrl} target="_blank">{location}</a>
+                {` ${showDay ? "on" : "at"} ${toTimeString(date, showDay)}`}
+            </div>
+        </div>;
+    }
+
+}
 
 class Commit extends React.Component<{ commit: CommitContribution, showDay: boolean }, {}> {
     render() {
         const { repo, commit } = this.props.commit;
         const { showDay } = this.props;
-        return <div className="commit">
-            <a className="title" href={commit.remoteUrl} target="_blank">{`${commit.comment}`}</a>
-            {" in "}
-            <a className="repository" href={repo.remoteUrl} target="_blank">{repo.name}</a>
-            {` ${showDay ? "on" : "at"} ${toTimeString(commit.author.date, showDay)}`}
-        </div>;
+        return <ContributionItem
+            title={commit.comment}
+            titleUrl={commit.remoteUrl}
+            location={repo.name}
+            locationUrl={repo.remoteUrl}
+            showDay={showDay}
+            date={commit.author.date}
+            className="commit"
+        />;
     }
 }
 
@@ -52,12 +77,15 @@ class PullRequest extends React.Component<{ pullrequest: PullRequestContribution
         const project = repository.project.name;
         const prUrl = `${uri}${project}/_git/${repository.name}/pullrequest/${pullrequest.pullRequestId}`;
         const repoUrl = `${uri}_git/${repository.name}`;
-        return <div className="commit">
-            <a className="title" href={prUrl} target="_blank">{`${title}`}</a>
-            {" in "}
-            <a className="repository" href={repoUrl} target="_blank">{repository.name}</a>
-            {` ${showDay ? "on" : "at"} ${toTimeString(date, this.props.showDay)}`}
-        </div>;
+        return <ContributionItem
+            title={title}
+            titleUrl={prUrl}
+            location={repository.name}
+            locationUrl={repoUrl}
+            showDay={showDay}
+            date={date}
+            className="commit"
+        />;
     }
 }
 

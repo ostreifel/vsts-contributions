@@ -1,77 +1,93 @@
 $day-size: 15px;
 body.contributions-body {
     overflow: scroll;
-}
-
-.collapsible-header {
-    .header {
-        h1,h2,h3,h4,h5,h6 {
-            margin-bottom: 0px;
-            display: inline-block;
-        }
-        button.toggle-button {
-            vertical-align: sub;
-        }
-    }
-}
-.filter-container {
-    .filter-header {
-        .filters {
-            display: flex;
-            > * {
-                margin-right: 10px;
+    padding: 0px 10px;
+    .collapsible-header {
+        .header {
+            h1,h2,h3,h4,h5,h6 {
+                margin-bottom: 0px;
+                display: inline-block;
+            }
+            button.toggle-button {
+                vertical-align: sub;
             }
         }
     }
-
-}
-.graph-container {
-    .year {
-        display: flex;
-        .week {
-            display: flex;
-            flex-direction: column;
-            .day-container {
-                width: $day-size + 2;
-                height: $day-size + 2;
-                .day {
-                    width: $day-size;
-                    height: $day-size;
-                    background-color: lightgray;
-                    margin: 1px;
-                    &.work {
-                        background-color: blue;
-                    }
-                }
-                .day-filter {
-                    width: $day-size;
-                    height: $day-size;
-                    margin: 1px;
-                    position: relative;
-                    top: -  $day-size - 1;
-                    background-color: black;
-                    opacity: 0;
-                    cursor: pointer;
-                    &.hover:not(.selected) {
-                        opacity: 0.3;
-                    }
-                    &.selected {
-                        opacity: 0.8;
-                    }
+    .filter-container {
+        .filter-header {
+            .filters {
+                display: flex;
+                > * {
+                    margin-right: 10px;
                 }
             }
         }
-        .graph-spinner {
-            position: relative;
-            left: -480px;
-            top: 40px;
+
+    }
+    .graph-container {
+        .year {
+            display: flex;
+            .week {
+                display: flex;
+                flex-direction: column;
+                .day-container {
+                    width: $day-size + 2;
+                    height: $day-size + 2;
+                    .day {
+                        width: $day-size;
+                        height: $day-size;
+                        background-color: lightgray;
+                        margin: 1px;
+                        &.work {
+                            background-color: blue;
+                        }
+                    }
+                    .day-filter {
+                        width: $day-size;
+                        height: $day-size;
+                        margin: 1px;
+                        position: relative;
+                        top: -  $day-size - 1;
+                        background-color: black;
+                        opacity: 0;
+                        cursor: pointer;
+                        &.hover:not(.selected) {
+                            opacity: 0.3;
+                        }
+                        &.selected {
+                            opacity: 0.8;
+                        }
+                    }
+                }
+            }
+            .graph-spinner {
+                position: relative;
+                left: -480px;
+                top: 40px;
+            }
         }
     }
-}
-.time-window-container {
-    .time-window {
-        .hidden {
-            display: none;
+    .time-window-container {
+        .time-window {
+            .hidden {
+                display: none;
+            }
+            .contribution-item {
+                padding: 2px 0px;
+                &:hover {
+                    background-color: aliceblue;
+                }
+                a.title {
+                    color: black;
+                    &:hover, &:visited, &:hover, &:focus, &:active {
+                        color: black;
+                    }
+                }
+                .location-time {
+                    font-size: smaller;
+                    color: gray;
+                }
+            }
         }
     }
 }
