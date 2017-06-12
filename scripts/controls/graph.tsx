@@ -14,7 +14,7 @@ function getContributionClassDelegate(contributions: IUserContributions): (count
     if (counts.length === 0) {
         return () => "";
     }
-    counts.sort();
+    counts.sort((a, b) => a - b);
     const thresholds: [number, string][] = [
         [0.25, "work_25"],
         [0.50, "work_50"],
