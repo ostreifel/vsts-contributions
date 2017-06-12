@@ -1,21 +1,27 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "0.1.155",
+    "version": "0.1.157",
     "name": "Contributions Graph",
     "scopes": [ "vso.work", "vso.work_write", "vso.code" ],
-    "description": "View account contributions per user.",
+    "description": "View account contributions.",
     "publisher": "ottostreifel",
     "icons": {
         "default": "img/logo.png"
     },
     "targets": [
         {
-            "id": "Microsoft.VisualStudio.Services"
+            "id": "Microsoft.VisualStudio.Services.Cloud"
         }
     ],
     "tags": [
-        "Sample"
+        "Work Items",
+        "Work Item",
+        "Git",
+        "Pull Request",
+        "Commit",
+        "Visualization",
+        "Contributions"
     ],
     "content": {
         "details": {
@@ -41,7 +47,7 @@
         }
     ],
     "categories": [
-        "Integrate"
+        "Collaborate"
     ],
     "contributions": [
         {
