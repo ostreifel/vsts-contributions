@@ -36,10 +36,19 @@ body.contributions-body {
                     .day {
                         width: $day-size;
                         height: $day-size;
-                        background-color: lightgray;
+                        background-color: #d3d3d3;
                         margin: 1px;
-                        &.work {
-                            background-color: blue;
+                        &.work_0 {
+                            background-color: #C0C0FF;
+                        }
+                        &.work_25 {
+                            background-color: #8080FF;
+                        }
+                        &.work_50 {
+                            background-color: #4040FF;
+                        }
+                        &.work_75 {
+                            background-color: #0000FF;
                         }
                     }
                     .day-filter {

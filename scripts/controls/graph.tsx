@@ -7,7 +7,37 @@ import { toDateString, toCountString } from "./messageFormatting";
 import { updateSelectedDate } from "./filters";
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
 
-class Day extends React.Component<{ date: Date, selectedDate?: Date, contributions?: UserContribution[] }, { showCallout: boolean }> {
+function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
+    const counts: number[] = Object.keys(contributions).map(day => contributions[day].length);
+    if (counts.length === 0) {
+        return () => "";
+    }
+    counts.sort();
+    const thresholds: [number, string][] = [
+        [0.25, "work_25"],
+        [0.50, "work_50"],
+        [0.75, "work_75"]
+    ];
+    // convert the percentiles to their values for the inputs
+    for (const percentile of thresholds) {
+        percentile[0] = counts[Math.floor(percentile[0] * counts.length)];
+    }
+    thresholds.unshift([0, "work_0"]);
+    thresholds.reverse();
+    return (count: number) => {
+        if (count === 0) {
+            return "";
+        }
+        for (const threshold of thresholds) {
+            if (count >= threshold[0]) {
+                return threshold[1];
+            }
+        }
+        throw new Error("No mapping");
+    }
+}
+
+class Day extends React.Component<{ date: Date, selectedDate?: Date, contributions?: UserContribution[], getWorkClass: (count: number) => string }, { showCallout: boolean }> {
     private dayElem: HTMLDivElement;
     constructor() {
         super();
@@ -23,7 +53,7 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
             onMouseLeave={() => this.showCallout(false)}
             onClick={() => this.toggleSelect()}
         >
-            <div className={this.getDayClasses(contributions.length)} ref={ref => this.dayElem = ref}></div>
+            <div className={`day ${this.props.getWorkClass(contributions.length)}`} ref={ref => this.dayElem = ref}></div>
             <div className={this.getDayFilterClasses()} />
             {this.state.showCallout ?
                 <Callout
@@ -35,13 +65,6 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
                 : null
             }
         </div>;
-    }
-    private getDayClasses(contributionCount: number): string {
-        let classes = "day";
-        if (contributionCount > 0) {
-            classes += " work";
-        }
-        return classes;
     }
     private getDayFilterClasses(): string {
         let classes = "day-filter";
@@ -70,7 +93,7 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
     }
 }
 
-class Week extends React.Component<{ date: Date, selectedDate?: Date, contributions: IUserContributions }, {}> {
+class Week extends React.Component<{ date: Date, selectedDate?: Date, contributions: IUserContributions, getWorkClass: (count: number) => string }, {}> {
     render() {
         const date = this.props.date;
         const days: JSX.Element[] = [];
@@ -79,6 +102,7 @@ class Week extends React.Component<{ date: Date, selectedDate?: Date, contributi
                 date={new Date(date.getTime())}
                 selectedDate={this.props.selectedDate}
                 contributions={this.props.contributions[date.getTime()]}
+                getWorkClass={this.props.getWorkClass}
             />);
             date.setDate(date.getDate() + 1);
         } while (date.getDay() > 0 && date < new Date());
@@ -89,6 +113,7 @@ class Week extends React.Component<{ date: Date, selectedDate?: Date, contributi
 
 class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserContributions, loading: boolean }, {}> {
     render() {
+        const getWorkClass = getContributionClassDelegate(this.props.contributions);
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         date.setDate(date.getDate() - date.getDay());
@@ -99,6 +124,7 @@ class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserC
                 date={new Date(date.getTime())}
                 selectedDate={this.props.selectedDate}
                 contributions={this.props.contributions}
+                getWorkClass={getWorkClass}
             />)
             date.setDate(date.getDate() - 7);
         }
