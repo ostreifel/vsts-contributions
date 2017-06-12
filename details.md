@@ -16,4 +16,4 @@ Click that same day again to go back to viewing all contributions for the year
 - Validate and release for on premise installations (url formats in links expected to create issues)
 
 ## Version History
-v1.0.1 Initial Release
+(06/11/2017) v1.0.1 Initial Release
