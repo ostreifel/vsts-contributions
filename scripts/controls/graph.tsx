@@ -6,6 +6,8 @@ import { IUserContributions, UserContribution, IContributionFilter } from "../da
 import { toDateString, toCountString } from "./messageFormatting";
 import { updateSelectedDate } from "./filters";
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
+import { trackEvent } from "../events";
+import { Timings } from "../timings";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
     const counts: number[] = Object.keys(contributions).map(day => contributions[day].length);
@@ -137,9 +139,14 @@ class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserC
 let previousContributons: IUserContributions = {};
 export function renderGraph(filter: IContributionFilter) {
     const graphParent = $(".graph-container")[0];
+    const timings = new Timings();
     ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={previousContributons} loading={true} />, graphParent);
+    timings.measure("drawSpinner");
     getContributions(filter).then(contributions => {
+        timings.measure("getContributions");
         previousContributons = contributions;
         ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={contributions} loading={false} />, graphParent);
+        timings.measure("drawGraph");
+        trackEvent("loadGraph", undefined, timings.measurements);
     })
 }

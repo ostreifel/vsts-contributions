@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@types/applicationinsights-js": "^1.0.4",
     "@types/jquery": "^2.0.41",
     "@types/knockout": "^3.4.40",
     "@types/react-dom": "^15.5.0",
