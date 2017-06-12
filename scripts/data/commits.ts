@@ -1,6 +1,4 @@
-import { } from "TFS/VersionControl/Contracts";
-import { GitQueryCommitsCriteria, GitCommitRef } from "TFS/VersionControl/Contracts";
-import { getClient } from "TFS/VersionControl/GitRestClient";
+import { GitCommitRef } from "TFS/VersionControl/Contracts";
 import { format } from "VSS/Utils/Date"
 import * as Q from "q";
 import { CachedValue } from "./CachedValue";
@@ -12,6 +10,7 @@ import {
     IContributionProvider,
     ContributionName,
 } from "./contracts";
+import { callApi } from "./RestCall";
 
 const commits: {
     [userName: string]: {
@@ -19,18 +18,29 @@ const commits: {
     }
 } = {};
 
-function commitsForReprository(username: string, repoId: string, skip = 0): Q.IPromise<GitCommitRef[]> {
-    const criteria: Partial<GitQueryCommitsCriteria> = {
-        fromDate: format(yearStart, "MM/dd/yyyy HH:mm:ss"),
-        $skip: skip,
-        $top: 100,
-        author: username,
-    };
-    return getClient().getCommits(repoId, criteria as GitQueryCommitsCriteria).then(commits => {
+function getCommits(repoId: string, fromDate: string, skip: number, top: number, author: string): Q.IPromise<GitCommitRef[]> {
+    const webContext = VSS.getWebContext();
+    const commitsUrl = webContext.account.uri +
+        "DefaultCollection/_apis/git/repositories/" +
+         repoId +
+          "/Commits?api-version=1.0" +
+          "&fromDate=" + encodeURI(fromDate) +
+          "&author=" + encodeURI(author) +
+          "&$skip=" + skip +
+          "&$top=" + top;
+
+    const defered = Q.defer<GitCommitRef[]>();
+    callApi(commitsUrl, "GET", undefined, undefined, (commits) => defered.resolve(commits.value), (error) => defered.reject(error));
+    return defered.promise;
+}
+
+function commitsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitCommitRef[]> {
+    const fromDate = format(yearStart, "MM/dd/yyyy HH:mm:ss");
+    return getCommits(repoId, fromDate, skip, 100, username).then(commits => {
         if (commits.length < 100) {
             return commits;
         } else {
-            return commitsForReprository(username, repoId, skip + 100).then(moreCommits => [...commits, ...moreCommits]);
+            return commitsForRepository(username, repoId, skip + 100).then(moreCommits => [...commits, ...moreCommits]);
         }
     });
 }
@@ -49,7 +59,7 @@ export class CommitContributionProvider implements IContributionProvider {
                         commits[username] = {};
                     }
                     if (!(r.id in commits[username])) {
-                        commits[username][r.id] = new CachedValue(() => commitsForReprository(username, r.id).then(commits =>
+                        commits[username][r.id] = new CachedValue(() => commitsForRepository(username, r.id).then(commits =>
                             commits.map(c => (new CommitContribution(r, c))
                             )
                         ));

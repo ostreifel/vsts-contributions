@@ -51,7 +51,7 @@ class Commit extends React.Component<{ commit: CommitContribution, showDay: bool
             location={repo.name}
             locationUrl={repo.remoteUrl}
             showDay={showDay}
-            date={commit.author.date}
+            date={new Date(commit.author.date)}
             className="commit"
         />;
     }
