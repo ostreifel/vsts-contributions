@@ -73,12 +73,12 @@ export class CreateWorkItemContribution extends WorkItemContribution {
 
 export class ResolveWorkItemContribution extends WorkItemContribution {
     constructor(wi: WorkItem) {
-        super(wi, wi.fields["System.ResolvedDate"]);
+        super(wi, wi.fields["Microsoft.VSTS.Common.ResolvedDate"]);
     }
 }
 
 export class CloseWorkItemContribution extends WorkItemContribution {
     constructor(wi: WorkItem) {
-        super(wi, wi.fields["System.ClosedDate"]);
+        super(wi, wi.fields["Microsoft.VSTS.Common.ClosedDate"]);
     }
 }

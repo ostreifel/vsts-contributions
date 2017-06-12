@@ -10,6 +10,10 @@ import {
     PullRequestContribution,
     CreatePullRequestContribution,
     ClosePullRequestContribution,
+    WorkItemContribution,
+    CreateWorkItemContribution,
+    ResolveWorkItemContribution,
+    CloseWorkItemContribution,
 } from "../data/contracts";
 import { CollapsibleHeader } from "./header";
 
@@ -117,6 +121,67 @@ class ClosePullRequests extends React.Component<{ allContributions: UserContribu
     }
 }
 
+class WorkItemComponent extends React.Component<{ workItem: WorkItemContribution, showDay: boolean }, {}> {
+    render() {
+        const { date, wi } = this.props.workItem;
+        const { showDay } = this.props;
+        const uri = VSS.getWebContext().host.uri;
+        const project = wi.fields["System.TeamProject"];
+        const wiUrl = `${uri}${project}/_workitems?id=${wi.id}&_a=edit&fullScreen=true`;
+        return <ContributionItem
+            title={wi.fields["System.Title"]}
+            titleUrl={wiUrl}
+            location={project}
+            locationUrl={`${uri}${project}`}
+            showDay={showDay}
+            date={date}
+            className="commit"
+        />;
+    }
+}
+
+class CreateWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
+    render() {
+        const prs: CreateWorkItemContribution[] = [];
+        for (const contribution of this.props.allContributions) {
+            if (contribution instanceof CreateWorkItemContribution) {
+                prs.push(contribution);
+            }
+        }
+        return <Contributions count={prs.length} noun={"Created # work item"}>
+            {prs.map(pr => <WorkItemComponent workItem={pr} showDay={this.props.showDay} />)}
+        </Contributions>;
+    }
+}
+
+class ResolveWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
+    render() {
+        const prs: ResolveWorkItemContribution[] = [];
+        for (const contribution of this.props.allContributions) {
+            if (contribution instanceof ResolveWorkItemContribution) {
+                prs.push(contribution);
+            }
+        }
+        return <Contributions count={prs.length} noun={"Resolved # work item"}>
+            {prs.map(pr => <WorkItemComponent workItem={pr} showDay={this.props.showDay} />)}
+        </Contributions>;
+    }
+}
+
+class CloseWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
+    render() {
+        const prs: CloseWorkItemContribution[] = [];
+        for (const contribution of this.props.allContributions) {
+            if (contribution instanceof CloseWorkItemContribution) {
+                prs.push(contribution);
+            }
+        }
+        return <Contributions count={prs.length} noun={"Closed # work item"}>
+            {prs.map(pr => <WorkItemComponent workItem={pr} showDay={this.props.showDay} />)}
+        </Contributions>;
+    }
+}
+
 class Contributions extends React.Component<{ count: number, noun: string }, { showChildren: boolean }> {
     render() {
         const { count, noun } = this.props;
@@ -139,6 +204,9 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
                 <Commits allContributions={contributions} showDay={showDay} />
                 <CreatePullRequests allContributions={contributions} showDay={showDay} />
                 <ClosePullRequests allContributions={contributions} showDay={showDay} />
+                <CreateWorkItems allContributions={contributions} showDay={showDay} />
+                <ResolveWorkItems allContributions={contributions} showDay={showDay} />
+                <CloseWorkItems allContributions={contributions} showDay={showDay} />
             </div>
         </div>;
     }

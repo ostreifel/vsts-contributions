@@ -97,7 +97,7 @@ export class ResolveWorkItemContributionProvider implements IContributionProvide
 export class CloseWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CloseWorkItem";
     public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
-        const query = getStateQuery("System.Created", filter.username, filter.allProjects);
+        const query = getStateQuery("Microsoft.VSTS.Common.Closed", filter.username, filter.allProjects);
         return getWorkItemsForQuery(query).then(wis =>
             wis.map(wi => new CloseWorkItemContribution(wi))
         );
