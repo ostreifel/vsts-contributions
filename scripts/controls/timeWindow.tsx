@@ -65,7 +65,7 @@ class Commits extends React.Component<{ allContributions: UserContribution[], sh
                 commits.push(contribution);
             }
         }
-        return <Contributions count={commits.length} noun={"commit"}>
+        return <Contributions count={commits.length} noun={"Created # commit"}>
             {commits.map(c => <Commit commit={c} showDay={this.props.showDay} />)}
         </Contributions>;
     }

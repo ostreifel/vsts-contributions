@@ -31,14 +31,23 @@ class Filters extends React.Component<{}, IContributionFilter> {
                 <Toggle defaultChecked={this.state.allProjects} label={"All projects"} onChanged={checked => {
                     this.setState({ ...this.state, allProjects: checked });
                 }} />
-                <Toggle defaultChecked={this.state.enabledProviders.Commit} label={"Show commits"} onChanged={checked => {
+                <Toggle defaultChecked={this.state.enabledProviders.Commit} label={"Commits"} onChanged={checked => {
                     this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, Commit: checked } });
                 }} />
-                <Toggle defaultChecked={this.state.enabledProviders.CreatePullRequest} label={"Show created pull requests"} onChanged={checked => {
+                <Toggle defaultChecked={this.state.enabledProviders.CreatePullRequest} label={"Created pull requests"} onChanged={checked => {
                     this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CreatePullRequest: checked } });
                 }} />
-                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Show closed pull requests"} onChanged={checked => {
+                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed pull requests"} onChanged={checked => {
                     this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, ClosePullRequest: checked } });
+                }} />
+                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Created work items"} onChanged={checked => {
+                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CreateWorkItem: checked } });
+                }} />
+                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Resolved work items"} onChanged={checked => {
+                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, ResolveWorkItem: checked } });
+                }} />
+                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed work items"} onChanged={checked => {
+                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CloseWorkItem: checked } });
                 }} />
             </div>
         </CollapsibleHeader>;
