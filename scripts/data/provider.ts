@@ -9,6 +9,8 @@ import { CommitContributionProvider } from "./commits";
 import { ClosePullRequestProvider, CreatePullRequestProvider } from "./pullrequests";
 import {
     CreateWorkItemContributionProvider,
+    ResolveWorkItemContributionProvider,
+    CloseWorkItemContributionProvider,
 } from "./workitems";
 
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
@@ -33,6 +35,8 @@ const providers: IContributionProvider[] = [
     new CreatePullRequestProvider(),
     new CommitContributionProvider(),
     new CreateWorkItemContributionProvider(),
+    new ResolveWorkItemContributionProvider(),
+    new CloseWorkItemContributionProvider(),
 ];
 
 export function getContributions(filter: IContributionFilter): Q.IPromise<IUserContributions> {

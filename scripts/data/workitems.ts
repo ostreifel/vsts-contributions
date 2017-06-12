@@ -87,7 +87,7 @@ export class CreateWorkItemContributionProvider implements IContributionProvider
 export class ResolveWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "ResolveWorkItem";
     public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
-        const query = getStateQuery("System.Resolved", filter.username, filter.allProjects);
+        const query = getStateQuery("Microsoft.VSTS.Common.Resolved", filter.username, filter.allProjects);
         return getWorkItemsForQuery(query).then(wis =>
             wis.map(wi => new ResolveWorkItemContribution(wi))
         );
