@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "0.1.157",
+    "version": "0.1.160",
     "name": "Contributions Graph",
     "scopes": [ "vso.work", "vso.work_write", "vso.code" ],
     "description": "View account contributions.",
@@ -27,6 +27,10 @@
         "details": {
             "path": "details.md"
         }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/ostreifel/vsts-contributions"
     },
     "branding": {
         "color": "rgb(220, 235, 252)",
