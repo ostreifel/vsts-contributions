@@ -15,7 +15,7 @@ import {
     ResolveWorkItemContribution,
     CloseWorkItemContribution,
 } from "../data/contracts";
-import { CollapsibleHeader } from "./header";
+import { CollapsibleHeader } from "./CollapsibleHeader";
 
 
 class ContributionItem extends React.Component<{

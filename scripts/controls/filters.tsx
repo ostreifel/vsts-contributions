@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { renderGraph } from "./graph";
 import { renderTimeWindow } from "./timeWindow";
 import { IContributionFilter } from "../data/contracts";
-import { CollapsibleHeader } from "./header";
+import { CollapsibleHeader } from "./CollapsibleHeader";
 import { Toggle } from "OfficeFabric/components/toggle";
 import { IdentityPicker } from "./IdentityPicker";
 
