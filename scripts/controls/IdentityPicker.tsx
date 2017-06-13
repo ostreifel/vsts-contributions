@@ -36,6 +36,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
     identityId?: string,
     identities?: IPersonaProps[]
 }> {
+    button: IconButton;
     constructor() {
         super();
         this.state = {};
@@ -50,9 +51,14 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     <Persona
                         {...identities[0]}
                     />
-                    <IconButton icon={"ChromeClose"} label={"Clear identity selection"} onClick={() => {
-                        this.setState({ ...this.state, identityId: undefined });
-                    }} />
+                    <IconButton
+                        icon={"ChromeClose"}
+                        label={"Clear identity selection"}
+                        autoFocus
+                        onClick={() => {
+                            this.setState({ ...this.state, identityId: undefined });
+                        }}
+                    />
                 </div> :
                 <NormalPeoplePicker
                     onResolveSuggestions={(filter) => this._getIdentities(filter)}
@@ -65,7 +71,10 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                         }
                     }}
                     defaultSelectedItems={[]}
-                    inputProps={{ placeholder: this.props.placeholder }}
+                    inputProps={{
+                        placeholder: this.props.placeholder,
+                    }}
+                    ref={(ref) => ref && ref.focus()}
                     key={'normal'}
                 />
             }
