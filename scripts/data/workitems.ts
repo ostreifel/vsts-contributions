@@ -34,29 +34,24 @@ function getStateQuery(fieldPrefix: string, username: string, allProjects: boole
         .concat(allProjects ? "" : filterProjectClause);
 }
 
-const wiCache: { [id: number]: WorkItem } = {};
-function getWorkItemsImpl(ids: number[]): Q.IPromise<WorkItem[]> {
-    if (ids.length === 0) {
-        return Q([]);
-    }
-    const first200 = ids.slice(0, 200);
-    const otherIds = ids.slice(200);
-    // Do all 200 batches at the same time since the number of ids is already known
-    // no need to check the current page is full before going to the next one
-    return Q.all([getClient().getWorkItems(first200), getWorkItemsImpl(otherIds)]).then(([wis, moreWis]) =>
-        [...wis, ...moreWis]
-    );
-}
+const wiCache: { [id: number]: CachedValue<WorkItem> } = {};
 function getWorkItems(ids: number[]): Q.IPromise<WorkItem[]> {
-    const cachedIds = ids.filter(id => id in wiCache);
-    const coldIds = ids.filter(id => !(id in wiCache));
-    const cachedWis = cachedIds.map(id => wiCache[id]);
-    return getWorkItemsImpl(coldIds).then(moreWis => {
-        for (const wi of moreWis) {
-            wiCache[wi.id] = wi;
+    let coldIds = ids.filter(id => !(id in wiCache));
+    while(coldIds.length > 0) {
+        const idBatch = coldIds.slice(0, 200);
+        coldIds = coldIds.slice(200);
+        const wisPromise = getClient().getWorkItems(idBatch).then(wis => {
+            const wiMap: {[id: number]: WorkItem} = {};
+            for (const wi of wis) {
+                wiMap[wi.id] = wi;
+            }
+            return wiMap;
+        });
+        for (const id of idBatch) {
+            wiCache[id] = new CachedValue(() => wisPromise.then(map => map[id]));
         }
-        return [...moreWis, ...cachedWis];
-    });
+    }
+    return Q.all(ids.map(id => wiCache[id].getValue()));
 }
 
 
