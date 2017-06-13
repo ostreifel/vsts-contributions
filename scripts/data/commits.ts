@@ -20,8 +20,8 @@ const commits: {
 
 function getCommits(repoId: string, fromDate: string, skip: number, top: number, author: string): Q.IPromise<GitCommitRef[]> {
     const webContext = VSS.getWebContext();
-    const commitsUrl = webContext.account.uri +
-        "DefaultCollection/_apis/git/repositories/" +
+    const commitsUrl = webContext.collection.uri +
+        "_apis/git/repositories/" +
          repoId +
           "/Commits?api-version=1.0" +
           "&fromDate=" + encodeURI(fromDate) +
