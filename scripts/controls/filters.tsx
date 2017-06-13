@@ -4,7 +4,8 @@ import { renderGraph } from "./graph";
 import { renderTimeWindow } from "./timeWindow";
 import { IContributionFilter } from "../data/contracts";
 import { CollapsibleHeader } from "./header";
-import { Toggle } from "OfficeFabric/components/toggle"
+import { Toggle } from "OfficeFabric/components/toggle";
+import { IdentityPicker } from "./IdentityPicker";
 
 let filters: Filters;
 class Filters extends React.Component<{}, IContributionFilter> {
@@ -28,6 +29,10 @@ class Filters extends React.Component<{}, IContributionFilter> {
     render() {
         return <CollapsibleHeader title="Activity Filters" name="Filters" className="filter-header">
             <div className="filters">
+                <IdentityPicker
+                 defaultIdentityId="TODO default"
+                 onIdentityChanged={() => {}}
+                />
                 <Toggle defaultChecked={this.state.allProjects} label={"All projects"} onChanged={checked => {
                     this.setState({ ...this.state, allProjects: checked });
                 }} />

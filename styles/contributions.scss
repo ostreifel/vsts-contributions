@@ -16,6 +16,11 @@ body.contributions-body {
             }
         }
     }
+    .identity-picker {
+        .resolved-identity {
+            display: flex;
+        }
+    }
     .filter-container {
         .filter-header {
             .filters {
