@@ -5,8 +5,8 @@ import {
     IContributionFilter,
     IContributionProvider,
 } from "./contracts";
-import { CommitContributionProvider } from "./commits";
-import { ClosePullRequestProvider, CreatePullRequestProvider } from "./pullrequests";
+import { CommitContributionProvider } from "./git/commits";
+import { ClosePullRequestProvider, CreatePullRequestProvider } from "./git/pullrequests";
 import {
     CreateWorkItemContributionProvider,
     ResolveWorkItemContributionProvider,

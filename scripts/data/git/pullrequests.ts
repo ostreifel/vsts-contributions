@@ -5,16 +5,16 @@ import {
     IContributionProvider,
     ContributionName,
     UserContribution,
-} from "./contracts";
+} from "../contracts";
 import { repositories } from "./repositories";
 import { GitPullRequestSearchCriteria, PullRequestStatus, GitPullRequest } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
 import * as Q from "q";
-import { CachedValue } from "./CachedValue";
+import { CachedValue } from "../CachedValue";
 
 export const createdPrs: {
     [username: string]: {
-        [repoId: string]: CachedValue<any[]>
+        [repoId: string]: CachedValue<GitPullRequest[]>
     }
 } = {};
 

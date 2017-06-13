@@ -1,16 +1,16 @@
 import { GitCommitRef } from "TFS/VersionControl/Contracts";
 import { format } from "VSS/Utils/Date"
 import * as Q from "q";
-import { CachedValue } from "./CachedValue";
+import { CachedValue } from "../CachedValue";
 import { repositories } from "./repositories";
-import { yearStart } from "./dates";
+import { yearStart } from "../dates";
 import {
     CommitContribution,
     IContributionFilter,
     IContributionProvider,
     ContributionName,
-} from "./contracts";
-import { callApi } from "./RestCall";
+} from "../contracts";
+import { callApi } from "../RestCall";
 
 const commits: {
     [userName: string]: {
