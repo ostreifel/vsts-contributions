@@ -38,7 +38,7 @@ export function getPullRequests(filter: IContributionFilter): Q.IPromise<GitPull
         if (!filter.allProjects) {
             repositories = repositories.filter(r => r.project.id === projId);
         }
-        const username = filter.identity.uniqueName || filter.identity.displayName;
+        const username = filter.identity.id;
         return Q.all(repositories.map(r => {
             const repoId = r.id;
             if (!(username in createdPrs)) {

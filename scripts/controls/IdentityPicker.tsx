@@ -26,9 +26,9 @@ const personas = new CachedValue(getPersonas);
 
 export interface IIdentity {
     displayName: string;
-    id?: string;
-    uniqueName?: string;
-    imageUrl?: string;
+    id: string;
+    uniqueName: string;
+    imageUrl: string;
 }
 
 export interface IIdentityPickerProps {
