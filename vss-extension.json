@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.0.32",
+    "version": "1.0.34",
     "name": "Contributions Graph",
     "scopes": [ "vso.work", "vso.work_write", "vso.code" ],
     "description": "View account contributions.",
@@ -59,7 +59,7 @@
             "type": "ms.vss-web.hub",
             "description": "View code and work item contributions.",
             "targets": [
-                "ms.vss-work-web.work-hub-group"
+                    "ms.vss-web.home-hub-group"
                 ],
             "properties": {
                 "group": "contributed",
