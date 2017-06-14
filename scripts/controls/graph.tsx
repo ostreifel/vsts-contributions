@@ -6,7 +6,7 @@ import { IUserContributions, UserContribution, IContributionFilter } from "../da
 import { toDateString, toCountString } from "./messageFormatting";
 import { updateSelectedDate } from "./filters";
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
-import { trackEvent } from "../events";
+import { trackEvent, IProperties } from "../events";
 import { Timings } from "../timings";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
@@ -136,6 +136,17 @@ class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserC
         </div>;
     }
 }
+
+
+function filterToIProperties(filter: IContributionFilter): IProperties {
+    const properties: IProperties = {};
+    for (let providerKey in filter.enabledProviders) {
+        properties[providerKey] = String(filter.enabledProviders[providerKey]);
+    }
+    properties["selectedDate"] = String(!!filter.selectedDate);
+    properties["allProjects"] = String(!!filter.allProjects);
+    return properties;
+}
 let previousContributons: IUserContributions = {};
 export function renderGraph(filter: IContributionFilter) {
     const graphParent = $(".graph-container")[0];
@@ -147,6 +158,6 @@ export function renderGraph(filter: IContributionFilter) {
         previousContributons = contributions;
         ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={contributions} loading={false} />, graphParent);
         timings.measure("drawGraph");
-        trackEvent("loadGraph", undefined, timings.measurements);
+        trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
     })
 }
