@@ -1,5 +1,4 @@
 import * as React from "react";
-// import { IdentityRef } from "VSS/WebApi/Contracts";
 import { Persona, IPersonaProps } from "OfficeFabric/components/Persona"
 import { IconButton } from "OfficeFabric/components/Button"
 import { NormalPeoplePicker, IBasePickerSuggestionsProps } from "OfficeFabric/components/pickers";
@@ -36,7 +35,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
     identityId?: string,
     identities?: IPersonaProps[]
 }> {
-    button: IconButton;
+    private autoFocus: boolean;
     constructor() {
         super();
         this.state = {};
@@ -45,7 +44,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
         this.setState({ ...this.state, identityId: this.props.defaultIdentityId })
     }
     render() {
-        return <div className="identity-picker">
+        const elem = <div className="identity-picker">
             {this.state.identityId ?
                 <div className={`resolved-identity`}>
                     <Persona
@@ -54,8 +53,9 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     <IconButton
                         icon={"ChromeClose"}
                         label={"Clear identity selection"}
-                        autoFocus
+                        autoFocus={this.autoFocus}
                         onClick={() => {
+                            this.autoFocus = true;
                             this.setState({ ...this.state, identityId: undefined });
                         }}
                     />
@@ -67,6 +67,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     className={`ms-PeoplePicker identity-selector`}
                     onChange={(items) => {
                         if (items && items.length > 0) {
+                            this.autoFocus = true;
                             this.setState({ ...this.state, identityId: items[0].id });
                         }
                     }}
@@ -74,11 +75,13 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     inputProps={{
                         placeholder: this.props.placeholder,
                     }}
-                    ref={(ref) => ref && ref.focus()}
+                    ref={(ref) => ref && this.autoFocus && ref.focus()}
                     key={'normal'}
                 />
             }
         </div>;
+        this.autoFocus = false;
+        return elem;
     }
     private _getIdentities(filter: string) {
         const lowerFilter = filter.toLocaleLowerCase();
