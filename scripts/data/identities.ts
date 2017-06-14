@@ -73,7 +73,7 @@ function filterIdentities(identities: IIdentityMap, filter: (identity: IdentityR
     return filtered;
 }
 
-export function getUsers(type: IdentityTypes = IdentityTypes.Users): Q.IPromise<IIdentityMap> {
+export function getIdentities(type: IdentityTypes = IdentityTypes.Users): Q.IPromise<IIdentityMap> {
     return identities.getValue().then(identities => {
         switch (type) {
             case IdentityTypes.UsersAndGroups:

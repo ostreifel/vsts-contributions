@@ -72,7 +72,8 @@ function getWorkItemsForQuery(query: string): Q.IPromise<WorkItem[]> {
 export class CreateWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CreateWorkItem";
     public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
-        const query = getStateQuery("System.Created", filter.username, filter.allProjects);
+        const username = filter.identity.uniqueName || filter.identity.displayName;
+        const query = getStateQuery("System.Created", username, filter.allProjects);
         return getWorkItemsForQuery(query).then(wis =>
             wis.map(wi => new CreateWorkItemContribution(wi))
         );
@@ -82,7 +83,8 @@ export class CreateWorkItemContributionProvider implements IContributionProvider
 export class ResolveWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "ResolveWorkItem";
     public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
-        const query = getStateQuery("Microsoft.VSTS.Common.Resolved", filter.username, filter.allProjects);
+        const username = filter.identity.uniqueName || filter.identity.displayName;
+        const query = getStateQuery("Microsoft.VSTS.Common.Resolved", username, filter.allProjects);
         return getWorkItemsForQuery(query).then(wis =>
             wis.map(wi => new ResolveWorkItemContribution(wi))
         );
@@ -92,7 +94,8 @@ export class ResolveWorkItemContributionProvider implements IContributionProvide
 export class CloseWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CloseWorkItem";
     public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
-        const query = getStateQuery("Microsoft.VSTS.Common.Closed", filter.username, filter.allProjects);
+        const username = filter.identity.uniqueName || filter.identity.displayName;
+        const query = getStateQuery("Microsoft.VSTS.Common.Closed", username, filter.allProjects);
         return getWorkItemsForQuery(query).then(wis =>
             wis.map(wi => new CloseWorkItemContribution(wi))
         );

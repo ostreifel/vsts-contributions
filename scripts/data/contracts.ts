@@ -1,5 +1,6 @@
 import { GitCommitRef, GitRepository, GitPullRequest } from "TFS/VersionControl/Contracts";
 import { WorkItem } from "TFS/WorkItemTracking/Contracts";
+import { IIdentity } from "../controls/IdentityPicker";
 
 export type ContributionName = keyof IEnabledProviders;
 
@@ -18,7 +19,7 @@ export interface IEnabledProviders {
 }
 
 export interface IContributionFilter {
-    username: string;
+    identity: IIdentity;
     allProjects: boolean;
     selectedDate?: Date;
     enabledProviders: IEnabledProviders;

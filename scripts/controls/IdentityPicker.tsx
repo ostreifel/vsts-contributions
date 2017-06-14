@@ -2,29 +2,41 @@ import * as React from "react";
 import { Persona, IPersonaProps } from "OfficeFabric/components/Persona"
 import { IconButton } from "OfficeFabric/components/Button"
 import { NormalPeoplePicker, IBasePickerSuggestionsProps } from "OfficeFabric/components/pickers";
+import { getIdentities } from "../data/identities"
+import { CachedValue } from "../data/CachedValue";
+
+function getPersonas() {
+    return getIdentities().then(identities => {
+        const personas: IPersonaProps[] = [];
+        for (const id in identities) {
+            const identity = identities[id];
+            personas.push({
+                primaryText: identity.displayName,
+                secondaryText: identity.uniqueName,
+                imageUrl: identity.imageUrl,
+                id: identity.id
+            });
+        }
+        return personas;
+    });
+}
+
+const personas = new CachedValue(getPersonas);
+
 
 export interface IIdentity {
-    name: string;
-    id: string;
-    email: string;
-    picture: string;
+    displayName: string;
+    id?: string;
+    uniqueName?: string;
+    imageUrl?: string;
 }
 
 export interface IIdentityPickerProps {
-    defaultIdentityId?: string;
+    defaultIdentity?: IIdentity;
     placeholder?: string;
     onIdentityChanged?: (identity: IIdentity) => void;
     onIdentityCleared?: () => void;
 }
-
-const identities: IPersonaProps[] = [
-    {
-        primaryText: VSS.getWebContext().user.name,
-        id: VSS.getWebContext().user.id,
-        secondaryText: VSS.getWebContext().user.email,
-        imageUrl: `${VSS.getWebContext().collection.uri}_api/_common/identityImage?size=2&id=${VSS.getWebContext().user.id}`
-    }
-];
 
 const suggestionProps: IBasePickerSuggestionsProps = {
     suggestionsHeaderText: 'Suggested People',
@@ -33,8 +45,7 @@ const suggestionProps: IBasePickerSuggestionsProps = {
 };
 
 export class IdentityPicker extends React.Component<IIdentityPickerProps, {
-    identityId?: string,
-    identities?: IPersonaProps[]
+    identity?: IIdentity,
 }> {
     private autoFocus: boolean;
     constructor() {
@@ -42,17 +53,19 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
         this.state = {};
     }
     componentWillMount() {
-        this.setState({ ...this.state, identityId: this.props.defaultIdentityId })
+        this.setState({ ...this.state, identity: this.props.defaultIdentity })
     }
     componentDidUpdate() {
         this.autoFocus = false;
     }
     render() {
         return <div className="identity-picker">
-            {this.state.identityId ?
+            {this.state.identity ?
                 <div className={`resolved-identity`}>
                     <Persona
-                        {...identities[0]}
+                        primaryText={this.state.identity.displayName}
+                        secondaryText={this.state.identity.uniqueName}
+                        imageUrl={this.state.identity.imageUrl}
                     />
                     <IconButton
                         icon={"ChromeClose"}
@@ -63,7 +76,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                                 this.props.onIdentityCleared();
                             }
                             this.autoFocus = true;
-                            this.setState({ ...this.state, identityId: undefined });
+                            this.setState({ ...this.state, identity: undefined });
                         }}
                     />
                 </div> :
@@ -78,7 +91,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                                 this.props.onIdentityChanged(this._personaToIIdentity(items[0]));
                             }
                             this.autoFocus = true;
-                            this.setState({ ...this.state, identityId: items[0].id });
+                            this.setState({ ...this.state, identity: this._personaToIIdentity(items[0]) });
                         }
                     }}
                     defaultSelectedItems={[]}
@@ -96,10 +109,10 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
             throw new Error("Identity properties not set");
         }
         return {
-            email: persona.secondaryText,
+            uniqueName: persona.secondaryText,
             id: persona.id,
-            name: persona.primaryText,
-            picture: persona.imageUrl
+            displayName: persona.primaryText,
+            imageUrl: persona.imageUrl
         };
     }
     private _getIdentities(filter: string) {
@@ -107,6 +120,6 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
         function match(str?: string) {
             return str && str.toLocaleLowerCase().lastIndexOf(lowerFilter, 0) >= 0;
         }
-        return identities.filter(i => match(i.primaryText) || match(i.secondaryText));
+        return personas.getValue().then(personas => personas.filter(p => match(p.primaryText) || match(p.secondaryText)));
     }
 }

@@ -12,7 +12,12 @@ class Filters extends React.Component<{}, IContributionFilter> {
     constructor() {
         super();
         this.state = {
-            username: VSS.getWebContext().user.name,
+            identity: {
+                displayName: VSS.getWebContext().user.name,
+                id: VSS.getWebContext().user.id,
+                uniqueName: VSS.getWebContext().user.email,
+                imageUrl: `${VSS.getWebContext().collection.uri}_api/_common/identityImage?size=2&id=${VSS.getWebContext().user.id}`
+            },
             allProjects: false,
             enabledProviders: {
                 Commit: true,
@@ -30,8 +35,10 @@ class Filters extends React.Component<{}, IContributionFilter> {
         return <CollapsibleHeader title="Activity Filters" name="Filters" className="filter-header">
             <div className="filters">
                 <IdentityPicker
-                 defaultIdentityId="TODO default"
-                 onIdentityChanged={() => {}}
+                    defaultIdentity={this.state.identity}
+                    onIdentityChanged={(identity) => {
+                        this.setState({ ...this.state, identity })
+                    }}
                 />
                 <Toggle defaultChecked={this.state.allProjects} label={"All projects"} onChanged={checked => {
                     this.setState({ ...this.state, allProjects: checked });

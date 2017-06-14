@@ -47,7 +47,8 @@ function commitsForRepository(username: string, repoId: string, skip = 0): Q.IPr
 
 export class CommitContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "Commit";
-    public getContributions({ username, allProjects }: IContributionFilter) {
+    public getContributions({ identity, allProjects }: IContributionFilter) {
+        const username = identity.uniqueName || identity.displayName;
         return repositories.getValue().then(repositories => {
             const currentProject = VSS.getWebContext().project.id;
             if (!allProjects) {
