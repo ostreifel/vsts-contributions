@@ -13,7 +13,8 @@ export interface IIdentity {
 export interface IIdentityPickerProps {
     defaultIdentityId?: string;
     placeholder?: string;
-    onIdentityChanged: (identity: IIdentity) => void
+    onIdentityChanged?: (identity: IIdentity) => void;
+    onIdentityCleared?: () => void;
 }
 
 const identities: IPersonaProps[] = [
@@ -43,8 +44,11 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
     componentWillMount() {
         this.setState({ ...this.state, identityId: this.props.defaultIdentityId })
     }
+    componentDidUpdate() {
+        this.autoFocus = false;
+    }
     render() {
-        const elem = <div className="identity-picker">
+        return <div className="identity-picker">
             {this.state.identityId ?
                 <div className={`resolved-identity`}>
                     <Persona
@@ -55,6 +59,9 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                         label={"Clear identity selection"}
                         autoFocus={this.autoFocus}
                         onClick={() => {
+                            if (this.props.onIdentityCleared) {
+                                this.props.onIdentityCleared();
+                            }
                             this.autoFocus = true;
                             this.setState({ ...this.state, identityId: undefined });
                         }}
@@ -67,6 +74,9 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     className={`ms-PeoplePicker identity-selector`}
                     onChange={(items) => {
                         if (items && items.length > 0) {
+                            if (this.props.onIdentityChanged) {
+                                this.props.onIdentityChanged(this._personaToIIdentity(items[0]));
+                            }
                             this.autoFocus = true;
                             this.setState({ ...this.state, identityId: items[0].id });
                         }
@@ -80,8 +90,17 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                 />
             }
         </div>;
-        this.autoFocus = false;
-        return elem;
+    }
+    private _personaToIIdentity(persona: IPersonaProps): IIdentity {
+        if (!persona.secondaryText || !persona.id || !persona.primaryText || !persona.imageUrl) {
+            throw new Error("Identity properties not set");
+        }
+        return {
+            email: persona.secondaryText,
+            id: persona.id,
+            name: persona.primaryText,
+            picture: persona.imageUrl
+        };
     }
     private _getIdentities(filter: string) {
         const lowerFilter = filter.toLocaleLowerCase();
