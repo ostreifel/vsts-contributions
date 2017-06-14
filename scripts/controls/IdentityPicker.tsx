@@ -33,6 +33,7 @@ export interface IIdentity {
 
 export interface IIdentityPickerProps {
     defaultIdentity?: IIdentity;
+    width?: number | string;
     placeholder?: string;
     onIdentityChanged?: (identity: IIdentity) => void;
     onIdentityCleared?: () => void;
@@ -59,7 +60,13 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
         this.autoFocus = false;
     }
     render() {
-        return <div className="identity-picker">
+        return <div
+            className="identity-picker"
+            style={{
+                width: this.props.width || 250,
+                height: 48
+            }}
+        >
             {this.state.identity ?
                 <div className={`resolved-identity`}>
                     <Persona

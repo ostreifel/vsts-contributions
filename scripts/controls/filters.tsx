@@ -32,37 +32,40 @@ class Filters extends React.Component<{}, IContributionFilter> {
         filters = this;
     }
     render() {
-        return <CollapsibleHeader title="Activity Filters" name="Filters" className="filter-header">
-            <div className="filters">
-                <IdentityPicker
-                    defaultIdentity={this.state.identity}
-                    onIdentityChanged={(identity) => {
-                        this.setState({ ...this.state, identity })
-                    }}
-                />
-                <Toggle defaultChecked={this.state.allProjects} label={"All projects"} onChanged={checked => {
-                    this.setState({ ...this.state, allProjects: checked });
-                }} />
-                <Toggle defaultChecked={this.state.enabledProviders.Commit} label={"Commits"} onChanged={checked => {
-                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, Commit: checked } });
-                }} />
-                <Toggle defaultChecked={this.state.enabledProviders.CreatePullRequest} label={"Created pull requests"} onChanged={checked => {
-                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CreatePullRequest: checked } });
-                }} />
-                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed pull requests"} onChanged={checked => {
-                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, ClosePullRequest: checked } });
-                }} />
-                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Created work items"} onChanged={checked => {
-                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CreateWorkItem: checked } });
-                }} />
-                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Resolved work items"} onChanged={checked => {
-                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, ResolveWorkItem: checked } });
-                }} />
-                <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed work items"} onChanged={checked => {
-                    this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CloseWorkItem: checked } });
-                }} />
-            </div>
-        </CollapsibleHeader>;
+        return <div>
+            <IdentityPicker
+                defaultIdentity={this.state.identity}
+                onIdentityChanged={(identity) => {
+                    this.setState({ ...this.state, identity })
+                }}
+                width={400}
+            />
+            <CollapsibleHeader title="Activity Filters" name="Filters" className="filter-header">
+                <div className="filters">
+                    <Toggle defaultChecked={this.state.allProjects} label={"All projects"} onChanged={checked => {
+                        this.setState({ ...this.state, allProjects: checked });
+                    }} />
+                    <Toggle defaultChecked={this.state.enabledProviders.Commit} label={"Commits"} onChanged={checked => {
+                        this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, Commit: checked } });
+                    }} />
+                    <Toggle defaultChecked={this.state.enabledProviders.CreatePullRequest} label={"Created pull requests"} onChanged={checked => {
+                        this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CreatePullRequest: checked } });
+                    }} />
+                    <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed pull requests"} onChanged={checked => {
+                        this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, ClosePullRequest: checked } });
+                    }} />
+                    <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Created work items"} onChanged={checked => {
+                        this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CreateWorkItem: checked } });
+                    }} />
+                    <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Resolved work items"} onChanged={checked => {
+                        this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, ResolveWorkItem: checked } });
+                    }} />
+                    <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed work items"} onChanged={checked => {
+                        this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CloseWorkItem: checked } });
+                    }} />
+                </div>
+            </CollapsibleHeader>
+        </div>;
     }
     updateComponents(filter: IContributionFilter) {
         renderGraph(filter);
