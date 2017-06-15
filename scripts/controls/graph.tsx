@@ -164,7 +164,13 @@ let previousContributons: IUserContributions = {};
 export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: Date) => void, tileSize: TileSize = "medium-tiles") {
     const graphParent = $(".graph-container")[0];
     const timings = new Timings();
-    ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={previousContributons} loading={true} toggleSelect={toggleSelect} />, graphParent);
+    ReactDOM.render(<Graph
+        selectedDate={filter.selectedDate}
+        contributions={previousContributons}
+        loading={true}
+        toggleSelect={toggleSelect}
+        className={tileSize}
+    />, graphParent);
     timings.measure("drawSpinner");
     getContributions(filter).then(contributions => {
         timings.measure("getContributions");
