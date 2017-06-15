@@ -30,7 +30,7 @@ class ContributionsConfiguration implements IWidgetConfiguration {
             ? JSON.parse(widgetSettings.customSettings.data)
             : defaultFilter;
 
-        renderFilters(this.configUpdated.bind(this), this.filter);
+        renderFilters(this.configUpdated.bind(this), this.filter, false);
         return WidgetStatusHelper.Success();
     }
     public onSave() {

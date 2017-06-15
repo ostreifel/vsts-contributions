@@ -11,6 +11,7 @@ class Filters extends React.Component<
   {
     onChanged: (filter: IContributionFilter) => void;
     initialFilter?: IContributionFilter;
+    collapsible?: boolean;
   },
   IContributionFilter
 > {
@@ -20,21 +21,8 @@ class Filters extends React.Component<
     filters = this;
   }
   render() {
-    return (
-      <div>
-        <IdentityPicker
-          identity={this.state.identity}
-          onIdentityChanged={identity => {
-            this.setState({ ...this.state, identity });
-          }}
-          width={400}
-        />
-        <CollapsibleHeader
-          title="Activity Filters"
-          name="Filters"
-          className="filter-header"
-        >
-          <div className="filters">
+    const collapsibleContent =
+        <div className="filters">
             <Toggle defaultChecked={this.state.allProjects} label={"All projects"} onChanged={checked => {
                 this.setState({ ...this.state, allProjects: checked });
             }} />
@@ -56,8 +44,25 @@ class Filters extends React.Component<
             <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed work items"} onChanged={checked => {
                 this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CloseWorkItem: checked } });
             }} />
-          </div>
-        </CollapsibleHeader>
+        </div>;
+    return (
+      <div>
+        <IdentityPicker
+          identity={this.state.identity}
+          onIdentityChanged={identity => {
+            this.setState({ ...this.state, identity });
+          }}
+          width={400}
+        />
+        {this.props.collapsible ?
+          <CollapsibleHeader
+            title="Activity Filters"
+            name="Filters"
+            className="filter-header"
+          >
+            {collapsibleContent}
+          </CollapsibleHeader> : collapsibleContent
+        }
       </div>
     );
   }
@@ -84,11 +89,13 @@ export function getState() {
 
 export function renderFilters(
   onChanged: (filter: IContributionFilter) => void,
-  initialFilter: IContributionFilter = defaultFilter
+  initialFilter: IContributionFilter = defaultFilter,
+  collapsible: boolean = true
 ) {
   const graphParent = $(".filter-container")[0];
   ReactDOM.render(
-    <Filters onChanged={onChanged} initialFilter={initialFilter} />,
-    graphParent
+    <Filters onChanged={onChanged} initialFilter={initialFilter} collapsible={collapsible} />,
+    graphParent,
+    () => VSS.resize()
   );
 }
