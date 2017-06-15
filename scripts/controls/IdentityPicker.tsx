@@ -32,7 +32,7 @@ export interface IIdentity {
 }
 
 export interface IIdentityPickerProps {
-    defaultIdentity?: IIdentity;
+    identity?: IIdentity;
     width?: number | string;
     placeholder?: string;
     onIdentityChanged?: (identity: IIdentity) => void;
@@ -55,7 +55,15 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
         this.state = {};
     }
     componentWillMount() {
-        this.setState({ ...this.state, identity: this.props.defaultIdentity })
+        this.setState({ ...this.state, identity: this.props.identity })
+    }
+    componentWillUpdate(props: IIdentityPickerProps) {
+        if (props.identity &&
+            this.props.identity &&
+            this.props.identity.id !== props.identity.id
+        ) {
+            this.setState({...this.state, identity: props.identity})
+        }
     }
     componentDidUpdate() {
         this.autoFocus = false;

@@ -23,7 +23,7 @@ class Filters extends React.Component<
     return (
       <div>
         <IdentityPicker
-          defaultIdentity={this.state.identity}
+          identity={this.state.identity}
           onIdentityChanged={identity => {
             this.setState({ ...this.state, identity });
           }}

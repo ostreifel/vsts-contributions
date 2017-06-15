@@ -19,7 +19,7 @@ function gotoHub(date?: Date) {
 function renderIdentity(identity: IIdentity) {
   const identityContainer = $(".identity-container")[0];
   ReactDOM.render(
-    <IdentityPicker defaultIdentity={identity} readOnly />,
+    <IdentityPicker identity={identity} readOnly />,
     identityContainer
   );
 }
@@ -33,7 +33,7 @@ class ContributionsWidget implements IWidget {
       ? JSON.parse(widgetSettings.customSettings.data)
       : defaultFilter;
     renderIdentity(filter.identity);
-    renderGraph(defaultFilter, gotoHub, "small-tiles");
+    renderGraph(filter, gotoHub, "small-tiles");
     return WidgetStatusHelper.Success();
   }
   public readonly reload = this.load;
