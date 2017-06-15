@@ -36,11 +36,11 @@ function getCommits(repoId: string, fromDate: string, skip: number, top: number,
 
 function commitsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitCommitRef[]> {
     const fromDate = format(yearStart, "MM/dd/yyyy HH:mm:ss");
-    return getCommits(repoId, fromDate, skip, 100, username).then(commits => {
-        if (commits.length < 100) {
+    return getCommits(repoId, fromDate, skip, 10000, username).then(commits => {
+        if (commits.length < 10000) {
             return commits;
         } else {
-            return commitsForRepository(username, repoId, skip + 100).then(moreCommits => [...commits, ...moreCommits]);
+            return commitsForRepository(username, repoId, skip + 10000).then(moreCommits => [...commits, ...moreCommits]);
         }
     });
 }
