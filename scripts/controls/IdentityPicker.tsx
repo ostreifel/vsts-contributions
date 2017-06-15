@@ -37,6 +37,7 @@ export interface IIdentityPickerProps {
     placeholder?: string;
     onIdentityChanged?: (identity: IIdentity) => void;
     onIdentityCleared?: () => void;
+    readOnly?: boolean;
 }
 
 const suggestionProps: IBasePickerSuggestionsProps = {
@@ -68,24 +69,28 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
             }}
         >
             {this.state.identity ?
-                <div className={`resolved-identity`}>
+                <div className={`resolved-identity`} style={{ display: "flex"}}>
                     <Persona
                         primaryText={this.state.identity.displayName}
                         secondaryText={this.state.identity.uniqueName}
                         imageUrl={this.state.identity.imageUrl}
                     />
-                    <IconButton
-                        icon={"ChromeClose"}
-                        label={"Clear identity selection"}
-                        autoFocus={this.autoFocus}
-                        onClick={() => {
-                            if (this.props.onIdentityCleared) {
-                                this.props.onIdentityCleared();
-                            }
-                            this.autoFocus = true;
-                            this.setState({ ...this.state, identity: undefined });
-                        }}
-                    />
+                    {
+                        this.props.readOnly ?
+                            null :
+                            <IconButton
+                                icon={"ChromeClose"}
+                                label={"Clear identity selection"}
+                                autoFocus={this.autoFocus}
+                                onClick={() => {
+                                    if (this.props.onIdentityCleared) {
+                                        this.props.onIdentityCleared();
+                                    }
+                                    this.autoFocus = true;
+                                    this.setState({ ...this.state, identity: undefined });
+                                }}
+                            />
+                    }
                 </div> :
                 <NormalPeoplePicker
                     onResolveSuggestions={(filter) => this._getIdentities(filter)}
@@ -104,6 +109,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     defaultSelectedItems={[]}
                     inputProps={{
                         placeholder: this.props.placeholder,
+                        readOnly: this.props.readOnly,
                     }}
                     ref={(ref) => ref && this.autoFocus && ref.focus()}
                     key={'normal'}

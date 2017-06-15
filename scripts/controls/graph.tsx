@@ -4,7 +4,6 @@ import { Callout } from "OfficeFabric/components/Callout";
 import { getContributions } from "../data/provider";
 import { IUserContributions, UserContribution, IContributionFilter } from "../data/contracts";
 import { toDateString, toCountString } from "./messageFormatting";
-import { updateSelectedDate } from "./filters";
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
 import { trackEvent, IProperties } from "../events";
 import { Timings } from "../timings";
@@ -39,7 +38,15 @@ function getContributionClassDelegate(contributions: IUserContributions): (count
     }
 }
 
-class Day extends React.Component<{ date: Date, selectedDate?: Date, contributions?: UserContribution[], getWorkClass: (count: number) => string }, { showCallout: boolean }> {
+class Day extends React.Component<{
+    toggleSelect: (date?: Date)=> void,
+    date: Date,
+    selectedDate?: Date,
+    contributions?: UserContribution[],
+    getWorkClass: (count: number) => string
+},
+    { showCallout: boolean }
+> {
     private dayElem: HTMLDivElement;
     constructor() {
         super();
@@ -88,14 +95,20 @@ class Day extends React.Component<{ date: Date, selectedDate?: Date, contributio
     }
     private toggleSelect() {
         if (this.isSelected()) {
-            updateSelectedDate();
+            this.props.toggleSelect();
         } else {
-            updateSelectedDate(this.props.date);
+            this.props.toggleSelect(this.props.date);
         }
     }
 }
 
-class Week extends React.Component<{ date: Date, selectedDate?: Date, contributions: IUserContributions, getWorkClass: (count: number) => string }, {}> {
+class Week extends React.Component<{
+    date: Date,
+    selectedDate?: Date,
+    contributions: IUserContributions,
+    getWorkClass: (count: number) => string,
+    toggleSelect: (date?: Date) => void,
+}, {}> {
     render() {
         const date = this.props.date;
         const days: JSX.Element[] = [];
@@ -105,6 +118,7 @@ class Week extends React.Component<{ date: Date, selectedDate?: Date, contributi
                 selectedDate={this.props.selectedDate}
                 contributions={this.props.contributions[date.getTime()]}
                 getWorkClass={this.props.getWorkClass}
+                toggleSelect={this.props.toggleSelect}
             />);
             date.setDate(date.getDate() + 1);
         } while (date.getDay() > 0 && date < new Date());
@@ -113,7 +127,13 @@ class Week extends React.Component<{ date: Date, selectedDate?: Date, contributi
 }
 
 
-class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserContributions, loading: boolean }, {}> {
+class Graph extends React.Component<{
+    selectedDate?: Date,
+    contributions: IUserContributions,
+    loading: boolean,
+    className?: string,
+    toggleSelect: (date?: Date) => void,
+}, {}> {
     render() {
         const getWorkClass = getContributionClassDelegate(this.props.contributions);
         const date = new Date();
@@ -127,10 +147,11 @@ class Graph extends React.Component<{ selectedDate?: Date, contributions: IUserC
                 selectedDate={this.props.selectedDate}
                 contributions={this.props.contributions}
                 getWorkClass={getWorkClass}
+                toggleSelect={this.props.toggleSelect}
             />)
             date.setDate(date.getDate() - 7);
         }
-        return <div className={"year"}>
+        return <div className={`year ${this.props.className}`}>
             {weeks}
             {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
         </div>;
@@ -147,16 +168,25 @@ function filterToIProperties(filter: IContributionFilter): IProperties {
     properties["allProjects"] = String(!!filter.allProjects);
     return properties;
 }
+
+export type TileSize = "small-tiles" | "medium-tiles";
+
 let previousContributons: IUserContributions = {};
-export function renderGraph(filter: IContributionFilter) {
+export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: Date) => void, tileSize: TileSize = "medium-tiles") {
     const graphParent = $(".graph-container")[0];
     const timings = new Timings();
-    ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={previousContributons} loading={true} />, graphParent);
+    ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={previousContributons} loading={true} toggleSelect={toggleSelect} />, graphParent);
     timings.measure("drawSpinner");
     getContributions(filter).then(contributions => {
         timings.measure("getContributions");
         previousContributons = contributions;
-        ReactDOM.render(<Graph selectedDate={filter.selectedDate} contributions={contributions} loading={false} />, graphParent);
+        ReactDOM.render(<Graph
+            selectedDate={filter.selectedDate}
+            contributions={contributions}
+            loading={false}
+            className={tileSize}
+            toggleSelect={toggleSelect}
+        />, graphParent);
         timings.measure("drawGraph");
         trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
     })

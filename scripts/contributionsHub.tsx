@@ -3,9 +3,10 @@ import { IContributionFilter } from "./data/contracts";
 import { renderFilters } from "./controls/filters";
 import { renderGraph } from "./controls/graph";
 import { renderTimeWindow } from "./controls/timeWindow";
+import { updateSelectedDate } from "./controls/filters";
 
 function showData(filter: IContributionFilter) {
-  renderGraph(filter);
+  renderGraph(filter, updateSelectedDate);
   renderTimeWindow(filter);
 }
 renderFilters(showData);

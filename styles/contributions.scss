@@ -1,6 +1,12 @@
-$day-size: 15px;
+$small-tiles: 10px;
+$medium-tiles: 15px;
 body.contributions-body {
-    overflow: scroll;
+    &.hub {
+        overflow: scroll;
+    }
+    &.widget .identity-container {
+        margin: 8px 0px;
+    }
     padding: 0px 10px;
     .feedback {
         float: right;
@@ -14,11 +20,6 @@ body.contributions-body {
             button.toggle-button {
                 vertical-align: sub;
             }
-        }
-    }
-    .identity-picker {
-        .resolved-identity {
-            display: flex;
         }
     }
     .filter-container {
@@ -39,11 +40,7 @@ body.contributions-body {
                 display: flex;
                 flex-direction: column;
                 .day-container {
-                    width: $day-size + 2;
-                    height: $day-size + 2;
                     .day {
-                        width: $day-size;
-                        height: $day-size;
                         background-color: #d3d3d3;
                         margin: 1px;
                         &.work_0 {
@@ -60,11 +57,8 @@ body.contributions-body {
                         }
                     }
                     .day-filter {
-                        width: $day-size;
-                        height: $day-size;
                         margin: 1px;
                         position: relative;
-                        top: -  $day-size - 1;
                         background-color: black;
                         opacity: 0;
                         cursor: pointer;
@@ -83,6 +77,32 @@ body.contributions-body {
                 top: 40px;
             }
         }
+        .year.medium-tiles .week .day-container {
+            width: $medium-tiles + 2;
+            height: $medium-tiles + 2;
+            .day {
+                width: $medium-tiles;
+                height: $medium-tiles;
+            }
+            .day-filter {
+                width: $medium-tiles;
+                height: $medium-tiles;
+                top: -  $medium-tiles - 1;
+            }
+        }
+        .year.small-tiles .week .day-container {
+            width: $small-tiles + 2;
+            height: $small-tiles + 2;
+            .day {
+                width: $small-tiles;
+                height: $small-tiles;
+            }
+            .day-filter {
+                width: $small-tiles;
+                height: $small-tiles;
+                top: -  $small-tiles - 1;
+            }
+        }
     }
     .time-window-container {
         .time-window {
@@ -90,7 +110,7 @@ body.contributions-body {
                 display: none;
             }
             .contribution-item {
-                padding: 2px 0px;
+                padding: 2px 0px 2px 20px;
                 &:hover {
                     background-color: aliceblue;
                 }

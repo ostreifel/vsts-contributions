@@ -4,6 +4,8 @@ const path = require("path");
 module.exports = {
     entry: {
         contributionsHub: "./js/contributionsHub.js",
+        contributionsWidget: "./js/contributionsWidget.js",
+        contributionsWidgetConfiguration: "./js/contributionsWidgetConfiguration.js",
     },
     output: {
         libraryTarget: "amd",
