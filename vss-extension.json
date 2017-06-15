@@ -1,9 +1,13 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.1.5",
+    "version": "1.1.14",
     "name": "Contributions Graph",
-    "scopes": [ "vso.work", "vso.work_write", "vso.code" ],
+    "scopes": [
+        "vso.work",
+        "vso.work_write",
+        "vso.code"
+    ],
     "description": "View account contributions.",
     "publisher": "ottostreifel",
     "icons": {
@@ -38,15 +42,15 @@
     },
     "files": [
         {
-            "path": "img",
-            "addressable": true
-        },
-        {
             "path": "dist",
             "addressable": true
         },
         {
-            "path": "contributions.html",
+            "path": "img",
+            "addressable": true
+        },
+        {
+            "path": "html",
             "addressable": true
         }
     ],
@@ -59,12 +63,48 @@
             "type": "ms.vss-web.hub",
             "description": "View code and work item contributions.",
             "targets": [
-                    "ms.vss-web.home-hub-group"
-                ],
+                "ms.vss-web.home-hub-group"
+            ],
             "properties": {
                 "group": "contributed",
                 "name": "Contributions Graph",
-                "uri": "contributions.html"
+                "uri": "html/contributionsHub.html"
+            }
+        },
+        {
+            "id": "ContributionsWidget",
+            "type": "ms.vss-dashboards-web.widget",
+            "targets": [
+                "ms.vss-dashboards-web.widget-catalog",
+                ".ContributionsWidget-Configuration"
+            ],
+            "properties": {
+                "name": "Contributions Graph",
+                "description": "Graph the contributions of a user",
+                "previewImageUrl": "img/logo.png",
+                "uri": "html/contributionsWidget.html",
+                "isNameConfigurable": true,
+                "supportedSizes": [
+                    {
+                        "rowSpan": 1,
+                        "columnSpan": 4
+                    }
+                ],
+                "supportedScopes": [
+                    "project_team"
+                ]
+            }
+        },
+        {
+            "id": "ContributionsWidget-Configuration",
+            "type": "ms.vss-dashboards-web.widget-configuration",
+            "targets": [
+                "ms.vss-dashboards-web.widget-configuration"
+            ],
+            "properties": {
+                "name": "Contribution Filters",
+                "description": "Which criteria to use when counting contributions",
+                "uri": "html/contributionWidgetConfiguration.html"
             }
         }
     ]

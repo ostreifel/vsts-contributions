@@ -3,7 +3,7 @@ const path = require("path");
 
 module.exports = {
     entry: {
-        contributions: "./js/contributions.js",
+        contributionsHub: "./js/contributionsHub.js",
     },
     output: {
         libraryTarget: "amd",

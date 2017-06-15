@@ -12,25 +12,14 @@
         });
         
         window.appInsights=appInsights;
-        window.contributionLocation="hub";
+        window.contributionLocation="widgetConfiguration";
         appInsights.trackPageView();
     </script>
-    <script src="dist/VSS.SDK.min.js"></script>
-    <link href="dist/contributions.css" rel="stylesheet" />
+    <script src="../dist/VSS.SDK.min.js"></script>
+    <link href="../dist/contributions.css" rel="stylesheet" />
 </head>
 <body class="contributions-body">
-    <div class="feedback">
-        <a 
-            href="https://marketplace.visualstudio.com/items?itemName=ottostreifel.contributions"
-            target="_blank"
-        >Review</a> | <a
-            href="https://github.com/ostreifel/vsts-contributions/issues"
-            target="_blank"
-        >Report an Issue</a>
-    </div>
     <div class="filter-container"></div>
-    <div class="graph-container"></div>
-    <div class="time-window-container"></div>
     <script type="text/javascript">
         // Initialize framework 
         VSS.init({
@@ -40,7 +29,7 @@
         });
         
         // Load main entry point for extension
-        VSS.require(["dist/contributions"], function () {
+        VSS.require(["../dist/contributionsWidget"], function () {
             // Loading succeeded
             VSS.notifyLoadSucceeded();
         });
