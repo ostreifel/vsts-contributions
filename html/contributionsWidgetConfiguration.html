@@ -18,7 +18,7 @@
     <script src="../dist/VSS.SDK.min.js"></script>
     <link href="../dist/contributions.css" rel="stylesheet" />
 </head>
-<body class="contributions-body">
+<body class="contributions-body widget-configuration">
     <div class="filter-container"></div>
     <script type="text/javascript">
         // Initialize framework 
@@ -29,7 +29,7 @@
         });
         
         // Load main entry point for extension
-        VSS.require(["../dist/contributionsWidget"], function () {
+        VSS.require(["../dist/contributionsWidgetConfiguration"], function () {
             // Loading succeeded
             VSS.notifyLoadSucceeded();
         });

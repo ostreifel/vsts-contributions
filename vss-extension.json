@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.1.27",
+    "version": "1.1.31",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
@@ -104,7 +104,7 @@
             "properties": {
                 "name": "Contribution Filters",
                 "description": "Which criteria to use when counting contributions",
-                "uri": "html/contributionWidgetConfiguration.html"
+                "uri": "html/contributionsWidgetConfiguration.html"
             }
         }
     ]

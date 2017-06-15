@@ -2,10 +2,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Callout } from "OfficeFabric/components/Callout";
 import { getContributions } from "../data/provider";
-import { IUserContributions, UserContribution, IContributionFilter } from "../data/contracts";
+import { IUserContributions, UserContribution, IContributionFilter, filterToIProperties } from "../data/contracts";
 import { toDateString, toCountString } from "./messageFormatting";
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
-import { trackEvent, IProperties } from "../events";
+import { trackEvent } from "../events";
 import { Timings } from "../timings";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
@@ -156,17 +156,6 @@ class Graph extends React.Component<{
             {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
         </div>;
     }
-}
-
-
-function filterToIProperties(filter: IContributionFilter): IProperties {
-    const properties: IProperties = {};
-    for (let providerKey in filter.enabledProviders) {
-        properties[providerKey] = String(filter.enabledProviders[providerKey]);
-    }
-    properties["selectedDate"] = String(!!filter.selectedDate);
-    properties["allProjects"] = String(!!filter.allProjects);
-    return properties;
 }
 
 export type TileSize = "small-tiles" | "medium-tiles";

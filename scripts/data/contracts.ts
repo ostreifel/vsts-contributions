@@ -1,6 +1,7 @@
 import { GitCommitRef, GitRepository, GitPullRequest } from "TFS/VersionControl/Contracts";
 import { WorkItem } from "TFS/WorkItemTracking/Contracts";
 import { IIdentity } from "../controls/IdentityPicker";
+import { IProperties } from "../events";
 
 export type ContributionName = keyof IEnabledProviders;
 
@@ -23,6 +24,17 @@ export interface IContributionFilter {
     allProjects: boolean;
     selectedDate?: Date;
     enabledProviders: IEnabledProviders;
+}
+
+
+export function filterToIProperties(filter: IContributionFilter): IProperties {
+    const properties: IProperties = {};
+    for (let providerKey in filter.enabledProviders) {
+        properties[providerKey] = String(filter.enabledProviders[providerKey]);
+    }
+    properties["selectedDate"] = String(!!filter.selectedDate);
+    properties["allProjects"] = String(!!filter.allProjects);
+    return properties;
 }
 
 export interface IUserContributions {
