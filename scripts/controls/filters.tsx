@@ -3,15 +3,17 @@ import * as ReactDOM from "react-dom";
 import { CollapsibleHeader } from "./CollapsibleHeader";
 import { Toggle } from "OfficeFabric/components/toggle";
 import { IdentityPicker } from "./IdentityPicker";
-import { defaultFilter, IContributionFilter } from "../filter";
+import { defaultFilter, IContributionFilter, deepEqual } from "../filter";
+
+interface IFiltersProps {
+    onChanged: (filter: IContributionFilter) => void;
+    initialFilter: IContributionFilter;
+    collapsible?: boolean;
+}
 
 let filters: Filters;
 class Filters extends React.Component<
-  {
-    onChanged: (filter: IContributionFilter) => void;
-    initialFilter?: IContributionFilter;
-    collapsible?: boolean;
-  },
+  IFiltersProps,
   IContributionFilter
 > {
   constructor() {
@@ -34,13 +36,13 @@ class Filters extends React.Component<
             <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed pull requests"} onChanged={checked => {
                 this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, ClosePullRequest: checked } });
             }} />
-            <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Created work items"} onChanged={checked => {
+            <Toggle defaultChecked={this.state.enabledProviders.CreateWorkItem} label={"Created work items"} onChanged={checked => {
                 this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CreateWorkItem: checked } });
             }} />
-            <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Resolved work items"} onChanged={checked => {
+            <Toggle defaultChecked={this.state.enabledProviders.ResolveWorkItem} label={"Resolved work items"} onChanged={checked => {
                 this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, ResolveWorkItem: checked } });
             }} />
-            <Toggle defaultChecked={this.state.enabledProviders.ClosePullRequest} label={"Closed work items"} onChanged={checked => {
+            <Toggle defaultChecked={this.state.enabledProviders.CloseWorkItem} label={"Closed work items"} onChanged={checked => {
                 this.setState({ ...this.state, enabledProviders: { ...this.state.enabledProviders, CloseWorkItem: checked } });
             }} />
         </div>;
@@ -66,12 +68,15 @@ class Filters extends React.Component<
     );
   }
   componentWillMount() {
-    if (this.props.initialFilter) {
-        this.setState(this.props.initialFilter);
-    }
+      this.setState(this.props.initialFilter);
+  }
+  componentWillUpdate(newProps:IFiltersProps) {
+      if (!deepEqual(this.props.initialFilter, newProps.initialFilter)) {
+          this.setState(newProps.initialFilter)
+      }
   }
   componentDidMount() {
-    this.props.onChanged(this.state);
+    // this.props.onChanged(this.state);
   }
   componentDidUpdate() {
     this.props.onChanged(this.state);
@@ -89,12 +94,13 @@ export function getState() {
 export function renderFilters(
   onChanged: (filter: IContributionFilter) => void,
   initialFilter: IContributionFilter = defaultFilter,
-  collapsible: boolean = true
+  collapsible: boolean = true,
+  callback?: () => void,
 ) {
   const graphParent = $(".filter-container")[0];
   ReactDOM.render(
     <Filters onChanged={onChanged} initialFilter={initialFilter} collapsible={collapsible} />,
     graphParent,
-    () => VSS.resize()
+    callback
   );
 }

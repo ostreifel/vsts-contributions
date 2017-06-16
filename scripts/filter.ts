@@ -17,6 +17,14 @@ export interface IContributionFilter {
     enabledProviders: IEnabledProviders;
 }
 
+export function deepEqual(x, y): boolean {
+  return (x && y && typeof x === 'object' && typeof y === 'object') ?
+    (Object.keys(x).length === Object.keys(y).length) &&
+      Object.keys(x).reduce(function(isEqual, key) {
+        return isEqual && deepEqual(x[key], y[key]);
+      }, true) : (x === y);
+}
+
 export function filterToIProperties(filter: IContributionFilter): IProperties {
     const properties: IProperties = {};
     for (let providerKey in filter.enabledProviders) {
