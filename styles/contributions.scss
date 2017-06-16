@@ -73,34 +73,44 @@ body.contributions-body {
             }
             .graph-spinner {
                 position: relative;
+            }
+        }
+        .year.medium-tiles {
+            .graph-spinner {
                 left: -482px;
                 top: 40px;
             }
+            .week .day-container {
+                width: $medium-tiles + 2;
+                height: $medium-tiles + 2;
+                .day {
+                    width: $medium-tiles;
+                    height: $medium-tiles;
+                }
+                .day-filter {
+                    width: $medium-tiles;
+                    height: $medium-tiles;
+                    top: -  $medium-tiles - 1;
+                }
+            }
         }
-        .year.medium-tiles .week .day-container {
-            width: $medium-tiles + 2;
-            height: $medium-tiles + 2;
-            .day {
-                width: $medium-tiles;
-                height: $medium-tiles;
+        .year.small-tiles {
+            .graph-spinner {
+                left: -320px;
+                top: 30px;
             }
-            .day-filter {
-                width: $medium-tiles;
-                height: $medium-tiles;
-                top: -  $medium-tiles - 1;
-            }
-        }
-        .year.small-tiles .week .day-container {
-            width: $small-tiles + 2;
-            height: $small-tiles + 2;
-            .day {
-                width: $small-tiles;
-                height: $small-tiles;
-            }
-            .day-filter {
-                width: $small-tiles;
-                height: $small-tiles;
-                top: -  $small-tiles - 1;
+            .week .day-container {
+                width: $small-tiles + 2;
+                height: $small-tiles + 2;
+                .day {
+                    width: $small-tiles;
+                    height: $small-tiles;
+                }
+                .day-filter {
+                    width: $small-tiles;
+                    height: $small-tiles;
+                    top: -  $small-tiles - 1;
+                }
             }
         }
     }
