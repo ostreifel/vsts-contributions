@@ -2,7 +2,7 @@ $small-tiles: 10px;
 $medium-tiles: 15px;
 body.contributions-body {
     &.hub {
-        overflow: scroll;
+        overflow: auto;
     }
     &.widget .identity-container {
         margin: 8px 0px;

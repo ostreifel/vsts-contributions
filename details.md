@@ -1,21 +1,29 @@
-View your contributions to the current project  
+View your contributions to the current project by user
+# Contributions Widget
+Add the contributions widget
+
+![add widget](img/chooseWidget.png)
+
+Configure what data to show
+
+![configure widget](img/configureWidget.png)
+
+Click a day to bring up the details for that day in a new tab
+
+![click widget](img/clickWidget.png)
+
+
+# Contributions Details
 
 ![contribution graph](img/contributionGraph.png)
-
-Choose which contributions to display  
-
-![filter options](img/filters.png)
 
 Drill down into the specific contributions  
 
 ![specific contributions](img/timeWindow.png)  
 
-Click a day to view only the contributions that happened on that specific day  
+Click the selected day to show contributions for the whole year.
 
-![click day](img/clickDay.png)  
-![day window](img/dayWindow.png)
-
-Click that same day again to go back to viewing all contributions for the year
+Click that any day on the graph to show only the contribution details for that particular day
 
 ## Planned (in order)
 - Include dashboard widget
