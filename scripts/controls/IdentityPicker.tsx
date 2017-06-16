@@ -38,6 +38,7 @@ export interface IIdentityPickerProps {
     onIdentityChanged?: (identity: IIdentity) => void;
     onIdentityCleared?: () => void;
     readOnly?: boolean;
+    forceValue?: boolean;
 }
 
 const suggestionProps: IBasePickerSuggestionsProps = {
@@ -48,6 +49,7 @@ const suggestionProps: IBasePickerSuggestionsProps = {
 
 export class IdentityPicker extends React.Component<IIdentityPickerProps, {
     identity?: IIdentity,
+    onBlur?: () => void
 }> {
     private autoFocus: boolean;
     constructor() {
@@ -62,7 +64,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
             this.props.identity &&
             this.props.identity.id !== props.identity.id
         ) {
-            this.setState({...this.state, identity: props.identity})
+            this.setState({ ...this.state, identity: props.identity })
         }
     }
     componentDidUpdate() {
@@ -77,7 +79,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
             }}
         >
             {this.state.identity ?
-                <div className={`resolved-identity`} style={{ display: "flex"}}>
+                <div className={`resolved-identity`} style={{ display: "flex" }}>
                     <Persona
                         primaryText={this.state.identity.displayName}
                         secondaryText={this.state.identity.uniqueName}
@@ -95,7 +97,12 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                                         this.props.onIdentityCleared();
                                     }
                                     this.autoFocus = true;
-                                    this.setState({ ...this.state, identity: undefined });
+                                    const identity = this.state.identity;
+                                    this.setState({ ...this.state, identity: undefined, onBlur: () => {
+                                        if (this.props.forceValue) {
+                                            this.setState({ ...this.state, identity });
+                                        }
+                                    } });
                                 }}
                             />
                     }
@@ -118,6 +125,11 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     inputProps={{
                         placeholder: this.props.placeholder,
                         readOnly: this.props.readOnly,
+                        onBlur: () => {
+                            if (this.state.onBlur) {
+                                this.state.onBlur();
+                            }
+                        }
                     }}
                     ref={(ref) => ref && this.autoFocus && ref.focus()}
                     key={'normal'}

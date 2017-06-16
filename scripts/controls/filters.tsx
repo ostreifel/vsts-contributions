@@ -52,6 +52,7 @@ class Filters extends React.Component<
           onIdentityChanged={identity => {
             this.updateFilter({ ...filter, identity });
           }}
+          forceValue={true}
           width={400}
         />
         {this.props.collapsible ?
