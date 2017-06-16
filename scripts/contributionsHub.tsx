@@ -7,16 +7,24 @@ import { defaultFilter, IContributionFilter } from "./filter";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 
 VSS.getService(VSS.ServiceIds.Navigation).then(function(navigationService: HostNavigationService) {
+  function parseHash(hash: string): IContributionFilter {
+    if (!hash) {
+      return defaultFilter;
+    }
+    const filter: IContributionFilter = JSON.parse(decodeURI(hash));
+    // Json doesn't understand dates -- convert the date fields back to dates
+    if (filter.selectedDate) {
+      filter.selectedDate = new Date(filter.selectedDate);
+    }
+    return filter;
+  }
   function updateHash(filter: IContributionFilter) {
       const hash = encodeURI(JSON.stringify(filter));
       navigationService.setHash(hash);
   }
 
   function updateForHash(hash: string) {
-    if (!hash) {
-      updateHash(defaultFilter);
-    }
-    const filter = JSON.parse(decodeURI(hash));
+    const filter = parseHash(hash);
     renderFilters(updateHash, filter, true);
     renderGraph(filter, updateSelectedDate);
     renderTimeWindow(filter);
