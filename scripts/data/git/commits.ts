@@ -6,11 +6,11 @@ import { repositories } from "./repositories";
 import { yearStart } from "../dates";
 import {
     CommitContribution,
-    IContributionFilter,
     IContributionProvider,
     ContributionName,
 } from "../contracts";
 import { callApi } from "../RestCall";
+import { IContributionFilter } from "../../filter";
 
 const commits: {
     [userName: string]: {

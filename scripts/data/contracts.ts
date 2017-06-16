@@ -1,40 +1,12 @@
 import { GitCommitRef, GitRepository, GitPullRequest } from "TFS/VersionControl/Contracts";
 import { WorkItem } from "TFS/WorkItemTracking/Contracts";
-import { IIdentity } from "../controls/IdentityPicker";
-import { IProperties } from "../events";
+import { IContributionFilter, IEnabledProviders } from "../filter";
 
 export type ContributionName = keyof IEnabledProviders;
 
 export interface IContributionProvider {
     readonly name: ContributionName;
     getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]>;
-}
-
-export interface IEnabledProviders {
-    Commit: boolean;
-    CreatePullRequest: boolean;
-    ClosePullRequest: boolean;
-    CreateWorkItem: boolean;
-    CloseWorkItem: boolean;
-    ResolveWorkItem: boolean;
-}
-
-export interface IContributionFilter {
-    identity: IIdentity;
-    allProjects: boolean;
-    selectedDate?: Date;
-    enabledProviders: IEnabledProviders;
-}
-
-
-export function filterToIProperties(filter: IContributionFilter): IProperties {
-    const properties: IProperties = {};
-    for (let providerKey in filter.enabledProviders) {
-        properties[providerKey] = String(filter.enabledProviders[providerKey]);
-    }
-    properties["selectedDate"] = String(!!filter.selectedDate);
-    properties["allProjects"] = String(!!filter.allProjects);
-    return properties;
 }
 
 export interface IUserContributions {

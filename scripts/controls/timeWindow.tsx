@@ -6,7 +6,6 @@ import {
     IUserContributions,
     UserContribution,
     CommitContribution,
-    IContributionFilter,
     PullRequestContribution,
     CreatePullRequestContribution,
     ClosePullRequestContribution,
@@ -16,6 +15,7 @@ import {
     CloseWorkItemContribution,
 } from "../data/contracts";
 import { CollapsibleHeader } from "./CollapsibleHeader";
+import { IContributionFilter } from "../filter";
 
 
 class ContributionItem extends React.Component<{

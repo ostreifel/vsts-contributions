@@ -8,9 +8,8 @@ import {
 import * as Q from "q";
 import { renderFilters } from "./controls/filters";
 import { WidgetStatusHelper, WidgetEvent, WidgetConfigurationSave } from "TFS/Dashboards/WidgetHelpers";
-import { defaultFilter } from "./defaultFilter";
-import { IContributionFilter, filterToIProperties } from "./data/contracts";
 import { trackEvent } from "./events";
+import { IContributionFilter, filterToIProperties, defaultFilter } from "./filter";
 
 class ContributionsConfiguration implements IWidgetConfiguration {
     private context: IWidgetConfigurationContext;

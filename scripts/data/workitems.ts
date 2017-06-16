@@ -1,7 +1,6 @@
 import {
     IContributionProvider,
     ContributionName,
-    IContributionFilter,
     UserContribution,
     CreateWorkItemContribution,
     ResolveWorkItemContribution,
@@ -12,6 +11,7 @@ import { WorkItem, WorkItemQueryResult } from "TFS/WorkItemTracking/Contracts";
 import { getClient } from "TFS/WorkItemTracking/RestClient";
 import { yearStart } from "./dates";
 import { CachedValue } from "./CachedValue";
+import { IContributionFilter } from "../filter"
 
 const baseQuery = `SELECT
         [System.Id],

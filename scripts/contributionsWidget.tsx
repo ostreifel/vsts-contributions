@@ -2,8 +2,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { renderGraph } from "./controls/graph";
-import { defaultFilter } from "./defaultFilter";
-import { IContributionFilter } from "./data/contracts";
+import { defaultFilter, IContributionFilter } from "./filter";
 import { WidgetStatusHelper } from "TFS/Dashboards/WidgetHelpers";
 import {
   IWidget,

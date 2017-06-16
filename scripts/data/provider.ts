@@ -2,7 +2,6 @@ import * as Q from "q";
 import {
     UserContribution,
     IUserContributions,
-    IContributionFilter,
     IContributionProvider,
 } from "./contracts";
 import { CommitContributionProvider } from "./git/commits";
@@ -12,6 +11,7 @@ import {
     ResolveWorkItemContributionProvider,
     CloseWorkItemContributionProvider,
 } from "./workitems";
+import { IContributionFilter } from "../filter";
 
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
     for (const contribution of arr) {

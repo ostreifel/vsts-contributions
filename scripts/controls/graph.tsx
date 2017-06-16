@@ -2,11 +2,12 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Callout } from "OfficeFabric/components/Callout";
 import { getContributions } from "../data/provider";
-import { IUserContributions, UserContribution, IContributionFilter, filterToIProperties } from "../data/contracts";
+import { IUserContributions, UserContribution } from "../data/contracts";
 import { toDateString, toCountString } from "./messageFormatting";
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
 import { trackEvent } from "../events";
 import { Timings } from "../timings";
+import { IContributionFilter, filterToIProperties } from "../filter"
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
     const counts: number[] = Object.keys(contributions).map(day => contributions[day].length);

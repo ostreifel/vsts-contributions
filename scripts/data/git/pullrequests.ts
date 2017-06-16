@@ -1,5 +1,4 @@
 import {
-    IContributionFilter,
     ClosePullRequestContribution,
     CreatePullRequestContribution,
     IContributionProvider,
@@ -11,6 +10,7 @@ import { GitPullRequestSearchCriteria, PullRequestStatus, GitPullRequest } from 
 import { getClient } from "TFS/VersionControl/GitRestClient";
 import * as Q from "q";
 import { CachedValue } from "../CachedValue";
+import { IContributionFilter } from "../../filter";
 
 export const createdPrs: {
     [username: string]: {

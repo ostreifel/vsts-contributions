@@ -1,10 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IContributionFilter } from "../data/contracts";
 import { CollapsibleHeader } from "./CollapsibleHeader";
 import { Toggle } from "OfficeFabric/components/toggle";
 import { IdentityPicker } from "./IdentityPicker";
-import { defaultFilter } from "../defaultFilter";
+import { defaultFilter, IContributionFilter } from "../filter";
 
 let filters: Filters;
 class Filters extends React.Component<
