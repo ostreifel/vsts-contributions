@@ -1,14 +1,14 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
         "vso.work_write",
         "vso.code"
     ],
-    "description": "View account contributions.",
+    "description": "View account contributions by user.",
     "publisher": "ottostreifel",
     "icons": {
         "default": "img/logo.png"

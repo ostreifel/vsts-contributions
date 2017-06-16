@@ -1,4 +1,3 @@
-View your contributions to the current project by user
 # Contributions Widget
 Add the contributions widget
 
