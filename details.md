@@ -3,7 +3,7 @@ Add the contributions widget
 
 ![add widget](img/chooseWidget.png)
 
-Configure what data to show
+Configure which contribution types to show
 
 ![configure widget](img/configureWidget.png)
 
