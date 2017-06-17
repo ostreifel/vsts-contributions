@@ -8,6 +8,7 @@ export interface IEnabledProviders {
     CreateWorkItem: boolean;
     CloseWorkItem: boolean;
     ResolveWorkItem: boolean;
+    Changeset: boolean;
 }
 
 export interface IContributionFilter {
@@ -50,6 +51,7 @@ export const defaultFilter: IContributionFilter = {
     ClosePullRequest: true,
     CloseWorkItem: true,
     CreateWorkItem: true,
-    ResolveWorkItem: true
+    ResolveWorkItem: true,
+    Changeset: false,
   }
 };

@@ -6,6 +6,7 @@ import {
 } from "./contracts";
 import { CommitContributionProvider } from "./git/commits";
 import { ClosePullRequestProvider, CreatePullRequestProvider } from "./git/pullrequests";
+import { ChangsetContributionProvider } from "./tfvc/changsets";
 import {
     CreateWorkItemContributionProvider,
     ResolveWorkItemContributionProvider,
@@ -37,6 +38,7 @@ const providers: IContributionProvider[] = [
     new CreateWorkItemContributionProvider(),
     new ResolveWorkItemContributionProvider(),
     new CloseWorkItemContributionProvider(),
+    new ChangsetContributionProvider(),
 ];
 
 export function getContributions(filter: IContributionFilter): Q.IPromise<IUserContributions> {

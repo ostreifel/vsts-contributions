@@ -1,5 +1,6 @@
 import { GitCommitRef, GitRepository, GitPullRequest } from "TFS/VersionControl/Contracts";
 import { WorkItem } from "TFS/WorkItemTracking/Contracts";
+import { TfvcChangesetRef } from "TFS/VersionControl/Contracts";
 import { IContributionFilter, IEnabledProviders } from "../filter";
 
 export type ContributionName = keyof IEnabledProviders;
@@ -65,5 +66,11 @@ export class ResolveWorkItemContribution extends WorkItemContribution {
 export class CloseWorkItemContribution extends WorkItemContribution {
     constructor(wi: WorkItem) {
         super(wi, wi.fields["Microsoft.VSTS.Common.ClosedDate"]);
+    }
+}
+
+export class ChangesetContribution extends UserContribution {
+    constructor(readonly changeset: TfvcChangesetRef) {
+        super(changeset.createdDate);
     }
 }
