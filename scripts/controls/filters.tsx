@@ -44,6 +44,9 @@ class Filters extends React.Component<
             <Toggle checked={filter.enabledProviders.CloseWorkItem} label={"Closed work items"} onChanged={checked => {
                 this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, CloseWorkItem: checked } });
             }} />
+            <Toggle checked={filter.enabledProviders.Changeset} label={"Created changesets"} onChanged={checked => {
+                this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, Changeset: checked } });
+            }} />
         </div>;
     return (
       <div>

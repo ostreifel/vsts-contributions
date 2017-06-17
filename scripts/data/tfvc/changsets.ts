@@ -10,7 +10,7 @@ import * as Q from "q";
 import { CachedValue } from "../CachedValue";
 import { projects } from "./projects";
 
-const changesets: {[user: string]: {[project: string]: CachedValue<any[]>}} = {};
+const changesets: {[user: string]: {[project: string]: CachedValue<TfvcChangesetRef[]>}} = {};
 
 function getChangeSets(username: string, project: string, skip: number = 0): Q.IPromise<TfvcChangesetRef[]> {
     return getClient().getChangesets(project, undefined, skip, 100).then(changesets => {
@@ -18,6 +18,11 @@ function getChangeSets(username: string, project: string, skip: number = 0): Q.I
             return changesets;
         }
         return getChangeSets(username, project, skip + 100).then(moreChangsets => [...changesets, ...moreChangsets]);
+    }, (error: TfsError) => {
+        if (Number(error.status) === 404) {
+            return [];
+        }
+        return Q.reject(error)
     });
 
 }
@@ -32,15 +37,20 @@ export class ChangsetContributionProvider implements IContributionProvider {
             if (!(username in changesets)) {
                 changesets[username] = {}
             }
-            for (const project in projects) {
-                changesets[username][project] = new CachedValue(() => getChangeSets(username, project));
+            for (const project of projects) {
+                if (!(project in changesets[username])) {
+                    changesets[username][project] = new CachedValue(() => getChangeSets(username, project));
+                }
             }
-            return Q.all(projects.map(p => changesets[username][p].getValue())).then(changesetsArr => {
-                const changesets: TfvcChangesetRef[] = [];
+            return Q.all(projects.map(p =>
+                changesets[username][p].getValue().then(
+                    changesets => changesets.map(c => new ChangesetContribution(c, p))
+                ))).then(changesetsArr => {
+                const changesets: ChangesetContribution[] = [];
                 for (const arr of changesetsArr) {
                     changesets.push(...arr);
                 }
-                return changesets.map(c => new ChangesetContribution(c));
+                return changesets;
             });
         });
     }

@@ -70,7 +70,7 @@ export class CloseWorkItemContribution extends WorkItemContribution {
 }
 
 export class ChangesetContribution extends UserContribution {
-    constructor(readonly changeset: TfvcChangesetRef) {
+    constructor(readonly changeset: TfvcChangesetRef, readonly projectName: string) {
         super(changeset.createdDate);
     }
 }

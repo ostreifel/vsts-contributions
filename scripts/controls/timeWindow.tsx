@@ -13,6 +13,7 @@ import {
     CreateWorkItemContribution,
     ResolveWorkItemContribution,
     CloseWorkItemContribution,
+    ChangesetContribution,
 } from "../data/contracts";
 import { CollapsibleHeader } from "./CollapsibleHeader";
 import { IContributionFilter } from "../filter";
@@ -39,6 +40,27 @@ class ContributionItem extends React.Component<{
         </div>;
     }
 
+}
+
+class Changeset extends React.Component<{ changeset: ChangesetContribution, showDay: boolean }, {}> {
+    render() {
+        const { showDay } = this.props;
+        const { changeset, date, projectName } = this.props.changeset;
+
+        // https://ottost.visualstudio.com/Sample%20Project/_versionControl/changeset/37
+        const collectionUri = VSS.getWebContext().collection.uri;
+        const changesetUrl = `${collectionUri}${projectName}/_versionControl/changeset/${changeset.changesetId}`;
+        const repoUrl = `${collectionUri}${projectName}/_versionControl`;
+        return <ContributionItem
+            title={changeset.comment || `Changeset ${changeset.changesetId}`}
+            titleUrl={changesetUrl}
+            location={projectName}
+            locationUrl={repoUrl}
+            date={date}
+            className={"changeset"}
+            showDay={showDay}
+        />;
+    }
 }
 
 class Commit extends React.Component<{ commit: CommitContribution, showDay: boolean }, {}> {
@@ -142,42 +164,56 @@ class WorkItemComponent extends React.Component<{ workItem: WorkItemContribution
 
 class CreateWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const prs: CreateWorkItemContribution[] = [];
+        const workitems: CreateWorkItemContribution[] = [];
         for (const contribution of this.props.allContributions) {
             if (contribution instanceof CreateWorkItemContribution) {
-                prs.push(contribution);
+                workitems.push(contribution);
             }
         }
-        return <Contributions count={prs.length} noun={"Created # work item"}>
-            {prs.map(pr => <WorkItemComponent workItem={pr} showDay={this.props.showDay} />)}
+        return <Contributions count={workitems.length} noun={"Created # work item"}>
+            {workitems.map(wi => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />)}
         </Contributions>;
     }
 }
 
 class ResolveWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const prs: ResolveWorkItemContribution[] = [];
+        const workitems: ResolveWorkItemContribution[] = [];
         for (const contribution of this.props.allContributions) {
             if (contribution instanceof ResolveWorkItemContribution) {
-                prs.push(contribution);
+                workitems.push(contribution);
             }
         }
-        return <Contributions count={prs.length} noun={"Resolved # work item"}>
-            {prs.map(pr => <WorkItemComponent workItem={pr} showDay={this.props.showDay} />)}
+        return <Contributions count={workitems.length} noun={"Resolved # work item"}>
+            {workitems.map(wi => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />)}
         </Contributions>;
     }
 }
 
 class CloseWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const prs: CloseWorkItemContribution[] = [];
+        const changesets: CloseWorkItemContribution[] = [];
         for (const contribution of this.props.allContributions) {
             if (contribution instanceof CloseWorkItemContribution) {
-                prs.push(contribution);
+                changesets.push(contribution);
             }
         }
-        return <Contributions count={prs.length} noun={"Closed # work item"}>
-            {prs.map(pr => <WorkItemComponent workItem={pr} showDay={this.props.showDay} />)}
+        return <Contributions count={changesets.length} noun={"Closed # work item"}>
+            {changesets.map(wi => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />)}
+        </Contributions>;
+    }
+}
+
+class Changesets extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
+    render() {
+        const changesets: ChangesetContribution[] = [];
+        for (const contribution of this.props.allContributions) {
+            if (contribution instanceof ChangesetContribution) {
+                changesets.push(contribution);
+            }
+        }
+        return <Contributions count={changesets.length} noun={"Created # changesets"}>
+            {changesets.map(changeset => <Changeset changeset={changeset} showDay={this.props.showDay} />)}
         </Contributions>;
     }
 }
@@ -202,6 +238,7 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
             <h3>{`${toCountString(contributions.length, "contribution")} ${date ? ` on ${toDateString(date)}` : " for the year"}`}</h3>
             <div>
                 <Commits allContributions={contributions} showDay={showDay} />
+                <Changesets allContributions={contributions} showDay={showDay} />
                 <CreatePullRequests allContributions={contributions} showDay={showDay} />
                 <ClosePullRequests allContributions={contributions} showDay={showDay} />
                 <CreateWorkItems allContributions={contributions} showDay={showDay} />
