@@ -77,9 +77,6 @@ export function updateSelectedDate(date?: Date) {
   const filter: IContributionFilter = { ...filters.props.filter, selectedDate: date };
   filters.updateFilter(filter);
 }
-export function getState() {
-  return filters.state;
-}
 
 export function renderFilters(
   onChanged: (filter: IContributionFilter) => void,
