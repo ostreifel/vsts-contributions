@@ -47,7 +47,6 @@ class Changeset extends React.Component<{ changeset: ChangesetContribution, show
         const { showDay } = this.props;
         const { changeset, date, projectName } = this.props.changeset;
 
-        // https://ottost.visualstudio.com/Sample%20Project/_versionControl/changeset/37
         const collectionUri = VSS.getWebContext().collection.uri;
         const changesetUrl = `${collectionUri}${projectName}/_versionControl/changeset/${changeset.changesetId}`;
         const repoUrl = `${collectionUri}${projectName}/_versionControl`;
@@ -212,7 +211,7 @@ class Changesets extends React.Component<{ allContributions: UserContribution[],
                 changesets.push(contribution);
             }
         }
-        return <Contributions count={changesets.length} noun={"Created # changesets"}>
+        return <Contributions count={changesets.length} noun={"Created # changeset"}>
             {changesets.map(changeset => <Changeset changeset={changeset} showDay={this.props.showDay} />)}
         </Contributions>;
     }

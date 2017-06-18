@@ -28,6 +28,7 @@ Click that any day on the graph to show only the contribution details for that p
 - Validate and release for on premise installations (url formats in links expected to create issues)
 
 ## Version History
+(06/17/2017) v1.3.8 Validate for TFS 2017 Onwards  
 (06/16/2017) v1.3.1 Include tvcs changeset contribution types    
 (06/16/2017) v1.2.1 Dashboard Widget
 (06/14/2017) v1.1.1 Select identity for contributions  

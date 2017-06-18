@@ -6,7 +6,7 @@ import {
     UserContribution,
 } from "../contracts";
 import { repositories } from "./repositories";
-import { GitPullRequestSearchCriteria, PullRequestStatus, GitPullRequest } from "TFS/VersionControl/Contracts";
+import { GitPullRequestSearchCriteria, PullRequestStatus, GitPullRequest, GitRepository } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
 import * as Q from "q";
 import { CachedValue } from "../CachedValue";
@@ -18,17 +18,21 @@ export const createdPrs: {
     }
 } = {};
 
-function getPullRequestsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitPullRequest[]> {
+function getPullRequestsForRepository(username: string, repo: GitRepository, skip = 0): Q.IPromise<GitPullRequest[]> {
     const criteria = {
         creatorId: username,
-        repositoryId: repoId,
+        repositoryId: repo.id,
         status: PullRequestStatus.All,
     } as GitPullRequestSearchCriteria;
-    return getClient().getPullRequests(repoId, criteria, undefined, undefined, skip, 100).then(pullrequests => {
+    return getClient().getPullRequests(repo.id, criteria, undefined, undefined, skip, 100).then(pullrequests => {
+        for (const pr of pullrequests) {
+            // backcompat with older tfs versions
+            pr.repository = repo;
+        }
         if (pullrequests.length < 100) {
             return pullrequests;
         }
-        return getPullRequestsForRepository(username, repoId, skip + 100).then(morePullreqeusts => [...pullrequests, ...morePullreqeusts]);
+        return getPullRequestsForRepository(username, repo, skip + 100).then(morePullreqeusts => [...pullrequests, ...morePullreqeusts]);
     });
 }
 
@@ -45,7 +49,7 @@ export function getPullRequests(filter: IContributionFilter): Q.IPromise<GitPull
                 createdPrs[username] = {};
             }
             if (!(repoId in createdPrs[username])) {
-                createdPrs[username][repoId] = new CachedValue(() => getPullRequestsForRepository(username, repoId));
+                createdPrs[username][repoId] = new CachedValue(() => getPullRequestsForRepository(username, r));
             }
             return createdPrs[username][repoId].getValue();
         })).then(pullrequestsArr => {

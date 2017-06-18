@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.3.5",
+    "version": "1.3.8",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
@@ -16,6 +16,10 @@
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services.Cloud"
+        },
+        {
+            "id": "Microsoft.TeamFoundation.Server",
+            "version": "[15.0,)"
         }
     ],
     "tags": [
