@@ -12,6 +12,7 @@ import { getClient } from "TFS/WorkItemTracking/RestClient";
 import { yearStart } from "./dates";
 import { CachedValue } from "./CachedValue";
 import { IContributionFilter } from "../filter"
+import { format } from "VSS/Utils/Date";
 
 const baseQuery = `SELECT
         [System.Id],
@@ -20,7 +21,7 @@ const baseQuery = `SELECT
 FROM workitems
 WHERE
         #userfield = '#user'
-        and #datefield >= "#date"
+        and #datefield >= '#date'
 `;
 const filterProjectClause = ' and [System.TeamProject] = @project';
 
@@ -30,7 +31,7 @@ function getStateQuery(fieldPrefix: string, username: string, allProjects: boole
         .replace("#userfield", `${fieldPrefix}By`)
         .replace("#datefield", `${fieldPrefix}Date`)
         .replace("#user", username)
-        .replace("#date", yearStart.toLocaleDateString())
+        .replace("#date", format(yearStart, "yyyy-MM-dd"))
         .concat(allProjects ? "" : filterProjectClause);
 }
 
