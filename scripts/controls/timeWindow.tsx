@@ -101,7 +101,7 @@ class PullRequest extends React.Component<{ pullrequest: PullRequestContribution
         const uri = VSS.getWebContext().host.uri;
         const project = repository.project.name;
         const prUrl = `${uri}${project}/_git/${repository.name}/pullrequest/${pullrequest.pullRequestId}`;
-        const repoUrl = `${uri}_git/${repository.name}`;
+        const repoUrl = `${uri}${project}/_git/${repository.name}`;
         return <ContributionItem
             title={title}
             titleUrl={prUrl}
