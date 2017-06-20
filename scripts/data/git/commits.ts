@@ -1,5 +1,4 @@
 import { GitCommitRef } from "TFS/VersionControl/Contracts";
-import { format } from "VSS/Utils/Date"
 import * as Q from "q";
 import { CachedValue } from "../CachedValue";
 import { repositories } from "./repositories";
@@ -12,19 +11,20 @@ import {
 import { callApi } from "../RestCall";
 import { IContributionFilter } from "../../filter";
 
+
 const commits: {
     [userName: string]: {
         [repositoryId: string]: CachedValue<CommitContribution[]>
     }
 } = {};
 
-function getCommits(repoId: string, fromDate: string, skip: number, top: number, author: string): Q.IPromise<GitCommitRef[]> {
+function getCommits(repoId: string, fromDate: Date, skip: number, top: number, author: string): Q.IPromise<GitCommitRef[]> {
     const webContext = VSS.getWebContext();
     const commitsUrl = webContext.collection.uri +
         "_apis/git/repositories/" +
          repoId +
           "/Commits?api-version=1.0" +
-          "&fromDate=" + encodeURI(fromDate) +
+          "&fromDate=" + encodeURI(fromDate.toJSON()) +
           "&author=" + encodeURI(author) +
           "&$skip=" + skip +
           "&$top=" + top;
@@ -35,8 +35,7 @@ function getCommits(repoId: string, fromDate: string, skip: number, top: number,
 }
 
 function commitsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitCommitRef[]> {
-    const fromDate = format(yearStart, "MM/dd/yyyy HH:mm:ss");
-    return getCommits(repoId, fromDate, skip, 10000, username).then(commits => {
+    return getCommits(repoId, yearStart, skip, 10000, username).then(commits => {
         if (commits.length < 10000) {
             return commits;
         } else {
