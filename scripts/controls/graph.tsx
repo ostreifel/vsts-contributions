@@ -171,8 +171,10 @@ export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: D
         loading={true}
         toggleSelect={toggleSelect}
         className={tileSize}
-    />, graphParent);
-    timings.measure("drawSpinner");
+    />, graphParent,
+    () => {
+        timings.measure("drawSpinner");
+    });
     getContributions(filter).then(contributions => {
         timings.measure("getContributions");
         previousContributons = contributions;
@@ -182,8 +184,9 @@ export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: D
             loading={false}
             className={tileSize}
             toggleSelect={toggleSelect}
-        />, graphParent);
-        timings.measure("drawGraph");
-        trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
+        />, graphParent, () => {
+            timings.measure("drawGraph");
+            trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
+        });
     })
 }

@@ -149,8 +149,9 @@ class WorkItemComponent extends React.Component<{ workItem: WorkItemContribution
         const uri = VSS.getWebContext().host.uri;
         const project = wi.fields["System.TeamProject"];
         const wiUrl = `${uri}${project}/_workitems?id=${wi.id}&_a=edit&fullScreen=true`;
+        const title = wi.fields["System.Title"] || `${wi.fields["System.WorkItemType"]} ${wi.id}`;
         return <ContributionItem
-            title={wi.fields["System.Title"]}
+            title={title}
             titleUrl={wiUrl}
             location={project}
             locationUrl={`${uri}${project}`}
