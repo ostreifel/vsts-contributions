@@ -8,7 +8,7 @@ import {
 } from "../contracts";
 import * as Q from "q";
 import { CachedValue } from "../CachedValue";
-import { projects } from "./projects";
+import { projects } from "../projects";
 
 const changesets: {[user: string]: {[project: string]: CachedValue<TfvcChangesetRef[]>}} = {};
 

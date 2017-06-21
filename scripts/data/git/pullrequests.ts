@@ -11,47 +11,60 @@ import { getClient } from "TFS/VersionControl/GitRestClient";
 import * as Q from "q";
 import { CachedValue } from "../CachedValue";
 import { IContributionFilter } from "../../filter";
+import { projects } from "../projects"
 
 export const createdPrs: {
     [username: string]: {
-        [repoId: string]: CachedValue<GitPullRequest[]>
+        [project: string]: CachedValue<GitPullRequest[]>
     }
 } = {};
 
-function getPullRequestsForRepository(username: string, repo: GitRepository, skip = 0): Q.IPromise<GitPullRequest[]> {
+function toRepoMap(repos: GitRepository[]): {[id: string]: GitRepository} {
+    const map = {};
+    for (const repo of repos) {
+        map[repo.id] = repo;
+    }
+    return map;
+}
+
+function getPullRequestsForProject(username: string, project: string, skip = 0): Q.IPromise<GitPullRequest[]> {
     const criteria = {
         creatorId: username,
-        repositoryId: repo.id,
         status: PullRequestStatus.All,
     } as GitPullRequestSearchCriteria;
-    return getClient().getPullRequests(repo.id, criteria, undefined, undefined, skip, 100).then(pullrequests => {
+    return Q.all([
+        // Get batches of 300 at a time to reduce the number of roundtrips
+        getClient().getPullRequestsByProject(project, criteria, undefined, skip, 100),
+        repositories.getValue()
+    ]).then(([pullrequests, repositories]) => {
+        const repoMap = toRepoMap(repositories);
         for (const pr of pullrequests) {
-            // backcompat with older tfs versions
-            pr.repository = repo;
+            // backcompat with older tfs versions that do not have the project included in the repo reference
+            pr.repository = repoMap[pr.repository.id];
         }
         if (pullrequests.length < 100) {
-            return pullrequests;
+            return pullrequests
         }
-        return getPullRequestsForRepository(username, repo, skip + 100).then(morePullreqeusts => [...pullrequests, ...morePullreqeusts]);
+        return getPullRequestsForProject(username, project, skip + 100).then(morePullrequests =>
+            [...pullrequests, ...morePullrequests]);
+
     });
 }
 
 export function getPullRequests(filter: IContributionFilter): Q.IPromise<GitPullRequest[]> {
-    return repositories.getValue().then(repositories => {
-        const projId = VSS.getWebContext().project.id;
-        if (!filter.allProjects) {
-            repositories = repositories.filter(r => r.project.id === projId);
-        }
+    const targetProjects = filter.allProjects ?
+        projects.getValue().then(projs => projs.map(p => p.name)) :
+        Q([VSS.getWebContext().project.name]);
+    return targetProjects.then(projects => {
         const username = filter.identity.id;
-        return Q.all(repositories.map(r => {
-            const repoId = r.id;
+        return Q.all(projects.map(proj => {
             if (!(username in createdPrs)) {
                 createdPrs[username] = {};
             }
-            if (!(repoId in createdPrs[username])) {
-                createdPrs[username][repoId] = new CachedValue(() => getPullRequestsForRepository(username, r));
+            if (!(proj in createdPrs[username])) {
+                createdPrs[username][proj] = new CachedValue(() => getPullRequestsForProject(username, proj));
             }
-            return createdPrs[username][repoId].getValue();
+            return createdPrs[username][proj].getValue();
         })).then(pullrequestsArr => {
             const pullrequests: GitPullRequest[] = [];
             for (const arr of pullrequestsArr) {
