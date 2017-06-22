@@ -80,7 +80,7 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                     onResolveSuggestions={this.props.resolveSuggestions}
                     pickerSuggestionsProps={{
                         searchingText: this.props.searchingText || "Searching...",
-                        loadingText: this.props.loadingText || "Loading..."
+                        loadingText: this.props.loadingText || "Loading...",
                         noResultsFoundText: this.props.noResultsFoundText || "No results found",
                     }}
                     className={`completion-dropdown-selector`}
