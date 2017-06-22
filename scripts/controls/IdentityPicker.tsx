@@ -2,27 +2,7 @@ import * as React from "react";
 import { Persona, IPersonaProps } from "OfficeFabric/components/Persona"
 import { IconButton } from "OfficeFabric/components/Button"
 import { NormalPeoplePicker, IBasePickerSuggestionsProps } from "OfficeFabric/components/pickers";
-import { getIdentities } from "../data/identities"
-import { CachedValue } from "../data/CachedValue";
-
-function getPersonas() {
-    return getIdentities().then(identities => {
-        const personas: IPersonaProps[] = [];
-        for (const id in identities) {
-            const identity = identities[id];
-            personas.push({
-                primaryText: identity.displayName,
-                secondaryText: identity.uniqueName,
-                imageUrl: identity.imageUrl,
-                id: identity.id
-            });
-        }
-        return personas;
-    });
-}
-
-const personas = new CachedValue(getPersonas);
-
+import { searchIdentities } from "../data/identities"
 
 export interface IIdentity {
     displayName: string;
@@ -100,7 +80,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     }
                 </div> :
                 <NormalPeoplePicker
-                    onResolveSuggestions={(filter) => this._getIdentities(filter)}
+                    onResolveSuggestions={searchIdentities}
                     getTextFromItem={(persona: IPersonaProps) => persona.primaryText || "Unkown Identity"}
                     pickerSuggestionsProps={suggestionProps}
                     className={`ms-PeoplePicker identity-selector`}
@@ -139,12 +119,5 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
             displayName: persona.primaryText,
             imageUrl: persona.imageUrl
         };
-    }
-    private _getIdentities(filter: string) {
-        const lowerFilter = filter.toLocaleLowerCase();
-        function match(str?: string) {
-            return str && str.toLocaleLowerCase().lastIndexOf(lowerFilter, 0) >= 0;
-        }
-        return personas.getValue().then(personas => personas.filter(p => match(p.primaryText) || match(p.secondaryText)));
     }
 }

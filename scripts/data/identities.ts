@@ -3,6 +3,7 @@ import { getClient } from "TFS/Core/RestClient";
 import { WebApiTeam } from "TFS/Core/Contracts";
 import { CachedValue } from "./CachedValue";
 import * as Q from "q";
+import { IPersonaProps } from "OfficeFabric/components/Persona"
 
 export interface IIdentityMap {
     [id: string]: IdentityRef;
@@ -84,4 +85,31 @@ export function getIdentities(type: IdentityTypes = IdentityTypes.Users): Q.IPro
                 return filterIdentities(identities, ident => ident.isContainer);
         }
     })
+}
+
+function getPersonas() {
+    return getIdentities().then(identities => {
+        const personas: IPersonaProps[] = [];
+        for (const id in identities) {
+            const identity = identities[id];
+            personas.push({
+                primaryText: identity.displayName,
+                secondaryText: identity.uniqueName,
+                imageUrl: identity.imageUrl,
+                id: identity.id
+            });
+        }
+        return personas;
+    });
+}
+
+const personas = new CachedValue(getPersonas);
+
+
+export function searchIdentities(filter: string): IPromise<IPersonaProps[]> {
+    const lowerFilter = filter.toLocaleLowerCase();
+    function match(str?: string) {
+        return str && str.toLocaleLowerCase().lastIndexOf(lowerFilter, 0) >= 0;
+    }
+    return personas.getValue().then(personas => personas.filter(p => match(p.primaryText) || match(p.secondaryText)));
 }
