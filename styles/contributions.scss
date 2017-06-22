@@ -4,10 +4,7 @@ body.contributions-body {
     &.hub {
         overflow: auto;
     }
-    &.widget .identity-container {
-        margin: 8px 0px;
-    }
-    padding: 0px 10px;
+    padding: 8px;
     .feedback {
         float: right;
     }
@@ -25,9 +22,13 @@ body.contributions-body {
     .filter-container {
         .filter-header {
             .filters {
-                display: flex;
+                display: table;
                 > * {
-                    margin-right: 10px;
+                    display: table-row;
+                    > * {
+                        display: table-cell;
+                        padding: 3px 5px;
+                    }
                 }
             }
         }
