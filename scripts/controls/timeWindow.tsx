@@ -261,14 +261,18 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
     }
 }
 
+let renderNum = 0;
 export function renderTimeWindow(filter: IContributionFilter) {
     const graphParent = $(".time-window-container")[0];
+    const currentRender = ++renderNum;
     getContributions(filter).then(contributions => {
-        const date = filter.selectedDate;
-        if (date) {
-            const end = new Date(date);
-            end.setDate(end.getDate() + 1);
+        if (currentRender === renderNum) {
+            const date = filter.selectedDate;
+            if (date) {
+                const end = new Date(date);
+                end.setDate(end.getDate() + 1);
+            }
+            ReactDOM.render(<TimeWindow date={date} allContributions={contributions} />, graphParent);
         }
-        ReactDOM.render(<TimeWindow date={date} allContributions={contributions} />, graphParent);
     });
 }

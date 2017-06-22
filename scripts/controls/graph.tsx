@@ -162,6 +162,7 @@ class Graph extends React.Component<{
 export type TileSize = "small-tiles" | "medium-tiles";
 
 let previousContributons: IUserContributions = {};
+let renderNum = 0;
 export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: Date) => void, tileSize: TileSize = "medium-tiles") {
     const graphParent = $(".graph-container")[0];
     const timings = new Timings();
@@ -175,18 +176,21 @@ export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: D
     () => {
         timings.measure("drawSpinner");
     });
+    const currentRender = ++renderNum;
     getContributions(filter).then(contributions => {
-        timings.measure("getContributions");
-        previousContributons = contributions;
-        ReactDOM.render(<Graph
-            selectedDate={filter.selectedDate}
-            contributions={contributions}
-            loading={false}
-            className={tileSize}
-            toggleSelect={toggleSelect}
-        />, graphParent, () => {
-            timings.measure("drawGraph");
-            trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
-        });
+        if (currentRender === renderNum) {
+            timings.measure("getContributions");
+            previousContributons = contributions;
+            ReactDOM.render(<Graph
+                selectedDate={filter.selectedDate}
+                contributions={contributions}
+                loading={false}
+                className={tileSize}
+                toggleSelect={toggleSelect}
+            />, graphParent, () => {
+                timings.measure("drawGraph");
+                trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
+            });
+        }
     })
 }
