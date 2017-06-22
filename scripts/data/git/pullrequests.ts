@@ -26,13 +26,14 @@ function toRepoMap(repos: GitRepository[]): {[id: string]: GitRepository} {
     }
     return map;
 }
+const batchSize = 101;
 function getPullRequestsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitPullRequest[]> {
     const criteria = {
         creatorId: username,
         status: PullRequestStatus.All,
     } as GitPullRequestSearchCriteria;
     return Q.all([
-        getClient().getPullRequests(repoId, criteria, undefined, 0, skip, 100),
+        getClient().getPullRequests(repoId, criteria, undefined, 0, skip, batchSize),
         repositories.getValue()
     ]).then(([pullrequests, repositories]) => {
         const repoMap = toRepoMap(repositories);
@@ -40,10 +41,10 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
             // backcompat with older tfs versions that do not have the project included in the repo reference
             pr.repository = repoMap[pr.repository.id];
         }
-        if (pullrequests.length < 100) {
+        if (pullrequests.length < batchSize) {
             return pullrequests
         }
-        return getPullRequestsForRepository(username, repoId, skip + 100).then(morePullrequests =>
+        return getPullRequestsForRepository(username, repoId, skip + batchSize).then(morePullrequests =>
             [...pullrequests, ...morePullrequests]);
 
     });
@@ -55,7 +56,7 @@ function getPullRequestsForProject(username: string, project: string, skip = 0):
         status: PullRequestStatus.All,
     } as GitPullRequestSearchCriteria;
     return Q.all([
-        getClient().getPullRequestsByProject(project, criteria, undefined, skip, 100),
+        getClient().getPullRequestsByProject(project, criteria, undefined, skip, batchSize),
         repositories.getValue()
     ]).then(([pullrequests, repositories]) => {
         const repoMap = toRepoMap(repositories);
@@ -63,10 +64,10 @@ function getPullRequestsForProject(username: string, project: string, skip = 0):
             // backcompat with older tfs versions that do not have the project included in the repo reference
             pr.repository = repoMap[pr.repository.id];
         }
-        if (pullrequests.length < 100) {
+        if (pullrequests.length < batchSize) {
             return pullrequests
         }
-        return getPullRequestsForProject(username, project, skip + 100).then(morePullrequests =>
+        return getPullRequestsForProject(username, project, skip + batchSize).then(morePullrequests =>
             [...pullrequests, ...morePullrequests]);
 
     });

@@ -36,11 +36,12 @@ function getStateQuery(fieldPrefix: string, username: string, allProjects: boole
 }
 
 const wiCache: { [id: number]: CachedValue<WorkItem> } = {};
+const batchSize = 200;
 function getWorkItems(ids: number[]): Q.IPromise<WorkItem[]> {
     let coldIds = ids.filter(id => !(id in wiCache));
     while(coldIds.length > 0) {
-        const idBatch = coldIds.slice(0, 200);
-        coldIds = coldIds.slice(200);
+        const idBatch = coldIds.slice(0, batchSize);
+        coldIds = coldIds.slice(batchSize);
         const wisPromise = getClient().getWorkItems(idBatch).then(wis => {
             const wiMap: {[id: number]: WorkItem} = {};
             for (const wi of wis) {
