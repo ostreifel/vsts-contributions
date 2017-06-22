@@ -5,14 +5,14 @@ import { TextField } from "OfficeFabric/components/TextField"
 import { TagPicker, ITag } from "OfficeFabric/components/pickers";
 
 interface ICompletionDropdownProps {
-    selectedText?: string;
+    selected?: ITag;
     width?: string | number;
     readOnly?: boolean;
     placeholder?: string;
     noResultsFoundText?: string;
     loadingText?: string;
     onSelectionCleared?: () => void;
-    onSelectionChanged?: (text: string) => void;
+    onSelectionChanged?: (selection: ITag) => void;
     forceValue?: boolean;
     resolveSuggestions: (filter: string) => ITag[] | Q.IPromise<ITag[]>;
     inputWidth?: string | number;
@@ -20,16 +20,16 @@ interface ICompletionDropdownProps {
 }
 
 export class CompletionDropdown extends React.Component<ICompletionDropdownProps, {
-    selectedText?: string,
+    selected?: ITag,
     onBlur?: () => void
 }> {
     private autoFocus: boolean;
     constructor(props: ICompletionDropdownProps) {
         super();
-        this.state = {selectedText: props.selectedText};
+        this.state = {selected: props.selected};
     }
     componentWillReceiveProps(props: ICompletionDropdownProps) {
-        this.setState({...this.state, selectedText: props.selectedText});
+        this.setState({...this.state, selected: props.selected});
     }
     componentDidUpdate() {
         this.autoFocus = false;
@@ -46,12 +46,12 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                 <Label>{this.props.label}</Label> :
                 null
             }
-            {this.state.selectedText ?
+            {this.state.selected ?
                 <div className={`resolved-item`} style={{ display: "flex" }}>
                     <TextField
                         disabled={true}
                         width={this.props.width || 200}
-                        value={this.state.selectedText}
+                        value={this.state.selected.name}
                     />
                     {
                         this.props.readOnly ?
@@ -65,10 +65,10 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                                         this.props.onSelectionCleared();
                                     }
                                     this.autoFocus = true;
-                                    const selectedText = this.state.selectedText;
-                                    this.setState({ ...this.state, selectedText: undefined, onBlur: () => {
+                                    const selected = this.state.selected;
+                                    this.setState({ ...this.state, selected: undefined, onBlur: () => {
                                         if (this.props.forceValue) {
-                                            this.setState({ ...this.state, selectedText });
+                                            this.setState({ ...this.state, selected });
                                         }
                                     } });
                                 }}
@@ -84,11 +84,12 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                     className={`completion-dropdown-selector`}
                     onChange={(items) => {
                         if (items && items.length > 0) {
-                            if (this.props.onSelectionChanged) {
-                                this.props.onSelectionChanged(items[0].name);
-                            }
                             this.autoFocus = true;
-                            this.setState({ ...this.state, selectedText: items[0].name });
+                            this.setState({ ...this.state, selected: items[0] }, () => {
+                                if (this.props.onSelectionChanged) {
+                                    this.props.onSelectionChanged(items[0]);
+                                }
+                            });
                         }
                     }}
                     defaultSelectedItems={[]}

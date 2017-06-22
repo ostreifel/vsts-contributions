@@ -16,6 +16,7 @@ export interface IContributionFilter {
     allProjects: boolean;
     selectedDate?: Date;
     enabledProviders: IEnabledProviders;
+    repository?: {key: string; name: string};
 }
 
 export function deepEqual(x, y): boolean {

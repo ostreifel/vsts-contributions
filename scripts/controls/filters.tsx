@@ -74,7 +74,14 @@ class Filters extends React.Component<
         <ProviderToggle {...providerToggleProps} label={"Resolved work items"} provider={"ResolveWorkItem"} />
         <ProviderToggle {...providerToggleProps} label={"Closed work items"} provider={"CloseWorkItem"} />
         <ProviderToggle {...providerToggleProps} label={"Created changesets"} provider={"Changeset"} />
-        <CompletionDropdown label="Repository" resolveSuggestions={searchRepositories}/>
+        <CompletionDropdown
+          label="Repository"
+          selected={filter.repository}
+          resolveSuggestions={filter => searchRepositories(this.state.allProjects, filter)}
+          onSelectionChanged={repository => this.updateFilter({repository})}
+          onSelectionCleared={() => this.updateFilter({repository: undefined})}
+          placeholder={"All repositories"}
+        />
       </div>;
     return (
       <div>
