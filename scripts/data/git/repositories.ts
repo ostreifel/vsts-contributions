@@ -8,9 +8,9 @@ export const repositories = new CachedValue(() =>
 );
 
 export function searchRepositories(allProjects: boolean, filter: string): Q.IPromise<ITag[]> {
-  filter = filter.toLocaleLowerCase();
+  filter = filter.toLocaleLowerCase().trim();
   const proj = VSS.getWebContext().project.id;
-  return repositories
+  return sortedRepos
     .getValue()
     .then(repositories =>
       repositories
@@ -19,9 +19,16 @@ export function searchRepositories(allProjects: boolean, filter: string): Q.IPro
     );
 }
 
+function getSortedRepos() {
+  return repositories.getValue().then(repositories => repositories.sort((a, b) =>
+    a.name.localeCompare(b.name)
+  ))
+}
+const sortedRepos = new CachedValue(getSortedRepos);
+
 export function getDefaultRepository(): Q.IPromise<GitRepository | undefined> {
   const projName = VSS.getWebContext().project.name;
-  return repositories.getValue().then(repositories =>
+  return sortedRepos.getValue().then(repositories =>
     repositories.filter(r => r.name === projName)[0] || repositories[0]
   );
 }

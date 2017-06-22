@@ -11,6 +11,7 @@ interface ICompletionDropdownProps {
     placeholder?: string;
     noResultsFoundText?: string;
     loadingText?: string;
+    searchingText?: string;
     onSelectionCleared?: () => void;
     onSelectionChanged?: (selection: ITag) => void;
     forceValue?: boolean;
@@ -78,7 +79,8 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                 <TagPicker
                     onResolveSuggestions={this.props.resolveSuggestions}
                     pickerSuggestionsProps={{
-                        searchingText: this.props.loadingText || "Loading...",
+                        searchingText: this.props.searchingText || "Searching...",
+                        loadingText: this.props.loadingText || "Loading..."
                         noResultsFoundText: this.props.noResultsFoundText || "No results found",
                     }}
                     className={`completion-dropdown-selector`}
@@ -92,6 +94,7 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                             });
                         }
                     }}
+                    onEmptyInputFocus={() => this.props.resolveSuggestions("")}
                     defaultSelectedItems={[]}
                     inputProps={{
                         placeholder: this.props.placeholder,
