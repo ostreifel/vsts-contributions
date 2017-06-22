@@ -28,17 +28,20 @@ class ContributionsWidget implements IWidget {
     return WidgetStatusHelper.Success();
   }
   public load(widgetSettings: WidgetSettings): Q.IPromise<WidgetStatus> {
-    this.filter = widgetSettings.customSettings.data
-      ? JSON.parse(widgetSettings.customSettings.data)
-      : defaultFilter;
-    renderIdentity(this.filter.identity);
-    renderGraph(this.filter, this.gotoHub.bind(this), "small-tiles");
-    return WidgetStatusHelper.Success();
+    const filterPromise = widgetSettings.customSettings.data
+      ? Q(JSON.parse(widgetSettings.customSettings.data))
+      : defaultFilter.getValue();
+    return filterPromise.then(filter => {
+        this.filter = filter;
+        renderIdentity(this.filter.identity);
+        renderGraph(this.filter, this.gotoHub.bind(this), "small-tiles");
+        return WidgetStatusHelper.Success();
+      });
   }
   public readonly reload = this.load;
 
   private gotoHub(date?: Date) {
-    const filter: IContributionFilter = {...this.filter, selectedDate: date};
+    const filter: IContributionFilter = { ...this.filter, selectedDate: date };
     trackEvent("widgetDayClick", filterToIProperties(filter));
     VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: HostNavigationService) => {
       const collectionUri = VSS.getWebContext().collection.uri;

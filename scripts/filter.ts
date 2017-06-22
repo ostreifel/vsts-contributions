@@ -1,5 +1,7 @@
 import { IIdentity } from "./controls/IdentityPicker";
 import { IProperties } from "./events";
+import { CachedValue } from "./data/CachedValue";
+import { defaultRepostory } from "./data/git/repositories";
 
 export interface IEnabledProviders {
     Commit: boolean;
@@ -37,22 +39,27 @@ export function filterToIProperties(filter: IContributionFilter): IProperties {
     return properties;
 }
 
-export const defaultFilter: IContributionFilter = {
-  identity: {
-    displayName: VSS.getWebContext().user.name,
-    id: VSS.getWebContext().user.id,
-    uniqueName: VSS.getWebContext().user.email,
-    imageUrl: `${VSS.getWebContext().collection
-      .uri}_api/_common/identityImage?size=2&id=${VSS.getWebContext().user.id}`
-  },
-  allProjects: false,
-  enabledProviders: {
-    Commit: true,
-    CreatePullRequest: true,
-    ClosePullRequest: true,
-    CloseWorkItem: true,
-    CreateWorkItem: true,
-    ResolveWorkItem: true,
-    Changeset: false,
-  }
-};
+export const defaultFilter: CachedValue<IContributionFilter> = new CachedValue(getDefaultFilter);
+function getDefaultFilter(): Q.IPromise<IContributionFilter> {
+  return defaultRepostory.getValue().then(defaultRepo => ({
+    identity: {
+      displayName: VSS.getWebContext().user.name,
+      id: VSS.getWebContext().user.id,
+      uniqueName: VSS.getWebContext().user.email,
+      imageUrl: `${VSS.getWebContext().collection
+        .uri}_api/_common/identityImage?size=2&id=${VSS.getWebContext().user.id}`
+    },
+    allProjects: false,
+    enabledProviders: {
+      Commit: true,
+      CreatePullRequest: true,
+      ClosePullRequest: true,
+      CloseWorkItem: true,
+      CreateWorkItem: true,
+      ResolveWorkItem: true,
+      Changeset: false,
+    },
+    repository: defaultRepo && {key: defaultRepo.id, name: defaultRepo.name}
+  } as IContributionFilter));
+}
+

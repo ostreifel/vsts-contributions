@@ -4,7 +4,7 @@ import { CollapsibleHeader } from "./CollapsibleHeader";
 import { Toggle, IToggleProps } from "OfficeFabric/components/toggle";
 import { IdentityPicker } from "./IdentityPicker";
 import { ContributionName } from "../data/contracts";
-import { defaultFilter, IContributionFilter, IEnabledProviders } from "../filter";
+import { IContributionFilter, IEnabledProviders } from "../filter";
 import { CompletionDropdown } from "./CompletionDropdown";
 import { searchRepositories } from "../data/git/repositories";
 
@@ -124,7 +124,7 @@ export function updateSelectedDate(date?: Date) {
 
 export function renderFilters(
   onChanged: (filter: IContributionFilter) => void,
-  initialFilter: IContributionFilter = defaultFilter,
+  initialFilter: IContributionFilter,
   collapsible: boolean = true,
   callback?: () => void,
 ) {

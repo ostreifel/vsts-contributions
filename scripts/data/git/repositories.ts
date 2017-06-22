@@ -1,4 +1,5 @@
 import { CachedValue } from "../CachedValue";
+import { GitRepository } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
 import { ITag } from "OfficeFabric/components/pickers";
 
@@ -17,3 +18,11 @@ export function searchRepositories(allProjects: boolean, filter: string): Q.IPro
         .map(r => ({ key: r.id, name: r.name }))
     );
 }
+
+export function getDefaultRepository(): Q.IPromise<GitRepository | undefined> {
+  const projName = VSS.getWebContext().project.name;
+  return repositories.getValue().then(repositories =>
+    repositories.filter(r => r.name === projName)[0] || repositories[0]
+  );
+}
+export const defaultRepostory = new CachedValue(getDefaultRepository);
