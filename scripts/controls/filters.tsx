@@ -6,6 +6,7 @@ import { IdentityPicker } from "./IdentityPicker";
 import { ContributionName } from "../data/contracts";
 import { defaultFilter, IContributionFilter, IEnabledProviders } from "../filter";
 import { CompletionDropdown } from "./CompletionDropdown";
+import { searchRepositories } from "../data/git/repositories";
 
 /** Toggle except it adds a the css class 'focus' to the container when the toggle is focused */
 class FocusToggle extends React.Component<IToggleProps, {focus: boolean}> {
@@ -73,7 +74,7 @@ class Filters extends React.Component<
         <ProviderToggle {...providerToggleProps} label={"Resolved work items"} provider={"ResolveWorkItem"} />
         <ProviderToggle {...providerToggleProps} label={"Closed work items"} provider={"CloseWorkItem"} />
         <ProviderToggle {...providerToggleProps} label={"Created changesets"} provider={"Changeset"} />
-        <CompletionDropdown label="Repository" resolveSuggestions={() => [{key: "abc", name: "abc"}]}/>
+        <CompletionDropdown label="Repository" resolveSuggestions={searchRepositories}/>
       </div>;
     return (
       <div>
