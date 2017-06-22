@@ -52,20 +52,12 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
     onBlur?: () => void
 }> {
     private autoFocus: boolean;
-    constructor() {
+    constructor(props: IIdentityPickerProps) {
         super();
-        this.state = {};
+        this.state = {identity: props.identity};
     }
-    componentWillMount() {
-        this.setState({ ...this.state, identity: this.props.identity })
-    }
-    componentWillUpdate(props: IIdentityPickerProps) {
-        if (props.identity &&
-            this.props.identity &&
-            this.props.identity.id !== props.identity.id
-        ) {
-            this.setState({ ...this.state, identity: props.identity })
-        }
+    componentWillReceiveProps(props: IIdentityPickerProps) {
+        this.setState({...this.state, identity: props.identity});
     }
     componentDidUpdate() {
         this.autoFocus = false;
