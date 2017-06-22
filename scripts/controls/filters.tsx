@@ -1,53 +1,78 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CollapsibleHeader } from "./CollapsibleHeader";
-import { Toggle } from "OfficeFabric/components/toggle";
+import { Toggle, IToggleProps } from "OfficeFabric/components/toggle";
 import { IdentityPicker } from "./IdentityPicker";
-import { defaultFilter, IContributionFilter } from "../filter";
+import { ContributionName } from "../data/contracts";
+import { defaultFilter, IContributionFilter, IEnabledProviders } from "../filter";
+
+/** Toggle except it adds a the css class 'focus' to the container when the toggle is focused */
+class FocusToggle extends React.Component<IToggleProps, {focus: boolean}> {
+  constructor(props: IToggleProps) {
+    super(props);
+    this.state = {focus: false};
+  }
+  render() {
+    const classes = this.props.className || "";
+    return <Toggle {...this.props}
+      className={this.state.focus ? `focus ${classes}`: classes}
+      onFocus={() => this.setState({focus: true})}
+      onBlur={() => this.setState({focus: false})}
+    />;
+  }
+}
+
+interface IProviderToggleProps {
+  providers: IEnabledProviders;
+  label: string;
+  provider: ContributionName;
+  providerChange: (provider: ContributionName, checked: boolean) => {};
+}
+
+class ProviderToggle extends React.Component<IProviderToggleProps, {}> {
+  render() {
+    const { providers, provider, label, providerChange } = this.props;
+    return <FocusToggle checked={providers[provider]} label={label} onChanged={checked => providerChange(provider, checked)} />;
+  }
+}
 
 interface IFiltersProps {
-    onChanged: (filter: IContributionFilter) => void;
-    filter: IContributionFilter;
-    collapsible?: boolean;
+  onChanged: (filter: IContributionFilter) => void;
+  filter: IContributionFilter;
+  collapsible?: boolean;
 }
 
 let filters: Filters;
 class Filters extends React.Component<
-  IFiltersProps,{}
+  IFiltersProps, IContributionFilter
 > {
-  constructor() {
+  constructor(props: IFiltersProps) {
     super();
+    this.state = props.filter;
     filters = this;
   }
+  componentWillReceiveProps(props: IFiltersProps) {
+    this.setState(props.filter);
+  }
   render() {
-    const { filter } = this.props;
+    const filter = this.state;
+    const providerToggleProps = {
+      providers: filter.enabledProviders,
+      providerChange: this.updateProvider.bind(this)
+    };
     const collapsibleContent =
-        <div className="filters">
-            <Toggle checked={filter.allProjects} label={"All projects"} onChanged={checked => {
-                this.updateFilter({ ...filter, allProjects: checked });
-            }} />
-            <Toggle checked={filter.enabledProviders.Commit} label={"Commits"} onChanged={checked => {
-                this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, Commit: checked } });
-            }} />
-            <Toggle checked={filter.enabledProviders.CreatePullRequest} label={"Created pull requests"} onChanged={checked => {
-                this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, CreatePullRequest: checked } });
-            }} />
-            <Toggle checked={filter.enabledProviders.ClosePullRequest} label={"Closed pull requests"} onChanged={checked => {
-                this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, ClosePullRequest: checked } });
-            }} />
-            <Toggle checked={filter.enabledProviders.CreateWorkItem} label={"Created work items"} onChanged={checked => {
-                this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, CreateWorkItem: checked } });
-            }} />
-            <Toggle checked={filter.enabledProviders.ResolveWorkItem} label={"Resolved work items"} onChanged={checked => {
-                this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, ResolveWorkItem: checked } });
-            }} />
-            <Toggle checked={filter.enabledProviders.CloseWorkItem} label={"Closed work items"} onChanged={checked => {
-                this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, CloseWorkItem: checked } });
-            }} />
-            <Toggle checked={filter.enabledProviders.Changeset} label={"Created changesets"} onChanged={checked => {
-                this.updateFilter({ ...filter, enabledProviders: { ...filter.enabledProviders, Changeset: checked } });
-            }} />
-        </div>;
+      <div className="filters">
+        <FocusToggle checked={filter.allProjects} label={"All projects"} onChanged={checked => {
+          this.updateFilter({ allProjects: checked });
+        }} />
+        <ProviderToggle {...providerToggleProps} label={"Commits"} provider={"Commit"} />
+        <ProviderToggle {...providerToggleProps} label={"Created pull requests"} provider={"CreatePullRequest"} />
+        <ProviderToggle {...providerToggleProps} label={"Closed pull requests"}  provider={"ClosePullRequest"} />
+        <ProviderToggle {...providerToggleProps} label={"Created work items"} provider={"CreateWorkItem"} />
+        <ProviderToggle {...providerToggleProps} label={"Resolved work items"} provider={"ResolveWorkItem"} />
+        <ProviderToggle {...providerToggleProps} label={"Closed work items"} provider={"CloseWorkItem"} />
+        <ProviderToggle {...providerToggleProps} label={"Created changesets"} provider={"Changeset"} />
+      </div>;
     return (
       <div>
         <IdentityPicker
@@ -64,15 +89,21 @@ class Filters extends React.Component<
             name="Filters"
             className="filter-header"
           >
-            {collapsibleContent}
+          {collapsibleContent}
           </CollapsibleHeader> : collapsibleContent
         }
       </div>
     );
   }
-  updateFilter(filter: IContributionFilter) {
-    this.props.onChanged(filter);
-    renderFilters(this.props.onChanged, filter, this.props.collapsible);
+  updateFilter(filter: Partial<IContributionFilter>) {
+    const updatedFilter = {...this.state, ...filter};
+    this.props.onChanged(updatedFilter);
+    this.setState(updatedFilter);
+  }
+  updateProvider(provider: ContributionName, enabled: boolean) {
+    const filter = {enabledProviders: {...this.state.enabledProviders}};
+    filter.enabledProviders[provider] = enabled;
+    this.updateFilter(filter);
   }
 }
 

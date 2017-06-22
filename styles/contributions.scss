@@ -1,5 +1,9 @@
 $small-tiles: 10px;
 $medium-tiles: 15px;
+@mixin focused-element {
+    background-color: aliceblue;
+    outline: 1px solid black;
+}
 body.contributions-body {
     &.hub {
         overflow: auto;
@@ -8,7 +12,12 @@ body.contributions-body {
     .feedback {
         float: right;
     }
-    .collapsible-header {
+    button.ms-Button {
+        &:focus, &:hover {
+            @include focused-element;
+        }
+    }
+    .collapsible-header {   
         .header {
             h1,h2,h3,h4,h5,h6 {
                 margin-bottom: 0px;
@@ -28,6 +37,11 @@ body.contributions-body {
                     > * {
                         display: table-cell;
                         padding: 3px 5px;
+                    }
+                }
+                .ms-Toggle {
+                    &.focus, &:hover {
+                        @include focused-element;
                     }
                 }
             }
@@ -123,7 +137,7 @@ body.contributions-body {
             .contribution-item {
                 padding: 2px 0px 2px 20px;
                 &:hover {
-                    background-color: aliceblue;
+                    @include focused-element;
                 }
                 a.title {
                     color: black;
