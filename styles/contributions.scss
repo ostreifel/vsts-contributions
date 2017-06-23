@@ -137,6 +137,12 @@ body.contributions-body {
     }
     .time-window-container {
         .time-window {
+            .time-header {
+                display: flex;
+                h3 {
+                    margin-top: 6px;
+                }
+            }
             .hidden {
                 display: none;
             }

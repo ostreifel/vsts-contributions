@@ -17,7 +17,8 @@ import {
 } from "../data/contracts";
 import { CollapsibleHeader } from "./CollapsibleHeader";
 import { IContributionFilter } from "../filter";
-
+import { IconButton } from "OfficeFabric/components/Button";
+import { updateSelectedDate } from "./filters";
 
 class ContributionItem extends React.Component<{
     title: string,
@@ -235,7 +236,17 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
         const contributions = this.getContributions();
         const showDay = !date;
         return <div className="time-window">
-            <h3>{`${toCountString(contributions.length, "contribution")} ${date ? ` on ${toDateString(date)}` : " for the year"}`}</h3>
+            <div className="time-header">
+                <h3>{`${toCountString(contributions.length, "contribution")} ${date ? ` on ${toDateString(date)}` : " for the year"}`}</h3>
+                {
+                    date ?
+                        <IconButton
+                            icon={"ChromeClose"}
+                            label={"Clear date filter"}
+                            onClick={() => updateSelectedDate()}
+                        /> : null
+                }
+            </div>
             <div>
                 <Commits allContributions={contributions} showDay={showDay} />
                 <Changesets allContributions={contributions} showDay={showDay} />
