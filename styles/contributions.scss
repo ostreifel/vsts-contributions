@@ -49,48 +49,54 @@ body.contributions-body {
 
     }
     .graph-container {
-        .year {
-            display: flex;
-            .week {
+        .graph {
+            display: table;
+            .month-labels {
+                display: flex;       
+            }
+            .year {
                 display: flex;
-                flex-direction: column;
-                .day-container {
-                    .day {
-                        background-color: #d3d3d3;
-                        margin: 1px;
-                        &.work_0 {
-                            background-color: #C0C0FF;
+                .week {
+                    display: flex;
+                    flex-direction: column;
+                    .day-container {
+                        .day {
+                            background-color: #d3d3d3;
+                            margin: 1px;
+                            &.work_0 {
+                                background-color: #C0C0FF;
+                            }
+                            &.work_25 {
+                                background-color: #8080FF;
+                            }
+                            &.work_50 {
+                                background-color: #4040FF;
+                            }
+                            &.work_75 {
+                                background-color: #0000FF;
+                            }
                         }
-                        &.work_25 {
-                            background-color: #8080FF;
-                        }
-                        &.work_50 {
-                            background-color: #4040FF;
-                        }
-                        &.work_75 {
-                            background-color: #0000FF;
-                        }
-                    }
-                    .day-filter {
-                        margin: 1px;
-                        position: relative;
-                        background-color: black;
-                        opacity: 0;
-                        cursor: pointer;
-                        &.hover:not(.selected) {
-                            opacity: 0.3;
-                        }
-                        &.selected {
-                            opacity: 0.8;
+                        .day-filter {
+                            margin: 1px;
+                            position: relative;
+                            background-color: black;
+                            opacity: 0;
+                            cursor: pointer;
+                            &.hover:not(.selected) {
+                                opacity: 0.3;
+                            }
+                            &.selected {
+                                opacity: 0.8;
+                            }
                         }
                     }
                 }
-            }
-            .graph-spinner {
-                position: relative;
+                .graph-spinner {
+                    position: relative;
+                }
             }
         }
-        .year.medium-tiles {
+        .graph.medium-tiles .year {
             .graph-spinner {
                 left: -482px;
                 top: 46px;
@@ -109,7 +115,7 @@ body.contributions-body {
                 }
             }
         }
-        .year.small-tiles {
+        .graph.small-tiles .year {
             .graph-spinner {
                 left: -320px;
                 top: 30px;

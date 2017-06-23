@@ -127,6 +127,20 @@ class Week extends React.Component<{
     }
 }
 
+const monthNames: string[] = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+];
 
 class Graph extends React.Component<{
     selectedDate?: Date,
@@ -142,7 +156,9 @@ class Graph extends React.Component<{
         date.setDate(date.getDate() - date.getDay());
 
         const weeks: JSX.Element[] = [];
+        const monthIdxes: number[] = [];
         for (let i = 0; i < 52; i++) {
+            monthIdxes.push(date.getMonth());
             weeks.unshift(<Week
                 date={new Date(date.getTime())}
                 selectedDate={this.props.selectedDate}
@@ -152,10 +168,36 @@ class Graph extends React.Component<{
             />)
             date.setDate(date.getDate() - 7);
         }
-        return <div className={`year ${this.props.className}`}>
-            {weeks}
-            {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
+        return <div className={`graph ${this.props.className}`}>
+            <div className="month-labels">
+                {this.getMonths(monthIdxes)}
+            </div>
+            <div className="year">
+                {weeks}
+                {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
+            </div>
         </div>;
+    }
+    /**
+     * Create month labels of with appropriate widths and labels
+     * @param monthIdxes in latest to oldest order => Months
+     */
+    private getMonths(monthIdxes: number[]): JSX.Element[] {
+        interface IMonthCount { idx: number; count: number; }
+        /** oldest to latest order of counts */
+        const counts: IMonthCount[] = [];
+        for (const idx of monthIdxes) {
+            if (!counts[0] || counts[0].idx !== idx) {
+                counts.unshift({idx, count: 1});
+            } else {
+                counts[0].count++;
+            }
+        }
+        return counts.map(({idx, count}) =>
+            <div className="month" style={{ flexGrow: count }}>
+                {monthNames[idx]}
+            </div>
+        );
     }
 }
 
