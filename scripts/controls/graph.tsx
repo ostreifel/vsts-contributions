@@ -20,9 +20,10 @@ function getContributionClassDelegate(contributions: IUserContributions): (count
         [0.50, "work_50"],
         [0.75, "work_75"]
     ];
+    const largest = counts[counts.length - 1];
     // convert the percentiles to their values for the inputs
-    for (const percentile of thresholds) {
-        percentile[0] = counts[Math.floor(percentile[0] * counts.length)];
+    for (const threshold of thresholds) {
+        threshold[0] = Math.floor(threshold[0] * largest);
     }
     thresholds.unshift([0, "work_0"]);
     thresholds.reverse();
