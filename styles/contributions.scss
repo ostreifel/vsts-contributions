@@ -1,8 +1,19 @@
 $small-tiles: 10px;
 $medium-tiles: 15px;
-@mixin focused-element {
+@mixin hover-style {
     background-color: aliceblue;
+}
+@mixin focused-style {
+    @include hover-style;
     outline: 1px solid black;
+}
+@mixin focus-element {
+    &:hover {
+        @include hover-style;
+    }
+    &:focus, .focus {
+        @include focused-style;
+    }
 }
 body.contributions-body {
     &.hub {
@@ -13,9 +24,7 @@ body.contributions-body {
         float: right;
     }
     button.ms-Button {
-        &:focus, &:hover {
-            @include focused-element;
-        }
+        @include focus-element;
     }
     .collapsible-header {   
         .header {
@@ -40,9 +49,7 @@ body.contributions-body {
                     }
                 }
                 .ms-Toggle {
-                    &.focus, &:hover {
-                        @include focused-element;
-                    }
+                    @include focus-element;
                 }
             }
         }
@@ -148,9 +155,7 @@ body.contributions-body {
             }
             .contribution-item {
                 padding: 2px 0px 2px 20px;
-                &:hover {
-                    @include focused-element;
-                }
+                @include focus-element;
                 a.title {
                     color: black;
                     &:hover, &:visited, &:hover, &:focus, &:active {
