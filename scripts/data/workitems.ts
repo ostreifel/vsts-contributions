@@ -73,33 +73,45 @@ function getWorkItemsForQuery(query: string): Q.IPromise<WorkItem[]> {
 
 export class CreateWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CreateWorkItem";
+    private readonly queryResults: {[query: string]: CachedValue<CreateWorkItemContribution[]>} = {};
     public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("System.Created", username, filter.allProjects);
-        return getWorkItemsForQuery(query).then(wis =>
-            wis.map(wi => new CreateWorkItemContribution(wi))
-        );
+        if (!(query in this.queryResults)) {
+            this.queryResults[query]  = new CachedValue(() => getWorkItemsForQuery(query).then(wis =>
+                wis.map(wi => new CreateWorkItemContribution(wi))
+            ));
+        }
+        return this.queryResults[query].getValue();
     }
 }
 
 export class ResolveWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "ResolveWorkItem";
+    private readonly queryResults: {[query: string]: CachedValue<ResolveWorkItemContribution[]>} = {};
     public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("Microsoft.VSTS.Common.Resolved", username, filter.allProjects);
-        return getWorkItemsForQuery(query).then(wis =>
-            wis.map(wi => new ResolveWorkItemContribution(wi))
-        );
+        if (!(query in this.queryResults)) {
+            this.queryResults[query]  = new CachedValue(() => getWorkItemsForQuery(query).then(wis =>
+                wis.map(wi => new ResolveWorkItemContribution(wi))
+            ));
+        }
+        return this.queryResults[query].getValue();
     }
 }
 
 export class CloseWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CloseWorkItem";
+    private readonly queryResults: {[query: string]: CachedValue<ResolveWorkItemContribution[]>} = {};
     public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("Microsoft.VSTS.Common.Closed", username, filter.allProjects);
-        return getWorkItemsForQuery(query).then(wis =>
-            wis.map(wi => new CloseWorkItemContribution(wi))
-        );
+        if (!(query in this.queryResults)) {
+            this.queryResults[query]  = new CachedValue(() => getWorkItemsForQuery(query).then(wis =>
+                wis.map(wi => new CloseWorkItemContribution(wi))
+            ));
+        }
+        return this.queryResults[query].getValue();
     }
 }
