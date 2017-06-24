@@ -2,7 +2,13 @@ import * as React from "react";
 import { IconButton } from "OfficeFabric/components/Button";
 
 
-export class CollapsibleHeader extends React.Component<{ title: string, name: string, className?: string }, { showChildren: boolean }> {
+export class CollapsibleHeader extends React.Component<{
+    title: string,
+    name: string,
+    className?: string,
+}, {
+    showChildren: boolean,
+}> {
     constructor() {
         super();
         this.state = { showChildren: false };

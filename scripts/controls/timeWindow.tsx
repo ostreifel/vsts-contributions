@@ -18,6 +18,8 @@ import {
 import { CollapsibleHeader } from "./CollapsibleHeader";
 import { IContributionFilter } from "../filter";
 import { IconButton } from "OfficeFabric/components/Button";
+import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
+import { List } from "OfficeFabric/components/List";
 import { updateSelectedDate } from "./filters";
 
 class ContributionItem extends React.Component<{
@@ -40,7 +42,6 @@ class ContributionItem extends React.Component<{
             </div>
         </div>;
     }
-
 }
 
 class Changeset extends React.Component<{ changeset: ChangesetContribution, showDay: boolean }, {}> {
@@ -81,15 +82,11 @@ class Commit extends React.Component<{ commit: CommitContribution, showDay: bool
 
 class Commits extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const commits: CommitContribution[] = [];
-        for (const contribution of this.props.allContributions) {
-            if (contribution instanceof CommitContribution) {
-                commits.push(contribution);
-            }
-        }
-        return <Contributions count={commits.length} noun={"Created # commit"}>
-            {commits.map(c => <Commit commit={c} showDay={this.props.showDay} />)}
-        </Contributions>;
+        return <Contributions
+            noun={"Created # commit"}
+            items={this.props.allContributions.filter(c => c instanceof CommitContribution)}
+            onRenderItem={(commit: CommitContribution) => <Commit commit={commit} showDay={this.props.showDay} />}
+        />;
     }
 }
 
@@ -117,29 +114,21 @@ class PullRequest extends React.Component<{ pullrequest: PullRequestContribution
 
 class CreatePullRequests extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const prs: CreatePullRequestContribution[] = [];
-        for (const contribution of this.props.allContributions) {
-            if (contribution instanceof CreatePullRequestContribution) {
-                prs.push(contribution);
-            }
-        }
-        return <Contributions count={prs.length} noun={"Created # pull request"}>
-            {prs.map(pr => <PullRequest pullrequest={pr} showDay={this.props.showDay} />)}
-        </Contributions>;
+        return <Contributions
+            noun={"Created # pull request"}
+            items={this.props.allContributions.filter(c => c instanceof CreatePullRequestContribution)}
+            onRenderItem={(pr: CreatePullRequestContribution) => <PullRequest pullrequest={pr} showDay={this.props.showDay} />}
+        />;
     }
 }
 
 class ClosePullRequests extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const prs: ClosePullRequestContribution[] = [];
-        for (const contribution of this.props.allContributions) {
-            if (contribution instanceof ClosePullRequestContribution) {
-                prs.push(contribution);
-            }
-        }
-        return <Contributions count={prs.length} noun={"Closed # pull request"}>
-            {prs.map(pr => <PullRequest pullrequest={pr} showDay={this.props.showDay} />)}
-        </Contributions>;
+        return <Contributions
+            noun={"Closed # pull request"}
+            items={this.props.allContributions.filter(c => c instanceof ClosePullRequestContribution)}
+            onRenderItem={(pr: ClosePullRequestContribution) => <PullRequest pullrequest={pr} showDay={this.props.showDay} />}
+        />;
     }
 }
 
@@ -165,67 +154,63 @@ class WorkItemComponent extends React.Component<{ workItem: WorkItemContribution
 
 class CreateWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const workitems: CreateWorkItemContribution[] = [];
-        for (const contribution of this.props.allContributions) {
-            if (contribution instanceof CreateWorkItemContribution) {
-                workitems.push(contribution);
-            }
-        }
-        return <Contributions count={workitems.length} noun={"Created # work item"}>
-            {workitems.map(wi => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />)}
-        </Contributions>;
+        return <Contributions
+            noun={"Created # work item"}
+            items={this.props.allContributions.filter(c => c instanceof CreateWorkItemContribution)}
+            onRenderItem={(wi: CreateWorkItemContribution) => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />}
+        />;
     }
 }
 
 class ResolveWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const workitems: ResolveWorkItemContribution[] = [];
-        for (const contribution of this.props.allContributions) {
-            if (contribution instanceof ResolveWorkItemContribution) {
-                workitems.push(contribution);
-            }
-        }
-        return <Contributions count={workitems.length} noun={"Resolved # work item"}>
-            {workitems.map(wi => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />)}
-        </Contributions>;
+        return <Contributions
+            noun={"Resolved # work item"}
+            items={this.props.allContributions.filter(c => c instanceof ResolveWorkItemContribution)}
+            onRenderItem={(wi: ResolveWorkItemContribution) => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />}
+        />;
     }
 }
 
 class CloseWorkItems extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const changesets: CloseWorkItemContribution[] = [];
-        for (const contribution of this.props.allContributions) {
-            if (contribution instanceof CloseWorkItemContribution) {
-                changesets.push(contribution);
-            }
-        }
-        return <Contributions count={changesets.length} noun={"Closed # work item"}>
-            {changesets.map(wi => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />)}
-        </Contributions>;
+        return <Contributions
+            noun={"Closed # work item"}
+            items={this.props.allContributions.filter(c => c instanceof CloseWorkItemContribution)}
+            onRenderItem={(wi: CloseWorkItemContribution) => <WorkItemComponent workItem={wi} showDay={this.props.showDay} />}
+        />;
     }
 }
 
 class Changesets extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
     render() {
-        const changesets: ChangesetContribution[] = [];
-        for (const contribution of this.props.allContributions) {
-            if (contribution instanceof ChangesetContribution) {
-                changesets.push(contribution);
-            }
-        }
-        return <Contributions count={changesets.length} noun={"Created # changeset"}>
-            {changesets.map(changeset => <Changeset changeset={changeset} showDay={this.props.showDay} />)}
-        </Contributions>;
+        return <Contributions
+            noun={"Created # changeset"}
+            items={this.props.allContributions.filter(c => c instanceof ChangesetContribution)}
+            onRenderItem={(c: ChangesetContribution) => <Changeset changeset={c} showDay={this.props.showDay} />}
+        />;
     }
 }
 
-class Contributions extends React.Component<{ count: number, noun: string }, { showChildren: boolean }> {
+class Contributions<T> extends React.Component<{
+    noun: string,
+    items: T[],
+    onRenderItem: (item: T, index: number) => React.ReactNode;
+}, {
+    showChildren: boolean,
+}> {
     render() {
-        const { count, noun } = this.props;
+        let { noun } = this.props;
+        const count = this.props.items.length;
         const label = count === 1 ? noun : noun + "s";
         const title = label.match(/#/) ? label.replace('#', "" + count) : count + " " + label;
         return <CollapsibleHeader title={title} name={label.replace("# ", "").toLocaleLowerCase()} className={count === 0 ? "hidden" : ""}>
-            {this.props.children}
+            <FocusZone direction={FocusZoneDirection.vertical} >
+                <List
+                    items={this.props.items}
+                    onRenderCell={this.props.onRenderItem}
+                />
+            </FocusZone>
         </CollapsibleHeader>;
     }
 }
