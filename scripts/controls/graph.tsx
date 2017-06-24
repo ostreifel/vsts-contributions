@@ -8,6 +8,7 @@ import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
 import { trackEvent } from "../events";
 import { Timings } from "../timings";
 import { IContributionFilter, filterToIProperties } from "../filter"
+import { DelayedFunction } from "VSS/Utils/Core"
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
     const counts: number[] = Object.keys(contributions).map(day => contributions[day].length);
@@ -209,18 +210,25 @@ let renderNum = 0;
 export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: Date) => void, tileSize: TileSize = "medium-tiles") {
     const graphParent = $(".graph-container")[0];
     const timings = new Timings();
-    ReactDOM.render(<Graph
-        selectedDate={filter.selectedDate}
-        contributions={previousContributons}
-        loading={true}
-        toggleSelect={toggleSelect}
-        className={tileSize}
-    />, graphParent,
-    () => {
-        timings.measure("drawSpinner");
-    });
     const currentRender = ++renderNum;
+    /** Don't show the spinner all the time -- rendering the graph takes about 300 ms */
+    const showSpinner = new DelayedFunction(null, 100, "showSpinner", () => {
+        if (currentRender === renderNum) {
+            ReactDOM.render(<Graph
+                selectedDate={filter.selectedDate}
+                contributions={previousContributons}
+                loading={true}
+                toggleSelect={toggleSelect}
+                className={tileSize}
+            />, graphParent,
+            () => {
+                timings.measure("drawSpinner");
+            });
+        }
+    });
+    showSpinner.start();
     getContributions(filter).then(contributions => {
+        showSpinner.cancel();
         if (currentRender === renderNum) {
             timings.measure("getContributions");
             previousContributons = contributions;

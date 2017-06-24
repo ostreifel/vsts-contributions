@@ -13,6 +13,7 @@ import {
     CloseWorkItemContributionProvider,
 } from "./workitems";
 import { IContributionFilter } from "../filter";
+import { CachedValue } from "./CachedValue";
 
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
     for (const contribution of arr) {
@@ -41,17 +42,24 @@ const providers: IContributionProvider[] = [
     new ChangsetContributionProvider(),
 ];
 
+const contributionsCache: {[filterKey: string]: CachedValue<IUserContributions>} = {};
 export function getContributions(filter: IContributionFilter): Q.IPromise<IUserContributions> {
-    return Q.all(
-        providers
-            .filter(p => filter.enabledProviders[p.name])
-            .map(p => p.getContributions(filter))
-    ).then((contributionsArr) => {
-        const contributions: IUserContributions = {};
-        for (const arr of contributionsArr) {
-            addContributions(arr, contributions);
-        }
-        sortContributions(contributions);
-        return contributions;
-    });
+    const filterKey = JSON.stringify({...filter, selectedDate: null});
+    if (!(filterKey in contributionsCache)) {
+        contributionsCache[filterKey] = new CachedValue(() =>
+            Q.all(
+                providers
+                    .filter(p => filter.enabledProviders[p.name])
+                    .map(p => p.getContributions(filter))
+            ).then((contributionsArr) => {
+                const contributions: IUserContributions = {};
+                for (const arr of contributionsArr) {
+                    addContributions(arr, contributions);
+                }
+                sortContributions(contributions);
+                return contributions;
+            })
+        );
+    }
+    return contributionsCache[filterKey].getValue();
 }
