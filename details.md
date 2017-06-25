@@ -24,9 +24,6 @@ Click the selected day to show contributions for the whole year.
 
 Click that any day on the graph to show only the contribution details for that particular day
 
-## Planned
-- Validate and release for on premise installations (url formats in links expected to create issues)
-
 ## Version History
 (06/24/2017) v1.5.1 Usuability Updates
 - UI performance (lists and day selection)
