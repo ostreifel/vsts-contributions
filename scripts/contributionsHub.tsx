@@ -1,7 +1,7 @@
 ///<reference types="vss-web-extension-sdk" />
 import { renderFilters } from "./controls/filters";
 import { renderGraph } from "./controls/graph";
-import { renderTimeWindow } from "./controls/timeWindow";
+import { renderTimeWindow } from "./controls/timeWindow/timeWindow";
 import { updateSelectedDate } from "./controls/filters";
 import { defaultFilter, IContributionFilter } from "./filter";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";

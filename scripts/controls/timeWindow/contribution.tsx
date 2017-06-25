@@ -10,7 +10,7 @@ import {
     ChangesetContribution,
 } from "../../data/contracts";
 
-export class ContributionItem extends React.Component<{
+class ContributionItem extends React.Component<{
     title: string,
     titleUrl: string,
     location: string,
