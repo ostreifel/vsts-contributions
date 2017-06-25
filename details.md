@@ -28,6 +28,11 @@ Click that any day on the graph to show only the contribution details for that p
 - Validate and release for on premise installations (url formats in links expected to create issues)
 
 ## Version History
+(06/24/2017) v1.5.1 Usuability Updates
+- UI performance (lists and day selection)
+- coloring of days is now by value not percentile
+- Button to clear the current date selection
+
 (06/22/2017) v1.4.1 Performance Updates  
 - Add repository filter for git commits and pullrequests  
 - Add repository default of repo matching current project name or first repo  

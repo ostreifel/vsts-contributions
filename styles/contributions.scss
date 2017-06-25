@@ -18,8 +18,14 @@ $medium-tiles: 15px;
 body.contributions-body {
     &.hub {
         overflow: auto;
+        padding: 8px;
     }
-    padding: 8px;
+    &.widget {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
     .feedback {
         float: right;
     }

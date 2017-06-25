@@ -25,12 +25,15 @@ class ContributionsConfiguration implements IWidgetConfiguration {
         widgetConfigurationContext: IWidgetConfigurationContext
     ): Q.IPromise<WidgetStatus> {
         this.context = widgetConfigurationContext;
-        this.filter = widgetSettings.customSettings.data
-            ? JSON.parse(widgetSettings.customSettings.data)
-            : defaultFilter;
+        const filterPromise = widgetSettings.customSettings.data
+            ? Q(JSON.parse(widgetSettings.customSettings.data))
+            : defaultFilter.getValue();
+        return filterPromise.then(filter => {
+            this.filter = filter;
+            renderFilters(this.configUpdated.bind(this), this.filter, false, () => VSS.resize());
+            return WidgetStatusHelper.Success();
+        })
 
-        renderFilters(this.configUpdated.bind(this), this.filter, false, () => VSS.resize());
-        return WidgetStatusHelper.Success();
     }
     public onSave() {
         trackEvent("configUpdated", filterToIProperties(this.filter));

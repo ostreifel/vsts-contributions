@@ -227,7 +227,7 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
                     date ?
                         <IconButton
                             icon={"ChromeClose"}
-                            label={"Clear date filter"}
+                            title={"Clear date filter"}
                             onClick={() => updateSelectedDate()}
                         /> : null
                 }
