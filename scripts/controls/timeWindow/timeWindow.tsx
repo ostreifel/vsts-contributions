@@ -19,11 +19,26 @@ import {
     CreateWorkItems,
     ResolveWorkItems,
 } from "./contributions";
+import { SearchContributions } from "./search";
 
-class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserContributions }, {}> {
+interface ITimeWindowProps {
+    date?: Date,
+    allContributions: IUserContributions,
+    filter: IContributionFilter,
+}
+class TimeWindow extends React.Component<ITimeWindowProps, {
+    contributions: UserContribution[]
+}> {
+    constructor(props: ITimeWindowProps) {
+        super(props);
+        this.state = { contributions: this.getContributions(props)};
+    }
+    componentWillReceiveProps(props: ITimeWindowProps) {
+        this.setState({contributions: this.getContributions(props)});
+    }
     render() {
         const { date } = this.props;
-        const contributions = this.getContributions();
+        const { contributions } = this.state;
         const showDay = !date;
         return <div className="time-window">
             <div className="time-header">
@@ -37,6 +52,11 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
                         /> : null
                 }
             </div>
+            <SearchContributions
+                contributionsKey={JSON.stringify(this.props.filter)}
+                contributions={this.getContributions(this.props)}
+                update={contributions => this.setState({contributions})}
+            />
             <div>
                 <Commits allContributions={contributions} showDay={showDay} />
                 <Changesets allContributions={contributions} showDay={showDay} />
@@ -48,8 +68,7 @@ class TimeWindow extends React.Component<{ date?: Date, allContributions: IUserC
             </div>
         </div>;
     }
-    private getContributions() {
-        const { date, allContributions } = this.props;
+    private getContributions({date, allContributions}: ITimeWindowProps) {
         if (date) {
             return allContributions[date.getTime()] || [];
         }
@@ -73,7 +92,7 @@ export function renderTimeWindow(filter: IContributionFilter) {
                 const end = new Date(date);
                 end.setDate(end.getDate() + 1);
             }
-            ReactDOM.render(<TimeWindow date={date} allContributions={contributions} />, graphParent);
+            ReactDOM.render(<TimeWindow filter={filter} date={date} allContributions={contributions} />, graphParent);
         }
     });
 }

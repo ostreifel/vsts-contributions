@@ -16,7 +16,7 @@ export interface IUserContributions {
 
 export class UserContribution {
     readonly day: Date;
-    constructor(readonly date: Date) {
+    constructor(readonly id: string, readonly date: Date) {
         this.day = new Date(date);
         this.day.setHours(0, 0, 0, 0);
     }
@@ -24,53 +24,53 @@ export class UserContribution {
 
 export class CommitContribution extends UserContribution {
     constructor(readonly repo: GitRepository, readonly commit: GitCommitRef) {
-        super(new Date(commit.author.date));
+        super(`commit-${commit.commitId}`, new Date(commit.author.date));
     }
 }
 
 export abstract class PullRequestContribution extends UserContribution {
-    constructor(readonly pullrequest: GitPullRequest, date: Date) {
-        super(date);
+    constructor(id: string, date: Date, readonly pullrequest: GitPullRequest) {
+        super(id, date);
     }
 }
 
 export class CreatePullRequestContribution extends PullRequestContribution {
     constructor(pullrequest: GitPullRequest) {
-        super(pullrequest, pullrequest.creationDate);
+        super(`pr-create-${pullrequest.pullRequestId}`, pullrequest.creationDate, pullrequest);
     }
 }
 export class ClosePullRequestContribution extends PullRequestContribution {
     constructor(pullrequest: GitPullRequest) {
-        super(pullrequest, pullrequest.closedDate);
+        super(`pr-close-${pullrequest.pullRequestId}`, pullrequest.closedDate, pullrequest);
     }
 }
 
 export abstract class WorkItemContribution extends UserContribution {
-    constructor(readonly wi: WorkItem, dateStr: string) {
-        super(new Date(dateStr));
+    constructor(id: string, dateStr: string, readonly wi: WorkItem) {
+        super(id, new Date(dateStr));
     }
 }
 
 export class CreateWorkItemContribution extends WorkItemContribution {
     constructor(wi: WorkItem) {
-        super(wi, wi.fields["System.CreatedDate"]);
+        super(`create-wi-${wi.id}`, wi.fields["System.CreatedDate"], wi);
     }
 }
 
 export class ResolveWorkItemContribution extends WorkItemContribution {
     constructor(wi: WorkItem) {
-        super(wi, wi.fields["Microsoft.VSTS.Common.ResolvedDate"]);
+        super(`resolve-wi-${wi.id}`, wi.fields["Microsoft.VSTS.Common.ResolvedDate"], wi);
     }
 }
 
 export class CloseWorkItemContribution extends WorkItemContribution {
     constructor(wi: WorkItem) {
-        super(wi, wi.fields["Microsoft.VSTS.Common.ClosedDate"]);
+        super(`close-wi-${wi.id}`, wi.fields["Microsoft.VSTS.Common.ClosedDate"], wi);
     }
 }
 
 export class ChangesetContribution extends UserContribution {
     constructor(readonly changeset: TfvcChangesetRef, readonly projectName: string) {
-        super(changeset.createdDate);
+        super(`changeset-${changeset.changesetId}`, changeset.createdDate);
     }
 }
