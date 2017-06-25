@@ -21,6 +21,8 @@ import { IconButton } from "OfficeFabric/components/Button";
 import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
 import { List } from "OfficeFabric/components/List";
 import { updateSelectedDate } from "./filters";
+import { KeyCodes } from "OfficeFabric/Utilities";
+import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 
 class ContributionItem extends React.Component<{
     title: string,
@@ -33,14 +35,24 @@ class ContributionItem extends React.Component<{
 }, {}> {
     render() {
         const { title, titleUrl, location, locationUrl, date, showDay, className } = this.props
-        return <div className={`contribution-item ${className}`} >
-            <a className="title" href={titleUrl} target="_blank">{title}</a>
-            <div className="location-time">
-                {" in "}
-                <a className="location" href={locationUrl} target="_blank">{location}</a>
-                {` ${showDay ? "on" : "at"} ${toTimeString(date, showDay)}`}
-            </div>
+        return <div className={`contribution-item ${className}`} tabIndex={0} data-is-focusable={true} onKeyDown={this._onKeyDown.bind(this)} >
+            <FocusZone direction={FocusZoneDirection.horizontal}>
+                <a className="title" href={titleUrl} target="_blank">{title}</a>
+                <div className="location-time">
+                    {" in "}
+                    <a className="location" href={locationUrl} target="_blank">{location}</a>
+                    {` ${showDay ? "on" : "at"} ${toTimeString(date, showDay)}`}
+                </div>
+            </FocusZone>
         </div>;
+    }
+
+    private _onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+        if (e.keyCode === KeyCodes.space || e.keyCode === KeyCodes.enter) {
+            VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: HostNavigationService) => {
+                navigationService.openNewWindow(this.props.titleUrl, "");
+            })
+        }
     }
 }
 
