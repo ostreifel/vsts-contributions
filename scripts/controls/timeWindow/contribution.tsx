@@ -21,7 +21,12 @@ class ContributionItem extends React.Component<{
 }, {}> {
     render() {
         const { title, titleUrl, location, locationUrl, date, showDay, className } = this.props
-        return <div className={`contribution-item ${className}`} tabIndex={0} data-is-focusable={true} onKeyDown={this._onKeyDown.bind(this)} >
+        return <div className={`contribution-item ${className}`}
+            tabIndex={0}
+            data-is-focusable={true}
+            onKeyDown={this._onKeyDown.bind(this)}
+            onDoubleClick={this._openLink.bind(this)}
+        >
             <FocusZone direction={FocusZoneDirection.horizontal}>
                 <a className="title" href={titleUrl} target="_blank">{title}</a>
                 <div className="location-time">
@@ -35,10 +40,13 @@ class ContributionItem extends React.Component<{
 
     private _onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
         if (e.keyCode === KeyCodes.space || e.keyCode === KeyCodes.enter) {
-            VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: HostNavigationService) => {
-                navigationService.openNewWindow(this.props.titleUrl, "");
-            })
+            this._openLink();
         }
+    }
+    private _openLink() {
+        VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: HostNavigationService) => {
+            navigationService.openNewWindow(this.props.titleUrl, "");
+        })
     }
 }
 

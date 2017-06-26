@@ -92,14 +92,13 @@ body.contributions-body {
                         .day-filter {
                             margin: 1px;
                             position: relative;
-                            background-color: black;
-                            opacity: 0;
                             cursor: pointer;
                             &.hover:not(.selected) {
                                 opacity: 0.3;
+                                background-color: black;
                             }
                             &.selected {
-                                opacity: 0.8;
+                                border: 3px solid black;
                             }
                         }
                     }
@@ -156,21 +155,29 @@ body.contributions-body {
                     margin-top: 6px;
                 }
             }
-            .hidden {
-                display: none;
-            }
-            .contribution-item {
-                padding: 2px 0px 2px 20px;
-                @include focus-element;
-                a.title {
-                    color: black;
-                    &:hover, &:visited, &:hover, &:focus, &:active {
-                        color: black;
-                    }
+            .search-contributions {
+                display: flex;
+                .search-box {
+                    width: 400px;
                 }
-                .location-time {
-                    font-size: smaller;
-                    color: gray;
+            }
+            .contribution-section {
+                .hidden {
+                    display: none;
+                }
+                .contribution-item {
+                    padding: 2px 0px 2px 20px;
+                    @include focus-element;
+                    a.title {
+                        color: black;
+                        &:hover, &:visited, &:hover, &:focus, &:active {
+                            color: black;
+                        }
+                    }
+                    .location-time {
+                        font-size: smaller;
+                        color: gray;
+                    }
                 }
             }
         }

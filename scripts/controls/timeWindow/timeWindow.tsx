@@ -57,7 +57,7 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
                 contributions={this.getContributions(this.props)}
                 update={contributions => this.setState({contributions})}
             />
-            <div>
+            <div className="contribution-section">
                 <Commits allContributions={contributions} showDay={showDay} />
                 <Changesets allContributions={contributions} showDay={showDay} />
                 <CreatePullRequests allContributions={contributions} showDay={showDay} />

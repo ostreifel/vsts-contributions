@@ -2,6 +2,7 @@ import * as React from "react";
 import { UserContribution } from "../../data/contracts";
 import { TextField } from "OfficeFabric/components/TextField";
 import { toDocument, IContributionDocument } from "./searchDocument";
+import { IconButton } from "OfficeFabric/components/Button";
 
 export interface ISearchContributionsProps {
     contributionsKey: string;
@@ -10,60 +11,74 @@ export interface ISearchContributionsProps {
 }
 
 interface ISearchContributionsState {
+    searchText: string;
+}
+interface ISearchData {
     contributionsKey: string;
     documents: IContributionDocument[];
-    lookup: {[key: string]: UserContribution};
 }
 
 export class SearchContributions extends React.Component<
     ISearchContributionsProps,
     ISearchContributionsState
 > {
-    _searchText: string;
+    private autofocus: boolean;
     constructor(props: ISearchContributionsProps) {
         super(props);
-        this.state = this._calculateState(props);
-    }
-    componentWillReceiveProps(props: ISearchContributionsProps) {
-        if (this._haveContributionsChanged(props)) {
-            this.setState(this._calculateState(props), () => {
-                this._runSearch();
-            });
-        }
+        this.state = {searchText: ""};
     }
     render(): JSX.Element {
         return (
             <div className="search-contributions">
                 <TextField
+                    className="search-box"
                     placeholder="Search contributions..."
-                    onChanged={this._onChanged.bind(this)}
+                    value={this.state.searchText}
+                    onChanged={(searchText: string) => searchText !== this.state.searchText && this.setState({searchText})}
+                    ref={ref => ref && this.autofocus && ref.focus()}
                 />
+                {this.state.searchText ?
+                    <IconButton
+                        icon={"ChromeClose"}
+                        title={"Clear search text"}
+                        onClick={() => {
+                            this.autofocus = true;
+                            this.setState({searchText: ""});
+                        }}
+                    />
+                    : null
+                }
             </div>
         );
     }
-    private _haveContributionsChanged(props: ISearchContributionsProps) {
-        return this.state.contributionsKey !== props.contributionsKey;
+    private searchData?: ISearchData;
+    private havePropsChanged(): boolean {
+        return !this.searchData || this.searchData.contributionsKey !== this.props.contributionsKey;
     }
-    private _calculateState(props: ISearchContributionsProps): ISearchContributionsState {
-        const state: ISearchContributionsState = {
-            contributionsKey: props.contributionsKey,
-            documents: props.contributions.map(toDocument),
-            lookup: {},
-        };
-        const { lookup } = state;
-        for (const contribution of props.contributions) {
-            lookup[contribution.id] = contribution;
+    private getSearchData(): ISearchData {
+        if (!this.searchData || this.havePropsChanged()) {
+            this.searchData = {
+                contributionsKey: this.props.contributionsKey,
+                documents: this.props.contributions.map(toDocument),
+            }
         }
-        return state;
+        return this.searchData;
     }
-    private _onChanged(text: string) {
-        this._searchText = text.toLocaleLowerCase();
-        this._runSearch();
+
+    private _lastSearch?: string;
+    componentDidUpdate() {
+        this.autofocus = false;
+        if (this.state.searchText && this.havePropsChanged() || this._lastSearch !== this.state.searchText) {
+            this._lastSearch = this.state.searchText;
+            this.runSearch();
+        }
     }
-    private _runSearch() {
-        if (this._searchText) {
-            const searchResults = this.state.documents.filter(d =>
-                d.title.toLocaleLowerCase().indexOf(this._searchText) >= 0
+    private runSearch() {
+        if (this.state.searchText) {
+            const searchText = this.state.searchText;
+            const { documents } = this.getSearchData();
+            const searchResults = documents.filter(d =>
+                d.title.toLocaleLowerCase().indexOf(searchText) >= 0
             );
             const contributions = searchResults.map(res => res.contribution);
             this.props.update(contributions);
