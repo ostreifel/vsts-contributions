@@ -14,8 +14,11 @@ VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService: Host
     }
     const filter: IContributionFilter = JSON.parse(decodeURI(hash));
     // Json doesn't understand dates -- convert the date fields back to dates
-    if (filter.selectedDate) {
-      filter.selectedDate = new Date(filter.selectedDate);
+    if (filter.startDate) {
+      filter.startDate = new Date(filter.startDate);
+    }
+    if (filter.endDate) {
+      filter.endDate = new Date(filter.endDate);
     }
     return Q(filter);
   }

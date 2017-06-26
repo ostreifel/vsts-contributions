@@ -65,11 +65,11 @@ export class SearchContributions extends React.Component<
         return this.searchData;
     }
 
-    private _lastSearch?: string;
+    private lastSearch?: string;
     componentDidUpdate() {
         this.autofocus = false;
-        if (this.state.searchText && this.havePropsChanged() || this._lastSearch !== this.state.searchText) {
-            this._lastSearch = this.state.searchText;
+        if (this.state.searchText && this.havePropsChanged() || this.lastSearch !== this.state.searchText) {
+            this.lastSearch = this.state.searchText;
             this.runSearch();
         }
     }

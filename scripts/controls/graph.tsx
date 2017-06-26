@@ -42,9 +42,10 @@ function getContributionClassDelegate(contributions: IUserContributions): (count
 }
 
 class Day extends React.Component<{
-    toggleSelect: (date?: Date)=> void,
+    toggleSelect: (startDate?: Date, endDate?: Date) => void,
     date: Date,
-    selectedDate?: Date,
+    startDate?: Date,
+    endDate?: Date,
     contributions?: UserContribution[],
     getWorkClass: (count: number) => string
 },
@@ -56,14 +57,12 @@ class Day extends React.Component<{
         this.state = { showCallout: false };
     }
     render() {
-        const endDate = new Date(this.props.date);
-        endDate.setDate(endDate.getDate() + 1);
         const contributions = this.props.contributions || [];
         return <div className="day-container"
             onMouseEnter={() => this.showCallout()}
             onMouseOver={() => this.showCallout()}
             onMouseLeave={() => this.showCallout(false)}
-            onClick={() => this.toggleSelect()}
+            onClick={this.toggleSelect.bind(this)}
         >
             <div className={`day ${this.props.getWorkClass(contributions.length)}`} ref={ref => this.dayElem = ref}></div>
             <div className={this.getDayFilterClasses()} />
@@ -94,23 +93,34 @@ class Day extends React.Component<{
         }
     }
     private isSelected() {
-        return this.props.selectedDate && this.props.date.getTime() === this.props.selectedDate.getTime();
+        const {startDate, endDate, date} = this.props;
+        return startDate &&
+        endDate &&
+        date.getTime() >= startDate.getTime() &&
+        date.getTime() < endDate.getTime();
     }
-    private toggleSelect() {
-        if (this.isSelected()) {
-            this.props.toggleSelect();
+    private toggleSelect(e: MouseEvent) {
+        if (e.shiftKey) {
+            const nextDay = new Date(this.props.date);
+            nextDay.setDate(nextDay.getDate() + 1);
+            this.props.toggleSelect(undefined, nextDay);
         } else {
-            this.props.toggleSelect(this.props.date);
+            if (this.isSelected()) {
+                this.props.toggleSelect();
+            } else {
+                this.props.toggleSelect(this.props.date);
+            }
         }
     }
 }
 
 class Week extends React.Component<{
     date: Date,
-    selectedDate?: Date,
+    startDate?: Date,
+    endDate?: Date,
     contributions: IUserContributions,
     getWorkClass: (count: number) => string,
-    toggleSelect: (date?: Date) => void,
+    toggleSelect: (startDate?: Date, endDate?: Date)  => void,
 }, {}> {
     render() {
         const date = this.props.date;
@@ -118,7 +128,8 @@ class Week extends React.Component<{
         do {
             days.push(<Day
                 date={new Date(date.getTime())}
-                selectedDate={this.props.selectedDate}
+                startDate={this.props.startDate}
+                endDate={this.props.endDate}
                 contributions={this.props.contributions[date.getTime()]}
                 getWorkClass={this.props.getWorkClass}
                 toggleSelect={this.props.toggleSelect}
@@ -145,11 +156,12 @@ const monthNames: string[] = [
 ];
 
 class Graph extends React.Component<{
-    selectedDate?: Date,
+    startDate?: Date,
+    endDate?: Date,
     contributions: IUserContributions,
     loading: boolean,
     className?: string,
-    toggleSelect: (date?: Date) => void,
+    toggleSelect: (startDate?: Date, endDate?: Date)  => void,
 }, {}> {
     render() {
         const getWorkClass = getContributionClassDelegate(this.props.contributions);
@@ -163,7 +175,8 @@ class Graph extends React.Component<{
             monthIdxes.push(date.getMonth());
             weeks.unshift(<Week
                 date={new Date(date.getTime())}
-                selectedDate={this.props.selectedDate}
+                startDate={this.props.startDate}
+                endDate={this.props.endDate}
                 contributions={this.props.contributions}
                 getWorkClass={getWorkClass}
                 toggleSelect={this.props.toggleSelect}
@@ -207,7 +220,7 @@ export type TileSize = "small-tiles" | "medium-tiles";
 
 let previousContributons: IUserContributions = {};
 let renderNum = 0;
-export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: Date) => void, tileSize: TileSize = "medium-tiles") {
+export function renderGraph(filter: IContributionFilter, toggleSelect: (startDate?: Date, endDate?: Date)  => void, tileSize: TileSize = "medium-tiles") {
     const graphParent = $(".graph-container")[0];
     const timings = new Timings();
     const currentRender = ++renderNum;
@@ -215,7 +228,8 @@ export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: D
     const showSpinner = new DelayedFunction(null, 100, "showSpinner", () => {
         if (currentRender === renderNum) {
             ReactDOM.render(<Graph
-                selectedDate={filter.selectedDate}
+                startDate={filter.startDate}
+                endDate={filter.endDate}
                 contributions={previousContributons}
                 loading={true}
                 toggleSelect={toggleSelect}
@@ -233,7 +247,8 @@ export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: D
             timings.measure("getContributions");
             previousContributons = contributions;
             ReactDOM.render(<Graph
-                selectedDate={filter.selectedDate}
+                startDate={filter.startDate}
+                endDate={filter.endDate}
                 contributions={contributions}
                 loading={false}
                 className={tileSize}

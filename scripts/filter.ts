@@ -16,7 +16,8 @@ export interface IEnabledProviders {
 export interface IContributionFilter {
     identity: IIdentity;
     allProjects: boolean;
-    selectedDate?: Date;
+    startDate?: Date;
+    endDate?: Date;
     enabledProviders: IEnabledProviders;
     repository?: {key: string; name: string};
 }
@@ -34,7 +35,7 @@ export function filterToIProperties(filter: IContributionFilter): IProperties {
     for (let providerKey in filter.enabledProviders) {
         properties[providerKey] = String(filter.enabledProviders[providerKey]);
     }
-    properties["selectedDate"] = String(!!filter.selectedDate);
+    properties["selectedDate"] = String(!!filter.startDate);
     properties["allProjects"] = String(!!filter.allProjects);
     return properties;
 }

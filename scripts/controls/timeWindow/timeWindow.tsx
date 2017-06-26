@@ -22,7 +22,8 @@ import {
 import { SearchContributions } from "./search";
 
 interface ITimeWindowProps {
-    date?: Date,
+    startDate?: Date,
+    endDate?: Date,
     allContributions: IUserContributions,
     filter: IContributionFilter,
 }
@@ -37,14 +38,14 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
         this.setState({contributions: this.getContributions(props)});
     }
     render() {
-        const { date } = this.props;
+        const { startDate } = this.props;
         const { contributions } = this.state;
-        const showDay = !date;
+        const showDay = !startDate;
         return <div className="time-window">
             <div className="time-header">
-                <h3>{`${toCountString(contributions.length, "contribution")} ${date ? ` on ${toDateString(date)}` : " for the year"}`}</h3>
+                <h3>{this.getTitleText()}</h3>
                 {
-                    date ?
+                    startDate ?
                         <IconButton
                             icon={"ChromeClose"}
                             title={"Clear date filter"}
@@ -68,9 +69,32 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
             </div>
         </div>;
     }
-    private getContributions({date, allContributions}: ITimeWindowProps) {
-        if (date) {
-            return allContributions[date.getTime()] || [];
+    private getTitleText() {
+        const { startDate, endDate } = this.props;
+        const { contributions } = this.state;
+        let title = toCountString(contributions.length, "contribution");
+        if (startDate && endDate) {
+            const startDateP1 = new Date(startDate);
+            startDateP1.setDate(startDateP1.getDate());
+            if (startDateP1.getTime() === endDate.getTime()) {
+                title += ` on ${toDateString(startDate)}`;
+            } else {
+                const displayedEndDate = new Date(endDate);
+                displayedEndDate.setDate(displayedEndDate.getDate() - 1);
+                title += ` between ${toDateString(startDate)} and ${toDateString(displayedEndDate)}`;
+            }
+        } else {
+            title += " for the year";
+        }
+        return title;
+    }
+    private getContributions({startDate, endDate, allContributions}: ITimeWindowProps) {
+        if (startDate && endDate) {
+            const contributions: UserContribution[] = [];
+            for (const date = new Date(startDate); date.getTime() < endDate.getTime(); date.setDate(date.getDate() + 1)) {
+                contributions.push(...(allContributions[date.getTime()] || []))
+            }
+            return contributions;
         }
         const contributions: UserContribution[] = [];
         for (const day in allContributions) {
@@ -87,12 +111,8 @@ export function renderTimeWindow(filter: IContributionFilter) {
     const currentRender = ++renderNum;
     getContributions(filter).then(contributions => {
         if (currentRender === renderNum) {
-            const date = filter.selectedDate;
-            if (date) {
-                const end = new Date(date);
-                end.setDate(end.getDate() + 1);
-            }
-            ReactDOM.render(<TimeWindow filter={filter} date={date} allContributions={contributions} />, graphParent);
+            const { startDate, endDate } = filter;
+            ReactDOM.render(<TimeWindow filter={filter} startDate={startDate} endDate={endDate} allContributions={contributions} />, graphParent);
         }
     });
 }
