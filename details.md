@@ -25,6 +25,7 @@ Click the selected day to show contributions for the whole year.
 Click that any day on the graph to show only the contribution details for that particular day
 
 ## Version History
+(06/25/2017) v1.5.52 Specify time range with shift click, arrow through results, search title text  
 (06/24/2017) v1.5.1 Usuability Updates
 - UI performance (lists and day selection)
 - coloring of days is now by value not percentile
