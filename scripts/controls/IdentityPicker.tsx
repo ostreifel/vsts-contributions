@@ -3,6 +3,7 @@ import { Persona, IPersonaProps } from "OfficeFabric/components/Persona";
 import { IconButton } from "OfficeFabric/components/Button";
 import { NormalPeoplePicker, IBasePickerSuggestionsProps } from "OfficeFabric/components/pickers";
 import { searchIdentities } from "../data/identities";
+import { DelayedFunction } from "VSS/Utils/Core";
 
 export interface IIdentity {
     displayName: string;
@@ -29,7 +30,7 @@ const suggestionProps: IBasePickerSuggestionsProps = {
 
 export class IdentityPicker extends React.Component<IIdentityPickerProps, {
     identity?: IIdentity,
-    onBlur?: () => void
+    onBlur?: DelayedFunction,
 }> {
     private autoFocus: boolean;
     constructor(props: IIdentityPickerProps) {
@@ -71,11 +72,11 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                                     }
                                     this.autoFocus = true;
                                     const identity = this.state.identity;
-                                    this.setState({ ...this.state, identity: undefined, onBlur: () => {
+                                    this.setState({ ...this.state, identity: undefined, onBlur: new DelayedFunction(null, 500, "", () => {
                                         if (this.props.forceValue) {
                                             this.setState({ ...this.state, identity });
                                         }
-                                    } });
+                                    }) });
                                 }}
                             />
                     }
@@ -87,6 +88,9 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                     className={`ms-PeoplePicker identity-selector`}
                     onChange={(items) => {
                         if (items && items.length > 0) {
+                            if (this.state.onBlur) {
+                                this.state.onBlur.cancel();
+                            }
                             if (this.props.onIdentityChanged) {
                                 this.props.onIdentityChanged(this._personaToIIdentity(items[0]));
                             }
@@ -100,7 +104,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                         readOnly: this.props.readOnly,
                         onBlur: () => {
                             if (this.state.onBlur) {
-                                this.state.onBlur();
+                                this.state.onBlur.start();
                             }
                         }
                     }}
