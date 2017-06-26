@@ -11,7 +11,7 @@ $medium-tiles: 15px;
     &:hover {
         @include hover-style;
     }
-    &:focus, .focus {
+    &:focus, &.focus {
         @include focused-style;
     }
 }
@@ -34,8 +34,10 @@ body.contributions-body {
     }
     .collapsible-header {   
         .header {
+            display: flex;
+            align-items: center;
             h1,h2,h3,h4,h5,h6 {
-                margin-bottom: 0px;
+                margin: 0px;
                 display: inline-block;
             }
             button.toggle-button {
@@ -51,6 +53,7 @@ body.contributions-body {
                     display: table-row;
                     > * {
                         display: table-cell;
+                        vertical-align: top;
                         padding: 3px 5px;
                     }
                 }
