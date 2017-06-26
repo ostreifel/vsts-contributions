@@ -75,7 +75,7 @@ export class SearchContributions extends React.Component<
     }
     private runSearch() {
         if (this.state.searchText) {
-            const searchText = this.state.searchText;
+            const searchText = this.state.searchText.toLocaleLowerCase();
             const { documents } = this.getSearchData();
             const searchResults = documents.filter(d =>
                 d.title.toLocaleLowerCase().indexOf(searchText) >= 0
