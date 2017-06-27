@@ -40,17 +40,10 @@ class ContributionsWidget implements IWidget {
   }
   public readonly reload = this.load;
 
-  private gotoHub(startDate: Date, endDate: undefined);
-  private gotoHub(startDate: undefined, endDate: Date);
-  private gotoHub(startDate?: Date, endDate?: Date) {
-    if (!startDate && endDate) {
-      startDate = new Date(endDate);
-      startDate.setDate(startDate.getDate() - 1);
-    }
-    if (startDate && !endDate) {
-      endDate = new Date(startDate);
-      endDate.setDate(endDate.getDate() - 1);
-    }
+  private gotoHub(startDate: Date) {
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 1);
+
     const filter: IContributionFilter = { ...this.filter, startDate, endDate };
     trackEvent("widgetDayClick", filterToIProperties(filter));
     VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: HostNavigationService) => {
@@ -58,7 +51,7 @@ class ContributionsWidget implements IWidget {
       const projectName = VSS.getWebContext().project.name;
       const { publisherId, extensionId } = VSS.getExtensionContext();
       const contributionid = `${publisherId}.${extensionId}.contributions-hub`;
-      const url = `${collectionUri}${projectName}/_apps/hub/${contributionid}#${encodeURI(JSON.stringify(filter))}`;
+      const url = `${collectionUri}${projectName}/_apps/hub/${contributionid}#${encodeURIComponent(JSON.stringify(filter))}`;
       navigationService.openNewWindow(url, "");
     });
   }

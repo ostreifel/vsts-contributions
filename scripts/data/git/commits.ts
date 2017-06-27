@@ -24,8 +24,8 @@ function getCommits(repoId: string, fromDate: Date, skip: number, top: number, a
         "_apis/git/repositories/" +
          repoId +
           "/Commits?api-version=1.0" +
-          "&fromDate=" + encodeURI(fromDate.toJSON()) +
-          "&author=" + encodeURI(author) +
+          "&fromDate=" + encodeURIComponent(fromDate.toJSON()) +
+          "&author=" + encodeURIComponent(author) +
           "&$skip=" + skip +
           "&$top=" + top;
 

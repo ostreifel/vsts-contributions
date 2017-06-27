@@ -21,6 +21,12 @@ import {
 } from "./contributions";
 import { SearchContributions } from "./search";
 
+function isOneDayRange(startDate: Date, endDate: Date) {
+    const startDateP1 = new Date(startDate);
+    startDateP1.setDate(startDateP1.getDate() + 1);
+    return startDateP1.getTime() === endDate.getTime();
+}
+
 interface ITimeWindowProps {
     startDate?: Date,
     endDate?: Date,
@@ -38,9 +44,9 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
         this.setState({contributions: this.getContributions(props)});
     }
     render() {
-        const { startDate } = this.props;
+        const { startDate, endDate } = this.props;
         const { contributions } = this.state;
-        const showDay = !startDate;
+        const showDay = !startDate || !endDate || !isOneDayRange(startDate, endDate);
         return <div className="time-window">
             <div className="time-header">
                 <h3>{this.getTitleText()}</h3>
@@ -74,9 +80,7 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
         const { contributions } = this.state;
         let title = toCountString(contributions.length, "contribution");
         if (startDate && endDate) {
-            const startDateP1 = new Date(startDate);
-            startDateP1.setDate(startDateP1.getDate() + 1);
-            if (startDateP1.getTime() === endDate.getTime()) {
+            if (isOneDayRange(startDate, endDate)) {
                 title += ` on ${toDateString(startDate)}`;
             } else {
                 const displayedEndDate = new Date(endDate);
