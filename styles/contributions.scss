@@ -76,6 +76,9 @@ body.contributions-body {
                     display: flex;
                     flex-direction: column;
                     .day-container {
+                        &:focus {
+                            outline: 2px solid #00FFFF
+                        }
                         .day {
                             background-color: #d3d3d3;
                             margin: 1px;

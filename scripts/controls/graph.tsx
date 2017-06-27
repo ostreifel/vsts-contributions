@@ -9,6 +9,8 @@ import { trackEvent } from "../events";
 import { Timings } from "../timings";
 import { IContributionFilter, filterToIProperties } from "../filter"
 import { DelayedFunction } from "VSS/Utils/Core"
+import { FocusZone } from "OfficeFabric/components/FocusZone";
+import { KeyCodes } from "OfficeFabric/Utilities";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
     const counts: number[] = Object.keys(contributions).map(day => contributions[day].length);
@@ -62,7 +64,10 @@ class Day extends React.Component<{
             onMouseEnter={() => this.showCallout()}
             onMouseOver={() => this.showCallout()}
             onMouseLeave={() => this.showCallout(false)}
-            onClick={this.toggleSelect.bind(this)}
+            onClick={this.onClick.bind(this)}
+            onKeyDown={this.onKeydown.bind(this)}
+            tabIndex={0}
+            data-is-focusable={true}
         >
             <div className={`day ${this.props.getWorkClass(contributions.length)}`} ref={ref => this.dayElem = ref}></div>
             <div className={this.getDayFilterClasses()} />
@@ -99,8 +104,19 @@ class Day extends React.Component<{
         date.getTime() >= startDate.getTime() &&
         date.getTime() < endDate.getTime();
     }
-    private toggleSelect(e: MouseEvent) {
-        if (e.shiftKey) {
+    /** can't rely on synthetic events b/c they don't have the shift flag set */
+    private onKeydown(e: KeyboardEvent) {
+        if (e.keyCode === KeyCodes.space || e.keyCode === KeyCodes.enter) {
+            this.toggleSelect(e.shiftKey);
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    }
+    private onClick(e: MouseEvent) {
+        this.toggleSelect(e.shiftKey);
+    }
+    private toggleSelect(expand: boolean) {
+        if (expand) {
             this.props.toggleSelect(this.props.date, true);
         } else {
             if (this.isSelected()) {
@@ -185,10 +201,10 @@ class Graph extends React.Component<{
             <div className="month-labels">
                 {this.getMonths(monthIdxes)}
             </div>
-            <div className="year">
+            <FocusZone className="year">
                 {weeks}
                 {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
-            </div>
+            </FocusZone>
         </div>;
     }
     /**
