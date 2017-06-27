@@ -42,7 +42,7 @@ function getContributionClassDelegate(contributions: IUserContributions): (count
 }
 
 class Day extends React.Component<{
-    toggleSelect: (startDate?: Date, endDate?: Date) => void,
+    toggleSelect: (date?: Date, expand?: boolean) => void,
     date: Date,
     startDate?: Date,
     endDate?: Date,
@@ -101,9 +101,7 @@ class Day extends React.Component<{
     }
     private toggleSelect(e: MouseEvent) {
         if (e.shiftKey) {
-            const nextDay = new Date(this.props.date);
-            nextDay.setDate(nextDay.getDate() + 1);
-            this.props.toggleSelect(undefined, nextDay);
+            this.props.toggleSelect(this.props.date, true);
         } else {
             if (this.isSelected()) {
                 this.props.toggleSelect();
@@ -120,7 +118,7 @@ class Week extends React.Component<{
     endDate?: Date,
     contributions: IUserContributions,
     getWorkClass: (count: number) => string,
-    toggleSelect: (startDate?: Date, endDate?: Date)  => void,
+    toggleSelect: (date?: Date, expand?: boolean)  => void,
 }, {}> {
     render() {
         const date = this.props.date;
@@ -161,7 +159,7 @@ class Graph extends React.Component<{
     contributions: IUserContributions,
     loading: boolean,
     className?: string,
-    toggleSelect: (startDate?: Date, endDate?: Date)  => void,
+    toggleSelect: (date?: Date, expand?: boolean)  => void,
 }, {}> {
     render() {
         const getWorkClass = getContributionClassDelegate(this.props.contributions);
@@ -220,7 +218,7 @@ export type TileSize = "small-tiles" | "medium-tiles";
 
 let previousContributons: IUserContributions = {};
 let renderNum = 0;
-export function renderGraph(filter: IContributionFilter, toggleSelect: (startDate?: Date, endDate?: Date)  => void, tileSize: TileSize = "medium-tiles") {
+export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: Date, expand?: boolean)  => void, tileSize: TileSize = "medium-tiles") {
     const graphParent = $(".graph-container")[0];
     const timings = new Timings();
     const currentRender = ++renderNum;

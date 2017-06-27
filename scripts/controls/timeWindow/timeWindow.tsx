@@ -75,7 +75,7 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
         let title = toCountString(contributions.length, "contribution");
         if (startDate && endDate) {
             const startDateP1 = new Date(startDate);
-            startDateP1.setDate(startDateP1.getDate());
+            startDateP1.setDate(startDateP1.getDate() + 1);
             if (startDateP1.getTime() === endDate.getTime()) {
                 title += ` on ${toDateString(startDate)}`;
             } else {

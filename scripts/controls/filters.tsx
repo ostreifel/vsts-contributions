@@ -117,16 +117,18 @@ class Filters extends React.Component<
   }
 }
 
-export function updateSelectedDate(startDate?: Date, endDate?: Date) {
-  if (!startDate && endDate) {
-    if (filters.props.filter.startDate) {
-      startDate = filters.props.filter.startDate;
-    } else {
-      startDate = new Date(endDate);
-      startDate.setDate(startDate.getDate() - 1);
-    }
-  } else if (startDate && !endDate) {
-    endDate = new Date(startDate);
+export function updateSelectedDate(date?: Date, expand: boolean = false) {
+  let {startDate, endDate} = filters.props.filter;
+  if (!date) {
+    startDate = endDate = undefined;
+  } else if (!expand || !startDate || !endDate) {
+    startDate = date;
+    endDate = new Date(date);
+    endDate.setDate(endDate.getDate() + 1);
+  } else if (date.getTime() < startDate.getTime()) {
+    startDate = date;
+  } else if (date.getTime() >= endDate.getTime()) {
+    endDate = new Date(date);
     endDate.setDate(endDate.getDate() + 1);
   }
   const filter: IContributionFilter = { ...filters.props.filter, startDate, endDate };
