@@ -24,8 +24,24 @@ Click the selected day to show contributions for the whole year.
 
 Click that any day on the graph to show only the contribution details for that particular day
 
-## Version History
-(06/25/2017) v1.5.52 Specify time range with shift click, arrow through results, search title text  
+## Time Range
+
+Once one day is selected hold shift while selecting another day with the keyboard or mouse. This will expand the select time range to include that day.
+
+![hover over new time range](img/hoverTimeRange.png)  
+![3 day time range selected](img/timeRange.png)  
+
+# Version History
+(06/26/2017) v1.5.70
+- keyboard navigation of graph
+- fix bug selecting day to include in time range
+- fix casing issue in search
+  
+(06/25/2017) v1.5.52 
+- Specify time range with shift click
+- arrow through results
+- search title text  
+
 (06/24/2017) v1.5.1 Usuability Updates
 - UI performance (lists and day selection)
 - coloring of days is now by value not percentile
