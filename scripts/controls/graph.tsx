@@ -53,27 +53,27 @@ class Day extends React.Component<{
 },
     { showCallout: boolean }
 > {
-    private dayElem: HTMLDivElement;
     constructor() {
         super();
         this.state = { showCallout: false };
     }
     render() {
         const contributions = this.props.contributions || [];
+        const dayId = `day_${this.props.date.getTime()}`;
         return <div className="day-container"
-            onMouseEnter={() => this.showCallout()}
-            onMouseOver={() => this.showCallout()}
-            onMouseLeave={() => this.showCallout(false)}
+            onMouseEnter={() => this.delayedShowCallout()}
+            onMouseOver={() => this.delayedShowCallout()}
+            onMouseLeave={() => this.delayedShowCallout(false)}
             onClick={this.onClick.bind(this)}
             onKeyDown={this.onKeydown.bind(this)}
             tabIndex={0}
             data-is-focusable={true}
         >
-            <div className={`day ${this.props.getWorkClass(contributions.length)}`} ref={ref => this.dayElem = ref}></div>
+            <div className={`day ${this.props.getWorkClass(contributions.length)}`} id={dayId}></div>
             <div className={this.getDayFilterClasses()} />
             {this.state.showCallout ?
                 <Callout
-                    targetElement={this.dayElem}
+                    target={`#${dayId}`}
                 >
                     <div>{toCountString(contributions.length, "contribution")}</div>
                     <div>{toDateString(this.props.date)}</div>
@@ -92,7 +92,16 @@ class Day extends React.Component<{
         }
         return classes;
     }
-    private showCallout(show: boolean = true) {
+    private readonly showCalloutDelay = new DelayedFunction(null, 200, "", () => this.showCalloutNow(true));
+    private delayedShowCallout(show: boolean = true) {
+        if (show) {
+            this.showCalloutDelay.reset();
+        } else {
+            this.showCalloutDelay.cancel();
+            this.showCalloutNow(false);
+        }
+    }
+    private showCalloutNow(show: boolean = true) {
         if (this.state.showCallout !== show) {
             this.setState({ ...this.state, showCallout: show });
         }

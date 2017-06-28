@@ -76,6 +76,7 @@ body.contributions-body {
                     display: flex;
                     flex-direction: column;
                     .day-container {
+                        cursor: pointer;
                         &:focus {
                             outline: 2px solid #00FFFF
                         }
@@ -98,7 +99,6 @@ body.contributions-body {
                         .day-filter {
                             margin: 1px;
                             position: relative;
-                            cursor: pointer;
                             &.hover:not(.selected) {
                                 opacity: 0.3;
                                 background-color: black;
