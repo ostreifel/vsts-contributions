@@ -58,7 +58,7 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                         this.props.readOnly ?
                             null :
                             <IconButton
-                                icon={"ChromeClose"}
+                                iconProps={{ iconName: "ChromeClose" }}
                                 label={"Clear identity selection"}
                                 autoFocus={this.autoFocus}
                                 onClick={() => {

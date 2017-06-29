@@ -7,6 +7,7 @@
 		"semicolon": ["always"],
 		"triple-equals": true,
 		"no-trailing-whitespace": true,
-		"eofline": true
+		"eofline": true,
+		"no-any": true
 	}
 }

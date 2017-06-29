@@ -39,7 +39,7 @@ export class SearchContributions extends React.Component<
                 />
                 {this.state.searchText ?
                     <IconButton
-                        icon={"ChromeClose"}
+                        iconProps={{ iconName: "ChromeClose" }}
                         title={"Clear search text"}
                         onClick={() => {
                             this.autofocus = true;

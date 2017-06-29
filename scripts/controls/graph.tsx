@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { Callout } from "OfficeFabric/components/Callout";
 import { getContributions } from "../data/provider";
 import { IUserContributions, UserContribution } from "../data/contracts";
-import { toDateString, toCountString } from "./messageFormatting";
+import { toDateString, toCountString, isOneDayRange } from "./messageFormatting";
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
 import { trackEvent } from "../events";
 import { Timings } from "../timings";
@@ -64,7 +64,7 @@ class Day extends React.Component<{
             onMouseEnter={() => this.delayedShowCallout()}
             onMouseOver={() => this.delayedShowCallout()}
             onMouseLeave={() => this.delayedShowCallout(false)}
-            onClick={this.onClick.bind(this)}
+            onMouseDown={this.onClick.bind(this)}
             onKeyDown={this.onKeydown.bind(this)}
             tabIndex={0}
             data-is-focusable={true}
@@ -130,6 +130,13 @@ class Day extends React.Component<{
         } else {
             if (this.isSelected()) {
                 this.props.toggleSelect();
+                if (
+                    this.props.startDate &&
+                    this.props.endDate &&
+                    !isOneDayRange(this.props.startDate, this.props.endDate)
+                ) {
+                    this.props.toggleSelect(this.props.date);
+                }
             } else {
                 this.props.toggleSelect(this.props.date);
             }

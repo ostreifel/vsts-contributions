@@ -12,7 +12,7 @@ export interface IMeasurements {
     [name: string]: number;
 }
 
-const flush = new DelayedFunction(null, 100, "flush", () => {
+const flush = new DelayedFunction(null, 3000, "flush", () => {
     const insights = getInsights();
     if (insights) {
         insights.flush();
@@ -31,7 +31,7 @@ export function trackEvent(name: string, properties?: IProperties, measurements?
             contributionLocation: window['contributionLocation']
         };
         insights.trackEvent(name, properties, measurements);
-        flush.reset();
+        flush.start();
     }
 }
 function getInsights(): Microsoft.ApplicationInsights.IAppInsights | undefined {

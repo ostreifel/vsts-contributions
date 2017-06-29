@@ -27,3 +27,9 @@ export function toCountString(count: number, noun: string): string {
     }
     return `${count} ${noun}s`;
 }
+
+export function isOneDayRange(startDate: Date, endDate: Date) {
+    const startDateP1 = new Date(startDate);
+    startDateP1.setDate(startDateP1.getDate() + 1);
+    return startDateP1.getTime() === endDate.getTime();
+}

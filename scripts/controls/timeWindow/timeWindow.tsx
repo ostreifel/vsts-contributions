@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { getContributions } from "../../data/provider";
-import { toDateString, toCountString } from "../messageFormatting";
+import { toDateString, toCountString, isOneDayRange } from "../messageFormatting";
 import {
     IUserContributions,
     UserContribution,
@@ -20,12 +20,6 @@ import {
     ResolveWorkItems,
 } from "./contributions";
 import { SearchContributions } from "./search";
-
-function isOneDayRange(startDate: Date, endDate: Date) {
-    const startDateP1 = new Date(startDate);
-    startDateP1.setDate(startDateP1.getDate() + 1);
-    return startDateP1.getTime() === endDate.getTime();
-}
 
 interface ITimeWindowProps {
     startDate?: Date,
@@ -53,7 +47,7 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
                 {
                     startDate ?
                         <IconButton
-                            icon={"ChromeClose"}
+                            iconProps={{ iconName: "ChromeClose" }}
                             title={"Clear date filter"}
                             onClick={() => updateSelectedDate()}
                         /> : null

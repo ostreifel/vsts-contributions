@@ -2,7 +2,7 @@ import { authTokenManager } from "VSS/Authentication/Services";
 export function callApi(url: string,
                         method: string,
                         headers: {[header: string]: string} | undefined,
-                        data: any | undefined,
+                        data: object | undefined,
                         success: (response) => void,
                         failure: (error: TfsError, errorThrown: string, status: number) => void) {
     VSS.getAccessToken().then((sessionToken) => {

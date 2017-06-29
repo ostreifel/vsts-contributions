@@ -62,7 +62,7 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                         this.props.readOnly ?
                             null :
                             <IconButton
-                                icon={"ChromeClose"}
+                                iconProps={{ iconName: "ChromeClose" }}
                                 label={"Clear identity selection"}
                                 autoFocus={this.autoFocus}
                                 title={"Clear identity"}
