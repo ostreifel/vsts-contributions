@@ -60,6 +60,8 @@ class Day extends React.Component<{
     render() {
         const contributions = this.props.contributions || [];
         const dayId = `day_${this.props.date.getTime()}`;
+        const contributionCount = toCountString(contributions.length, "contribution");
+        const dateString = toDateString(this.props.date);
         return <div className="day-container"
             onMouseEnter={() => this.delayedShowCallout()}
             onMouseOver={() => this.delayedShowCallout()}
@@ -68,6 +70,7 @@ class Day extends React.Component<{
             onKeyDown={this.onKeydown.bind(this)}
             tabIndex={0}
             data-is-focusable={true}
+            aria-label={`${contributionCount} on ${dateString}`}
         >
             <div className={`day ${this.props.getWorkClass(contributions.length)}`} id={dayId}></div>
             <div className={this.getDayFilterClasses()} />
@@ -75,8 +78,8 @@ class Day extends React.Component<{
                 <Callout
                     target={`#${dayId}`}
                 >
-                    <div>{toCountString(contributions.length, "contribution")}</div>
-                    <div>{toDateString(this.props.date)}</div>
+                    <div>{contributionCount}</div>
+                    <div>{dateString}</div>
                 </Callout>
                 : null
             }

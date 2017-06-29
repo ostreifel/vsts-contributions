@@ -26,6 +26,7 @@ class ContributionItem extends React.Component<{
             data-is-focusable={true}
             onKeyDown={this._onKeyDown.bind(this)}
             onDoubleClick={this._openLink.bind(this)}
+            aria-label={this.props.title}
         >
             <FocusZone direction={FocusZoneDirection.horizontal}>
                 <a className="title" href={titleUrl} target="_blank">{title}</a>
