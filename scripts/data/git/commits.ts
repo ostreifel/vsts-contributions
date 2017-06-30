@@ -34,7 +34,7 @@ function getCommits(repoId: string, fromDate: Date, skip: number, top: number, a
     return defered.promise;
 }
 
-const batchSize = 100;
+const batchSize = 2000;
 function commitsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitCommitRef[]> {
     return getCommits(repoId, yearStart, skip, batchSize, username).then(commits => {
         if (commits.length < batchSize) {
