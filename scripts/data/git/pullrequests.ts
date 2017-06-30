@@ -12,6 +12,7 @@ import * as Q from "q";
 import { CachedValue } from "../CachedValue";
 import { IContributionFilter } from "../../filter";
 import { projects } from "../projects"
+import { yearStart } from "../dates";
 
 export const createdPrs: {
     [username: string]: {
@@ -31,12 +32,14 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
     const criteria = {
         creatorId: username,
         status: PullRequestStatus.All,
+
     } as GitPullRequestSearchCriteria;
     return Q.all([
         getClient().getPullRequests(repoId, criteria, undefined, 0, skip, batchSize),
         repositories.getValue()
     ]).then(([pullrequests, repositories]) => {
         const repoMap = toRepoMap(repositories);
+        pullrequests = pullrequests.filter(pr => pr.creationDate >= yearStart);
         for (const pr of pullrequests) {
             // backcompat with older tfs versions that do not have the project included in the repo reference
             pr.repository = repoMap[pr.repository.id];
@@ -60,6 +63,7 @@ function getPullRequestsForProject(username: string, project: string, skip = 0):
         repositories.getValue()
     ]).then(([pullrequests, repositories]) => {
         const repoMap = toRepoMap(repositories);
+        pullrequests = pullrequests.filter(pr => pr.creationDate >= yearStart);
         for (const pr of pullrequests) {
             // backcompat with older tfs versions that do not have the project included in the repo reference
             pr.repository = repoMap[pr.repository.id];

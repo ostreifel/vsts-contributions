@@ -28,8 +28,15 @@ const sortedRepos = new CachedValue(getSortedRepos);
 
 export function getDefaultRepository(): Q.IPromise<GitRepository | undefined> {
   const projName = VSS.getWebContext().project.name;
-  return sortedRepos.getValue().then(repositories =>
-    repositories.filter(r => r.name === projName)[0] || repositories[0]
-  );
+  return sortedRepos.getValue().then(repositories => {
+
+    if (projName === "VSOnline") {
+      const [repo] = repositories.filter(r => r.name === "VSO");
+      if (repo) {
+        return repo;
+      }
+    }
+    return repositories.filter(r => r.name === projName)[0] || repositories[0]
+  });
 }
 export const defaultRepostory = new CachedValue(getDefaultRepository);
