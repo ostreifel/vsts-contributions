@@ -92,6 +92,7 @@ class Filters extends React.Component<
           }}
           forceValue={true}
           width={400}
+          readOnly={true}
         />
         {this.props.collapsible ?
           <CollapsibleHeader

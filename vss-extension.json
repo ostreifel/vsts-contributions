@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.5.92",
+    "version": "1.6.1",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
@@ -73,42 +73,6 @@
                 "group": "contributed",
                 "name": "Contributions Graph",
                 "uri": "html/contributionsHub.html"
-            }
-        },
-        {
-            "id": "ContributionsWidget",
-            "type": "ms.vss-dashboards-web.widget",
-            "targets": [
-                "ms.vss-dashboards-web.widget-catalog",
-                ".ContributionsWidget-Configuration"
-            ],
-            "properties": {
-                "name": "Contributions Graph",
-                "description": "Graph the contributions of a user",
-                "previewImageUrl": "img/logo.png",
-                "uri": "html/contributionsWidget.html",
-                "isNameConfigurable": true,
-                "supportedSizes": [
-                    {
-                        "rowSpan": 1,
-                        "columnSpan": 4
-                    }
-                ],
-                "supportedScopes": [
-                    "project_team"
-                ]
-            }
-        },
-        {
-            "id": "ContributionsWidget-Configuration",
-            "type": "ms.vss-dashboards-web.widget-configuration",
-            "targets": [
-                "ms.vss-dashboards-web.widget-configuration"
-            ],
-            "properties": {
-                "name": "Contribution Filters",
-                "description": "Which criteria to use when counting contributions",
-                "uri": "html/contributionsWidgetConfiguration.html"
             }
         }
     ]

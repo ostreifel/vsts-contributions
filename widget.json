@@ -1,0 +1,37 @@
+        ,
+        {
+            "id": "ContributionsWidget",
+            "type": "ms.vss-dashboards-web.widget",
+            "targets": [
+                "ms.vss-dashboards-web.widget-catalog",
+                ".ContributionsWidget-Configuration"
+            ],
+            "properties": {
+                "name": "Contributions Graph",
+                "description": "Graph the contributions of a user",
+                "previewImageUrl": "img/logo.png",
+                "uri": "html/contributionsWidget.html",
+                "isNameConfigurable": true,
+                "supportedSizes": [
+                    {
+                        "rowSpan": 1,
+                        "columnSpan": 4
+                    }
+                ],
+                "supportedScopes": [
+                    "project_team"
+                ]
+            }
+        },
+        {
+            "id": "ContributionsWidget-Configuration",
+            "type": "ms.vss-dashboards-web.widget-configuration",
+            "targets": [
+                "ms.vss-dashboards-web.widget-configuration"
+            ],
+            "properties": {
+                "name": "Contribution Filters",
+                "description": "Which criteria to use when counting contributions",
+                "uri": "html/contributionsWidgetConfiguration.html"
+            }
+        }

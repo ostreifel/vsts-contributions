@@ -34,12 +34,13 @@ function getCommits(repoId: string, fromDate: Date, skip: number, top: number, a
     return defered.promise;
 }
 
+const batchSize = 100;
 function commitsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitCommitRef[]> {
-    return getCommits(repoId, yearStart, skip, 10000, username).then(commits => {
-        if (commits.length < 10000) {
+    return getCommits(repoId, yearStart, skip, batchSize, username).then(commits => {
+        if (commits.length < batchSize) {
             return commits;
         } else {
-            return commitsForRepository(username, repoId, skip + 10000).then(moreCommits => [...commits, ...moreCommits]);
+            return commitsForRepository(username, repoId, skip + batchSize).then(moreCommits => [...commits, ...moreCommits]);
         }
     });
 }

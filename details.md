@@ -1,16 +1,3 @@
-# Contributions Widget
-Add the contributions widget
-
-![add widget](img/chooseWidget.png)
-
-Configure which contribution types to show
-
-![configure widget](img/configureWidget.png)
-
-Click a day to bring up the details for that day in a new tab
-
-![click widget](img/clickWidget.png)
-
 
 # Contributions Details
 
@@ -32,6 +19,10 @@ Once one day is selected hold shift while selecting another day with the keyboar
 ![3 day time range selected](img/timeRange.png)  
 
 # Version History
+(06/29/2017) v1.6.1
+- Disable widget
+- Make identity picker readonly
+
 (06/26/2017) v1.5.70
 - keyboard navigation of graph
 - fix bug selecting day to include in time range
