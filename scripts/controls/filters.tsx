@@ -92,7 +92,6 @@ class Filters extends React.Component<
           }}
           forceValue={true}
           width={400}
-          readOnly={"mseng" === VSS.getWebContext().account.name}
         />
         {this.props.collapsible ?
           <CollapsibleHeader
