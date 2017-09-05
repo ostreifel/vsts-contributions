@@ -22,8 +22,10 @@ FROM workitems
 WHERE
         #userfield = '#user'
         and #datefield >= '#date'
+        and [System.ChangedDate] < '#earlierThanDate'
 `;
 const filterProjectClause = ' and [System.TeamProject] = @project';
+const orderClause = ' ORDER BY [System.ChangedDate] desc';
 
 function getStateQuery(fieldPrefix: string, username: string, allProjects: boolean): string {
     // This should really use query parameters but theres no such thing for wiql
@@ -32,7 +34,8 @@ function getStateQuery(fieldPrefix: string, username: string, allProjects: boole
         .replace("#datefield", `${fieldPrefix}Date`)
         .replace("#user", username)
         .replace("#date", format(yearStart, "yyyy-MM-dd"))
-        .concat(allProjects ? "" : filterProjectClause);
+        .concat(allProjects ? "" : filterProjectClause)
+        .concat(orderClause);
 }
 
 const wiCache: { [id: number]: CachedValue<WorkItem> } = {};
@@ -56,19 +59,32 @@ function getWorkItems(ids: number[]): Q.IPromise<WorkItem[]> {
     return Q.all(ids.map(id => wiCache[id].getValue()));
 }
 
-
-const queryResults: { [query: string]: CachedValue<WorkItemQueryResult> } = {};
-function getQueryResults(query: string): Q.IPromise<WorkItemQueryResult> {
-    if (!(query in queryResults)) {
+const queryResults: { [query: string]: CachedValue<WorkItem[]> } = {};
+function getWorkItemsForQuery(query: string): Q.IPromise<WorkItem[]> {
+    const BATCH_SIZE = 20000 - 1;
+    function getResults(earlierThanDate: string = new Date().toJSON()): IPromise<WorkItem[]> {
         const project = VSS.getWebContext().project.id;
-        queryResults[query] = new CachedValue(() => getClient().queryByWiql({ query }, project))
+        const fullQuery = query
+            .replace("#earlierThanDate", earlierThanDate);
+        return getClient().queryByWiql({ query: fullQuery }, project, undefined, true, BATCH_SIZE).then(
+            (results): Q.IPromise<WorkItem[]> => {
+                return getWorkItems(results.workItems.map((wi) => wi.id)).then(
+                    (workitems): Q.IPromise<WorkItem[]> => {
+                        if (workitems.length !== BATCH_SIZE) {
+                            return Q(workitems);
+                        }
+                        const newDate = workitems[workitems.length - 1].fields["System.ChangedDate"];
+                        return getResults(newDate).then((moreWorkItems) =>
+                            [...workitems, ...moreWorkItems]
+                        );
+                    });
+            }
+        );
+    }
+    if (!(query in queryResults)) {
+        queryResults[query] = new CachedValue(() => getResults())
     }
     return queryResults[query].getValue();
-}
-
-function getWorkItemsForQuery(query: string): Q.IPromise<WorkItem[]> {
-    return getQueryResults(query).then(queryResult =>
-        getWorkItems(queryResult.workItems.map(wi => wi.id)));
 }
 
 export class CreateWorkItemContributionProvider implements IContributionProvider {
