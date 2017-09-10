@@ -2,7 +2,7 @@ import * as React from "react";
 import { Persona, IPersonaProps } from "OfficeFabric/components/Persona";
 import { IconButton } from "OfficeFabric/components/Button";
 import { NormalPeoplePicker, IBasePickerSuggestionsProps } from "OfficeFabric/components/pickers";
-import { searchIdentities } from "../data/identities";
+import { searchIdentities } from "../data/identities/identities";
 import { DelayedFunction } from "VSS/Utils/Core";
 
 export interface IIdentity {

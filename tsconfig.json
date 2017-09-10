@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "amd",
         "moduleResolution": "node",
-        "target": "es5",
+        "target": "es6",
         "noImplicitAny": false,
         "jsx": "react",
         "sourceMap": false,
