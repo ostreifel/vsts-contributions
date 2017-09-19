@@ -19,6 +19,7 @@ Once one day is selected hold shift while selecting another day with the keyboar
 ![3 day time range selected](img/timeRange.png)  
 
 # Version History
+(09/19/2017) v1.6.26 Squash bug filtering tfvc changeset contributions  
 (07/10/2017) v1.6.7 Restore identity picker  
 (06/29/2017) v1.6.1
 - Disable widget

@@ -1,4 +1,4 @@
-import { TfvcChangesetRef } from "TFS/VersionControl/Contracts";
+import { TfvcChangesetRef, TfvcChangesetSearchCriteria } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/TfvcRestClient";
 import { IContributionFilter } from "../../filter";
 import {
@@ -17,7 +17,9 @@ const batchCount= 6;
 function getChangeSets(username: string, project: string, skip: number = 0): Q.IPromise<TfvcChangesetRef[]> {
     const promises: Q.IPromise<TfvcChangesetRef[]>[] = [];
     for (let i = 0; i < batchCount; i++) {
-        promises.push(getClient().getChangesets(project, undefined, skip + batchSize * i, batchSize));
+        promises.push(getClient().getChangesets(project, undefined, skip + batchSize * i, batchSize, undefined, {
+            author: username,
+        } as TfvcChangesetSearchCriteria));
     }
     return Q.all(promises).then(
         (changesetsArr) => {
