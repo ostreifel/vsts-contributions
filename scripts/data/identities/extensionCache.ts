@@ -11,7 +11,7 @@ interface IExtensionCacheEntry<T> {
     expiration: string;
     __etag: -1;
 }
-const formatVersion = 2;
+const formatVersion = 3;
 
 export function store<T>(key: string, value: T, expiration?: Date): Q.IPromise<void> {
     const entry: IExtensionCacheEntry<T> = {
@@ -26,23 +26,34 @@ export function store<T>(key: string, value: T, expiration?: Date): Q.IPromise<v
     );
 }
 
-export function get<T>(key: string): Q.IPromise<T | null> {
+export interface IHardGetValue<T> extends Q.IPromise<{
+    value: T,
+    expiration?: Date,
+}> {};
+
+export function get<T>(key: string, hardGet: () => IHardGetValue<T>): Q.IPromise<T> {
+    function hardGetAndStore() {
+        return hardGet().then(({value, expiration}) => {
+            store(key, value, expiration);
+            return value;
+        });
+    }
     return VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
         return dataService.getDocument(collection, key).then((doc: IExtensionCacheEntry<T>) => {
             if (doc.formatVersion !== formatVersion) {
-                return null;
+                return hardGetAndStore();
             }
             if (doc.expiration && new Date(doc.expiration) < new Date()) {
-                return null;
+                hardGetAndStore();
             }
             return doc.value;
-        }, (error: TfsError): T | null => {
+        }, (error: TfsError): Q.Promise<T> => {
             const status = Number(error.status);
             // If collection has not been created yet;
             if (status === 404 ||
                 // User does not have permissions
                 status === 401) {
-                return null;
+                return hardGetAndStore() as Q.Promise<T>;
             }
             throw error;
         });

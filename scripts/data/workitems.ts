@@ -14,6 +14,9 @@ import { CachedValue } from "./CachedValue";
 import { IContributionFilter } from "../filter"
 import { format } from "VSS/Utils/Date";
 
+
+import * as ProcessDefinitionsHttpClient from "TFS/WorkItemTracking/ProcessDefinitionsRestClient";
+
 const baseQuery = `SELECT
         [System.Id],
         [System.WorkItemType],

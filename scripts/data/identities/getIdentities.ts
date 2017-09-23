@@ -73,26 +73,22 @@ export function getIdentities(project?: { id: string, name: string }): Q.IPromis
             }
             return Object.keys(idMap).map(id => idMap[id]);
         }
-        return ExtensionCache.get<IProjectIdentities[]>(key).then(
-            (identities): Q.IPromise<IdentityRef[]> | IdentityRef[] => {
-                if (identities) {
-                    return toIdentityArr(identities);
-                }
-                const expiration = new Date();
-                expiration.setDate(expiration.getDate() + 7);
-                if (project) {
-                    return hardGetAllIdentitiesInProject(project).then((project): IdentityRef[] => {
-                        ExtensionCache.store(key, [project]);
-                        return toIdentityArr([project])
-                    });
-                } else {
-                    return hardGetAllIdentitiesInAllProjects().then((projects) => {
-                        ExtensionCache.store(key, projects);
-                        return toIdentityArr(projects);
-                    });
-                }
+        function hardGet(): ExtensionCache.IHardGetValue<IProjectIdentities[]> {
+            const expiration = new Date();
+            expiration.setDate(expiration.getDate() + 1);
+            if (project) {
+                return hardGetAllIdentitiesInProject(project).then((project) => ({
+                    value: [project],
+                    expiration,
+                }));
+            } else {
+                return hardGetAllIdentitiesInAllProjects().then((projects) => ({
+                    value: projects,
+                    expiration,
+                }));
             }
-        );
+        }
+        return ExtensionCache.get<IProjectIdentities[]>(key, hardGet).then(toIdentityArr);
     }
     if (!(key in identities)) {
         identities[key] = new CachedValue(tryGetIdentities);
