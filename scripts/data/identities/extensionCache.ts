@@ -1,5 +1,5 @@
 import * as Q from "q";
-import { CachedValue } from "../cachedValue";
+import { CachedValue } from "../CachedValue";
 
 const collection = "extension-cache";
 const service = new CachedValue<IExtensionDataService>(() => VSS.getService(VSS.ServiceIds.ExtensionData));

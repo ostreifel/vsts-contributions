@@ -2,7 +2,7 @@ import { IdentityRef } from "VSS/WebApi/Contracts";
 import { getClient } from "TFS/Core/RestClient";
 import { WebApiTeam } from "TFS/Core/Contracts";
 import * as Q from "q";
-import { CachedValue } from "../cachedValue";
+import { CachedValue } from "../CachedValue";
 import * as ExtensionCache from "./extensionCache";
 import { throttlePromises } from "./throttlePromises";
 
