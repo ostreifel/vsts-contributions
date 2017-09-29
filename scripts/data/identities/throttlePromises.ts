@@ -1,33 +1,61 @@
 import * as Q from "q";
 
-function *batchGenerator<T>(
+/** Need to implement b/c ie doesn't support */
+class IterableIterator<T> {
+    constructor(
+        public hasNext: () => boolean,
+        public next: () => T,
+    ) {}
+}
+
+function batchGenerator<T>(
     promiseGenerator: IterableIterator<Q.IPromise<T>>,
     batchsize: number,
 ): IterableIterator<Q.IPromise<T>[]> {
-    let arr: Q.IPromise<T>[] = [];
-    for (const promise of promiseGenerator) {
-        arr.push(promise);
-        if (arr.length >= batchsize) {
-            yield arr;
-            arr = [];
+    return new IterableIterator<Q.IPromise<T>[]>(
+        () => promiseGenerator.hasNext(),
+        () => {
+            const arr: Q.IPromise<T>[] = [];
+            while (promiseGenerator.hasNext()) {
+                arr.push(promiseGenerator.next());
+                if (arr.length >= batchsize) {
+                    return arr;
+                }
+            }
+            return arr;
+
         }
-    }
-    if (arr.length > 0) {
-        yield arr;
-    }
+    );
 }
 /** It is important to only create the promises as needed by the generator or they will all run at once */
-export async function throttlePromises<A, T>(arr: A[], convert: (val: A) => Q.IPromise<T>, batchsize: number): Promise<T[]> {
+export function throttlePromises<A, T>(arr: A[], convert: (val: A) => Q.IPromise<T>, batchsize: number): Q.IPromise<T[]> {
     const promiseGenerator = createPromiseGenerator(arr, convert);
+    const batcher = batchGenerator(promiseGenerator, batchsize);
     const results: T[] = [];
-    for (const promises of batchGenerator(promiseGenerator, batchsize)) {
-        results.push(...(await Q.all(promises)));
+    const deferred = Q.defer<T[]>();
+    function queueNext() {
+        if (batcher.hasNext()) {
+            Q.all(batcher.next()).then(
+                vals => {
+                    results.push(...vals);
+                    queueNext();
+                },
+                error => { deferred.reject(error); }
+            );
+        } else {
+            deferred.resolve(results);
+        }
     }
-    return results;
+    queueNext();
+    return deferred.promise;
 }
 
-function *createPromiseGenerator<A, T>(arr: A[], convert: (val: A) => Q.IPromise<T>): IterableIterator<Q.IPromise<T>> {
-    for (const val of arr) {
-        yield convert(val);
-    }
+function createPromiseGenerator<A, T>(arr: A[], convert: (val: A) => Q.IPromise<T>): IterableIterator<Q.IPromise<T>> {
+    let idx = 0;
+    const a = new IterableIterator<Q.IPromise<T>>(
+        () => idx < arr.length,
+        () => convert(arr[idx++]),
+    );
+    return a;
 }
+
