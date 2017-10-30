@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.6.31",
+    "version": "1.6.38",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
@@ -63,11 +63,23 @@
     ],
     "contributions": [
         {
+          "id": "admin-legacy-work-item-form-banner",
+          "type": "ms.vss-web.global-message-banner",
+          "description": "Banner shown when new work item form is not enforced to collection administators onprem",
+          "targets": [
+            "ms.vss-web.home-hub-group"
+          ],
+          "properties": {
+            "message": "i18n:The Contributions Graph pivot has moved from the dashboards hub to the work hub.",
+            "level": "info"
+          }
+        },
+        {
             "id": "contributions-hub",
             "type": "ms.vss-web.hub",
             "description": "View code and work item contributions.",
             "targets": [
-                "ms.vss-web.home-hub-group"
+                "ms.vss-work-web.work-hub-group"
             ],
             "properties": {
                 "group": "contributed",
