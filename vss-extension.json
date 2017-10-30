@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.6.38",
+    "version": "1.6.39",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
@@ -63,9 +63,8 @@
     ],
     "contributions": [
         {
-          "id": "admin-legacy-work-item-form-banner",
+          "id": "moved-hubs-banner",
           "type": "ms.vss-web.global-message-banner",
-          "description": "Banner shown when new work item form is not enforced to collection administators onprem",
           "targets": [
             "ms.vss-web.home-hub-group"
           ],
