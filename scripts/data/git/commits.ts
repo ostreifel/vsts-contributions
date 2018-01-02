@@ -38,7 +38,7 @@ const batchSize = 2000;
 function commitsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitCommitRef[]> {
     return getCommits(repoId, yearStart, skip, batchSize, username).then(commits => {
         if (commits.length < batchSize) {
-            return commits;
+            return commits.filter((c) => !c.comment.match(/Merged PR \d+/));
         } else {
             return commitsForRepository(username, repoId, skip + batchSize).then(moreCommits => [...commits, ...moreCommits]);
         }
@@ -47,10 +47,10 @@ function commitsForRepository(username: string, repoId: string, skip = 0): Q.IPr
 
 export class CommitContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "Commit";
-    public getContributions(filter: IContributionFilter) {
+    public getContributions(filter: IContributionFilter): Q.IPromise<CommitContribution[]> {
         const { identity, allProjects } = filter;
         const username = identity.uniqueName || identity.displayName;
-        return repositories.getValue().then(repositories => {
+        return repositories.getValue().then((repositories): Q.IPromise<CommitContribution[]> => {
             const currentProject = VSS.getWebContext().project.id;
             if (!allProjects) {
                 repositories = repositories.filter(r => r.project.id === currentProject);
@@ -60,7 +60,7 @@ export class CommitContributionProvider implements IContributionProvider {
                 repositories = repositories.filter(r => r.id === repoId);
             }
             return Q.all(
-                repositories.map(r => {
+                repositories.map((r): Q.IPromise<CommitContribution[]> => {
                     if (!(username in commits)) {
                         commits[username] = {};
                     }
@@ -69,10 +69,10 @@ export class CommitContributionProvider implements IContributionProvider {
                             commits.map(c => (new CommitContribution(r, c))
                             )
                         ));
-                    }
+                }
                     return commits[username][r.id].getValue();
                 })
-            ).then((commitsArr) => {
+            ).then((commitsArr): CommitContribution[] => {
                 const commits: CommitContribution[] = [];
                 for (const arr of commitsArr) {
                     commits.push(...arr);

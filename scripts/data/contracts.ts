@@ -16,15 +16,17 @@ export interface IUserContributions {
 
 export class UserContribution {
     readonly day: Date;
-    constructor(readonly id: string, readonly date: Date) {
-        this.day = new Date(date);
+    readonly date: Date;
+    constructor(readonly id: string, date: Date | string) {
+        this.date = date instanceof Date ? date : new Date(date);
+        this.day = new Date(this.date.getTime());
         this.day.setHours(0, 0, 0, 0);
     }
 }
 
 export class CommitContribution extends UserContribution {
     constructor(readonly repo: GitRepository, readonly commit: GitCommitRef) {
-        super(`commit-${commit.commitId}`, new Date(commit.author.date));
+        super(`commit-${commit.commitId}`, commit.author.date);
     }
 }
 

@@ -22,6 +22,7 @@ Once one day is selected hold shift while selecting another day with the keyboar
 
 
 # Version History
+(01/02/2018) v1.6.40 Filter out merge commits  
 (10/30/2017) v1.6.38 Move from dash boards hub to work hub  
 (09/19/2017) v1.6.26 Squash bug filtering tfvc changeset contributions  
 (07/10/2017) v1.6.7 Restore identity picker  
