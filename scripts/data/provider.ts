@@ -14,6 +14,7 @@ import {
 } from "./workitems";
 import { IContributionFilter } from "../filter";
 import { CachedValue } from "./CachedValue";
+import { trackEvent } from "../events";
 
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
     for (const contribution of arr) {
@@ -50,7 +51,11 @@ export function getContributions(filter: IContributionFilter): Q.IPromise<IUserC
             Q.all(
                 providers
                     .filter(p => filter.enabledProviders[p.name])
-                    .map(p => p.getContributions(filter))
+                    .map(p => p.getContributions(filter).then((r)=>r, (e) => {
+                        console.log("Error ", e);
+                        trackEvent("contributionError", {"message": "" + e}, undefined);
+                        return [];
+                    }))
             ).then((contributionsArr) => {
                 const contributions: IUserContributions = {};
                 for (const arr of contributionsArr) {
