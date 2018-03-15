@@ -31,7 +31,7 @@ export function getDefaultRepository(): Q.IPromise<GitRepository | undefined> {
   return sortedRepos.getValue().then(repositories => {
 
     if (projName === "VSOnline") {
-      const [repo] = repositories.filter(r => r.name === "VSO");
+      const [repo] = repositories.filter(r => r.name === "VSO" && r.project.name === "VSOnline");
       if (repo) {
         return repo;
       }
