@@ -25,7 +25,7 @@ class ContributionsConfiguration implements IWidgetConfiguration {
         widgetConfigurationContext: IWidgetConfigurationContext
     ): Q.IPromise<WidgetStatus> {
         this.context = widgetConfigurationContext;
-        const filterPromise = widgetSettings.customSettings.data
+        const filterPromise: IPromise<IContributionFilter> = widgetSettings.customSettings.data
             ? Q(JSON.parse(widgetSettings.customSettings.data))
             : defaultFilter.getValue();
         return filterPromise.then(filter => {

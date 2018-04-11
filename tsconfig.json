@@ -13,6 +13,11 @@
         "noUnusedParameters": true,
         "paths": {
             "OfficeFabric/*": ["node_modules/office-ui-fabric-react/lib-amd/*"]
-        }
+        },
+        "lib": [
+            "es2015.promise",
+            "dom",
+            "es5",
+        ],
     }
 }

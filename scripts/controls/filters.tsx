@@ -46,18 +46,10 @@ interface IFiltersProps {
 
 let filters: Filters;
 class Filters extends React.Component<
-  IFiltersProps, IContributionFilter
+  IFiltersProps, {}
 > {
-  constructor(props: IFiltersProps) {
-    super();
-    this.state = props.filter;
-    filters = this;
-  }
-  componentWillReceiveProps(props: IFiltersProps) {
-    this.setState(props.filter);
-  }
   render() {
-    const filter = this.state;
+    const filter = this.props.filter;
     const providerToggleProps = {
       providers: filter.enabledProviders,
       providerChange: this.updateProvider.bind(this)
@@ -77,7 +69,7 @@ class Filters extends React.Component<
         <CompletionDropdown
           label="Repository"
           selected={filter.repository}
-          resolveSuggestions={filter => searchRepositories(this.state.allProjects, filter)}
+          resolveSuggestions={search => searchRepositories(filter.allProjects, search)}
           onSelectionChanged={repository => this.updateFilter({repository})}
           onSelectionCleared={() => this.updateFilter({repository: undefined})}
           placeholder={"All repositories"}
@@ -106,12 +98,11 @@ class Filters extends React.Component<
     );
   }
   updateFilter(filter: Partial<IContributionFilter>) {
-    const updatedFilter = {...this.state, ...filter};
+    const updatedFilter = {...this.props.filter, ...filter};
     this.props.onChanged(updatedFilter);
-    this.setState(updatedFilter);
   }
   updateProvider(provider: ContributionName, enabled: boolean) {
-    const filter = {enabledProviders: {...this.state.enabledProviders}};
+    const filter = {enabledProviders: {...this.props.filter.enabledProviders}};
     filter.enabledProviders[provider] = enabled;
     this.updateFilter(filter);
   }
@@ -123,12 +114,12 @@ export function updateSelectedDate(date?: Date, expand: boolean = false) {
     startDate = endDate = undefined;
   } else if (!expand || !startDate || !endDate) {
     startDate = date;
-    endDate = new Date(date);
+    endDate = new Date(date as any);
     endDate.setDate(endDate.getDate() + 1);
   } else if (date.getTime() < startDate.getTime()) {
     startDate = date;
   } else if (date.getTime() >= endDate.getTime()) {
-    endDate = new Date(date);
+    endDate = new Date(date as any);
     endDate.setDate(endDate.getDate() + 1);
   }
   const filter: IContributionFilter = { ...filters.props.filter, startDate, endDate };

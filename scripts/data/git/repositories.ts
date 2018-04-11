@@ -7,7 +7,7 @@ export const repositories = new CachedValue(() =>
   getClient().getRepositories()
 );
 
-export function searchRepositories(allProjects: boolean, filter: string): Q.IPromise<ITag[]> {
+export async function searchRepositories(allProjects: boolean, filter: string): Promise<ITag[]> {
   filter = filter.toLocaleLowerCase().trim();
   const proj = VSS.getWebContext().project.id;
   return sortedRepos
