@@ -9,7 +9,7 @@ import { trackEvent } from "../events";
 import { Timings } from "../timings";
 import { IContributionFilter, filterToIProperties } from "../filter"
 import { DelayedFunction } from "VSS/Utils/Core"
-import { FocusZone } from "OfficeFabric/components/FocusZone";
+import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
 import { KeyCodes } from "OfficeFabric/Utilities";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
@@ -147,32 +147,6 @@ class Day extends React.Component<{
     }
 }
 
-class Week extends React.Component<{
-    date: Date,
-    startDate?: Date,
-    endDate?: Date,
-    contributions: IUserContributions,
-    getWorkClass: (count: number) => string,
-    toggleSelect: (date?: Date, expand?: boolean)  => void,
-}, {}> {
-    render() {
-        const date = this.props.date;
-        const days: JSX.Element[] = [];
-        do {
-            days.push(<Day
-                date={new Date(date.getTime())}
-                startDate={this.props.startDate}
-                endDate={this.props.endDate}
-                contributions={this.props.contributions[date.getTime()]}
-                getWorkClass={this.props.getWorkClass}
-                toggleSelect={this.props.toggleSelect}
-            />);
-            date.setDate(date.getDate() + 1);
-        } while (date.getDay() > 0 && date < new Date());
-        return <div className="week">{days}</div>;
-    }
-}
-
 const monthNames: string[] = [
     "Jan",
     "Feb",
@@ -202,26 +176,23 @@ class Graph extends React.Component<{
         date.setHours(0, 0, 0, 0);
         date.setDate(date.getDate() - date.getDay());
 
-        const weeks: JSX.Element[] = [];
+        const weeks: JSX.Element[][] = [];
         const monthIdxes: number[] = [];
         for (let i = 0; i < 52; i++) {
             monthIdxes.push(date.getMonth());
-            weeks.unshift(<Week
-                date={new Date(date.getTime())}
-                startDate={this.props.startDate}
-                endDate={this.props.endDate}
-                contributions={this.props.contributions}
-                getWorkClass={getWorkClass}
-                toggleSelect={this.props.toggleSelect}
-            />)
+            weeks.unshift(this.getWeek(new Date(date.getTime()), getWorkClass));
             date.setDate(date.getDate() - 7);
         }
+
         return <div className={`graph ${this.props.className}`}>
             <div className="month-labels">
                 {this.getMonths(monthIdxes)}
             </div>
-            <FocusZone className="year">
-                {weeks}
+            <FocusZone
+                className="year"
+                direction={FocusZoneDirection.bidirectional}
+            >
+                {this.getDays(weeks)}
                 {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
             </FocusZone>
         </div>;
@@ -246,6 +217,37 @@ class Graph extends React.Component<{
                 {monthNames[idx]}
             </div>
         );
+    }
+
+    private getWeek(date: Date, getWorkClass: (count: number) => string): JSX.Element[] {
+        const days: JSX.Element[] = [];
+        do {
+            days.push(<Day
+                date={new Date(date.getTime())}
+                startDate={this.props.startDate}
+                endDate={this.props.endDate}
+                contributions={this.props.contributions[date.getTime()]}
+                getWorkClass={getWorkClass}
+                toggleSelect={this.props.toggleSelect}
+            />);
+            date.setDate(date.getDate() + 1);
+        } while (date.getDay() > 0 && date < new Date());
+
+        // need these placeholders to take up space for row wrap to work
+        while (days.length < 7) {
+            days.push(<div className="day-container placeholder" />);
+        }
+        return days;
+    }
+    /** FocusZone cannot handle flex column wrap so rotate the days and use row wrap*/
+    private getDays(weeks: JSX.Element[][]): JSX.Element[] {
+        const days: JSX.Element[] = [];
+        for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 52; j++) {
+                days.push(weeks[j][i]);
+            }
+        }
+        return days;
     }
 }
 
