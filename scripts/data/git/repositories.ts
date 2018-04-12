@@ -3,7 +3,7 @@ import { GitRepository } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
 import { ITag } from "OfficeFabric/components/pickers";
 
-export const repositories = new CachedValue(() =>
+export const repositoriesVal = new CachedValue(() =>
   getClient().getRepositories()
 );
 
@@ -20,13 +20,13 @@ export async function searchRepositories(allProjects: boolean, filter: string): 
 }
 
 function getSortedRepos() {
-  return repositories.getValue().then(repositories => repositories.sort((a, b) =>
+  return repositoriesVal.getValue().then(repositories => repositories.sort((a, b) =>
     a.name.localeCompare(b.name)
-  ))
+  ));
 }
 const sortedRepos = new CachedValue(getSortedRepos);
 
-export function getDefaultRepository(): Q.IPromise<GitRepository | undefined> {
+export function getDefaultRepository(): Promise<GitRepository | undefined> {
   const projName = VSS.getWebContext().project.name;
   return sortedRepos.getValue().then(repositories => {
 
@@ -36,7 +36,7 @@ export function getDefaultRepository(): Q.IPromise<GitRepository | undefined> {
         return repo;
       }
     }
-    return repositories.filter(r => r.name === projName)[0] || repositories[0]
+    return repositories.filter(r => r.name === projName)[0] || repositories[0];
   });
 }
 export const defaultRepostory = new CachedValue(getDefaultRepository);

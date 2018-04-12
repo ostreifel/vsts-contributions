@@ -29,6 +29,6 @@ export class CollapsibleHeader extends React.Component<{
                 <div>{this.props.children}</div>
                 : null
             }
-        </div>
+        </div>;
     }
 }

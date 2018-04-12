@@ -5,18 +5,15 @@ import {
     ContributionName,
     UserContribution,
 } from "../contracts";
-import { repositories } from "./repositories";
+import { repositoriesVal } from "./repositories";
 import { GitPullRequestSearchCriteria, PullRequestStatus, GitPullRequest, GitRepository } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
-import * as Q from "q";
-import { CachedValue } from "../CachedValue";
-import { IContributionFilter } from "../../filter";
-import { projects } from "../projects"
 import { yearStart } from "../dates";
+import { IContributionFilter } from "../../filter";
 
 export const createdPrs: {
     [username: string]: {
-        [projectIdOrRepoId: string]: CachedValue<GitPullRequest[]>
+        [repoId: string]: Promise<GitPullRequest[]>
     }
 } = {};
 
@@ -28,15 +25,15 @@ function toRepoMap(repos: GitRepository[]): {[id: string]: GitRepository} {
     return map;
 }
 const batchSize = 101;
-function getPullRequestsForRepository(username: string, repoId: string, skip = 0): Q.IPromise<GitPullRequest[]> {
+function getPullRequestsForRepository(username: string, repoId: string, skip = 0): Promise<GitPullRequest[]> {
     const criteria = {
         creatorId: username,
         status: PullRequestStatus.All,
 
     } as GitPullRequestSearchCriteria;
-    return Q.all([
+    return Promise.all([
         getClient().getPullRequests(repoId, criteria, undefined, 0, skip, batchSize),
-        repositories.getValue()
+        repositoriesVal.getValue()
     ]).then(([pullrequests, repositories]) => {
         const repoMap = toRepoMap(repositories);
         pullrequests = pullrequests.filter(pr => pr.creationDate >= yearStart);
@@ -45,7 +42,7 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
             pr.repository = repoMap[pr.repository.id];
         }
         if (pullrequests.length < batchSize) {
-            return pullrequests
+            return pullrequests;
         }
         return getPullRequestsForRepository(username, repoId, skip + batchSize).then(morePullrequests =>
             [...pullrequests, ...morePullrequests]);
@@ -53,77 +50,54 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
     });
 }
 
-function getPullRequestsForProject(username: string, project: string, skip = 0): Q.IPromise<GitPullRequest[]> {
-    const criteria = {
-        creatorId: username,
-        status: PullRequestStatus.All,
-    } as GitPullRequestSearchCriteria;
-    return Q.all([
-        getClient().getPullRequestsByProject(project, criteria, undefined, skip, batchSize),
-        repositories.getValue()
-    ]).then(([pullrequests, repositories]) => {
-        const repoMap = toRepoMap(repositories);
-        pullrequests = pullrequests.filter(pr => pr.creationDate >= yearStart);
-        for (const pr of pullrequests) {
-            // backcompat with older tfs versions that do not have the project included in the repo reference
-            pr.repository = repoMap[pr.repository.id];
-        }
-        if (pullrequests.length < batchSize) {
-            return pullrequests
-        }
-        return getPullRequestsForProject(username, project, skip + batchSize).then(morePullrequests =>
-            [...pullrequests, ...morePullrequests]);
+// Old code for getting all repositories when the repo is not specified - this is inconsistent with the current behavior for commits
 
-    });
-}
+// async function getPullRequestsForProject(username: string, project: string, skip = 0): Promise<GitPullRequest[]> {
+//     const criteria = {
+//         creatorId: username,
+//         status: PullRequestStatus.All,
+//     } as GitPullRequestSearchCriteria;
+//     let [pullrequests, repositories] = await Promise.all([
+//         getClient().getPullRequestsByProject(project, criteria, undefined, skip, batchSize),
+//         repositoriesVal.getValue()
+//     ]);
+//     const repoMap = toRepoMap(repositories);
+//     pullrequests = pullrequests.filter(pr => pr.creationDate >= yearStart);
+//     for (const pr of pullrequests) {
+//         // backcompat with older tfs versions that do not have the project included in the repo reference
+//         pr.repository = repoMap[pr.repository.id];
+//     }
+//     if (pullrequests.length < batchSize) {
+//         return pullrequests;
+//     }
+//     return getPullRequestsForProject(username, project, skip + batchSize).then(morePullrequests =>
+//         [...pullrequests, ...morePullrequests]);
+// }
 
-export function getPullRequests(filter: IContributionFilter): Q.IPromise<GitPullRequest[]> {
-    const currentProject = VSS.getWebContext().project.id;
-    const targetProjects = Q.all([
-        projects.getValue(),
-        repositories.getValue()
-    ]).then(([
-        projects,
-        repositories
-    ]) => {
-        return projects
-            .filter(p =>
-                (filter.allProjects || currentProject === p.id) &&
-                (!filter.repository || repositories.some(r => !!filter.repository && r.id === filter.repository.key))
-            )
-            .map(p => p.id);
-    });
-    return targetProjects.then(projects => {
-        const username = filter.identity.id;
-        return Q.all(projects.map(proj => {
-            if (!(username in createdPrs)) {
-                createdPrs[username] = {};
-            }
-            if (filter.repository) {
-                const repoId = filter.repository.key;
-                if (!(repoId in createdPrs[username])) {
-                    createdPrs[username][repoId] = new CachedValue(() => getPullRequestsForRepository(username, repoId));
-                }
-                return createdPrs[username][repoId].getValue();
-            } else {
-                if (!(proj in createdPrs[username])) {
-                    createdPrs[username][proj] = new CachedValue(() => getPullRequestsForProject(username, proj));
-                }
-                return createdPrs[username][proj].getValue();
-            }
-        })).then(pullrequestsArr => {
-            const pullrequests: GitPullRequest[] = [];
-            for (const arr of pullrequestsArr) {
-                pullrequests.push(...arr);
-            }
-            return pullrequests;
-        });
-    })
+export async function getPullRequests(filter: IContributionFilter): Promise<GitPullRequest[]> {
+    const username = filter.identity.id;
+    if (!(username in createdPrs)) {
+        createdPrs[username] = {};
+    }
+
+    const prProms: Promise<GitPullRequest[]>[] = [];
+    for (const {key: repoId } of filter.repositories) {
+        if (!(repoId in createdPrs[username])) {
+            createdPrs[username][repoId] = getPullRequestsForRepository(username, repoId);
+        }
+        prProms.push(createdPrs[username][repoId]);
+    }
+    const pullrequestsArr = await Promise.all(prProms);
+    const pullrequests: GitPullRequest[] = [];
+    for (const arr of pullrequestsArr) {
+        pullrequests.push(...arr);
+    }
+    return pullrequests;
 }
 
 export class CreatePullRequestProvider implements IContributionProvider {
     public readonly name: ContributionName = "CreatePullRequest";
-    public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
+    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
         return getPullRequests(filter).then(pullrequests =>
             pullrequests
                 .filter(pr => pr.creationDate)
@@ -132,7 +106,7 @@ export class CreatePullRequestProvider implements IContributionProvider {
 }
 export class ClosePullRequestProvider implements IContributionProvider {
     public readonly name: ContributionName = "ClosePullRequest";
-    public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
+    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
         return getPullRequests(filter).then(pullrequests =>
             pullrequests
                 .filter(pr => pr.closedDate)

@@ -20,7 +20,7 @@ class ContributionItem extends React.Component<{
     className?: string;
 }, {}> {
     render() {
-        const { title, titleUrl, location, locationUrl, date, showDay, className } = this.props
+        const { title, titleUrl, location, locationUrl, date, showDay, className } = this.props;
         return <div className={`contribution-item ${className}`}
             tabIndex={0}
             data-is-focusable={true}
@@ -47,7 +47,7 @@ class ContributionItem extends React.Component<{
     private _openLink() {
         VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: HostNavigationService) => {
             navigationService.openNewWindow(this.props.titleUrl, "");
-        })
+        });
     }
 }
 
@@ -81,7 +81,7 @@ export class Commit extends React.Component<{ commit: CommitContribution, showDa
             location={repo.name}
             locationUrl={repo.remoteUrl}
             showDay={showDay}
-            date={new Date(commit.author.date)}
+            date={new Date(commit.author.date as any)}
             className="commit"
         />;
     }

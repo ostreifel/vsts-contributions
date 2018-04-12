@@ -1,4 +1,4 @@
-import { DelayedFunction } from "VSS/Utils/Core"
+import { DelayedFunction } from "VSS/Utils/Core";
 
 export interface ValueWithTimings<T> {
     value: T;

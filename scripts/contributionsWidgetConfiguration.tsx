@@ -32,12 +32,12 @@ class ContributionsConfiguration implements IWidgetConfiguration {
             this.filter = filter;
             renderFilters(this.configUpdated.bind(this), this.filter, false, () => VSS.resize());
             return WidgetStatusHelper.Success();
-        })
+        });
 
     }
     public onSave() {
         trackEvent("configUpdated", filterToIProperties(this.filter));
-        return WidgetConfigurationSave.Valid({data: JSON.stringify(this.filter)})
+        return WidgetConfigurationSave.Valid({data: JSON.stringify(this.filter)});
     }
 }
 

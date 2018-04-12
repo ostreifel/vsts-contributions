@@ -1,21 +1,20 @@
 import { CachedValue } from "../CachedValue";
-import { IPersonaProps } from "OfficeFabric/components/Persona"
+import { IPersonaProps } from "OfficeFabric/components/Persona";
 import { getIdentities } from "./getIdentities";
 
-function getPersonas() {
-    return getIdentities().then(identities => {
-        const personas: IPersonaProps[] = [];
-        for (const id in identities) {
-            const identity = identities[id];
-            personas.push({
-                primaryText: identity.displayName,
-                secondaryText: identity.uniqueName,
-                imageUrl: identity.imageUrl,
-                id: identity.id
-            });
-        }
-        return personas;
-    });
+async function getPersonas() {
+    const identities = await getIdentities();
+    const personas: IPersonaProps[] = [];
+    for (const id in identities) {
+        const identity = identities[id];
+        personas.push({
+            primaryText: identity.displayName,
+            secondaryText: identity.uniqueName,
+            imageUrl: identity.imageUrl,
+            id: identity.id
+        });
+    }
+    return personas;
 }
 
 const personas = new CachedValue(getPersonas);

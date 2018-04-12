@@ -6,12 +6,11 @@ import {
     ResolveWorkItemContribution,
     CloseWorkItemContribution,
 } from "./contracts";
-import * as Q from "q";
 import { WorkItem } from "TFS/WorkItemTracking/Contracts";
 import { getClient } from "TFS/WorkItemTracking/RestClient";
 import { yearStart } from "./dates";
 import { CachedValue } from "./CachedValue";
-import { IContributionFilter } from "../filter"
+import { IContributionFilter } from "../filter";
 import { format } from "VSS/Utils/Date";
 
 const baseQuery = `SELECT
@@ -40,7 +39,7 @@ function getStateQuery(fieldPrefix: string, username: string, allProjects: boole
 
 const wiCache: { [id: number]: CachedValue<WorkItem> } = {};
 const batchSize = 200;
-function getWorkItems(ids: number[]): Q.IPromise<WorkItem[]> {
+function getWorkItems(ids: number[]): Promise<WorkItem[]> {
     let coldIds = ids.filter(id => !(id in wiCache));
     while(coldIds.length > 0) {
         const idBatch = coldIds.slice(0, batchSize);
@@ -56,33 +55,28 @@ function getWorkItems(ids: number[]): Q.IPromise<WorkItem[]> {
             wiCache[id] = new CachedValue(() => wisPromise.then(map => map[id]));
         }
     }
-    return Q.all(ids.map(id => wiCache[id].getValue()));
+    return Promise.all(ids.map(id => wiCache[id].getValue()));
 }
 
 const queryResults: { [query: string]: CachedValue<WorkItem[]> } = {};
-function getWorkItemsForQuery(query: string): Q.IPromise<WorkItem[]> {
+function getWorkItemsForQuery(query: string): Promise<WorkItem[]> {
     const BATCH_SIZE = 20000 - 1;
-    function getResults(earlierThanDate: string = new Date().toJSON()): IPromise<WorkItem[]> {
+    async function getResults(earlierThanDate: string = new Date().toJSON()): Promise<WorkItem[]> {
         const project = VSS.getWebContext().project.id;
         const fullQuery = query
             .replace("#earlierThanDate", earlierThanDate);
-        return getClient().queryByWiql({ query: fullQuery }, project, undefined, true, BATCH_SIZE).then(
-            (results): Q.IPromise<WorkItem[]> => {
-                return getWorkItems(results.workItems.map((wi) => wi.id)).then(
-                    (workitems): Q.IPromise<WorkItem[]> => {
-                        if (workitems.length !== BATCH_SIZE) {
-                            return Q(workitems);
-                        }
-                        const newDate = workitems[workitems.length - 1].fields["System.ChangedDate"];
-                        return getResults(newDate).then((moreWorkItems) =>
-                            [...workitems, ...moreWorkItems]
-                        );
-                    });
-            }
+        const results = await getClient().queryByWiql({ query: fullQuery }, project, undefined, true, BATCH_SIZE);
+        const workitems = await getWorkItems(results.workItems.map((wi) => wi.id));
+        if (workitems.length !== BATCH_SIZE) {
+            return workitems;
+        }
+        const newDate = workitems[workitems.length - 1].fields["System.ChangedDate"];
+        return getResults(newDate).then((moreWorkItems) =>
+            [...workitems, ...moreWorkItems]
         );
     }
     if (!(query in queryResults)) {
-        queryResults[query] = new CachedValue(() => getResults())
+        queryResults[query] = new CachedValue(() => getResults());
     }
     return queryResults[query].getValue();
 }
@@ -90,7 +84,7 @@ function getWorkItemsForQuery(query: string): Q.IPromise<WorkItem[]> {
 export class CreateWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CreateWorkItem";
     private readonly queryResults: {[query: string]: CachedValue<CreateWorkItemContribution[]>} = {};
-    public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
+    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("System.Created", username, filter.allProjects);
         if (!(query in this.queryResults)) {
@@ -105,7 +99,7 @@ export class CreateWorkItemContributionProvider implements IContributionProvider
 export class ResolveWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "ResolveWorkItem";
     private readonly queryResults: {[query: string]: CachedValue<ResolveWorkItemContribution[]>} = {};
-    public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
+    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("Microsoft.VSTS.Common.Resolved", username, filter.allProjects);
         if (!(query in this.queryResults)) {
@@ -120,7 +114,7 @@ export class ResolveWorkItemContributionProvider implements IContributionProvide
 export class CloseWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CloseWorkItem";
     private readonly queryResults: {[query: string]: CachedValue<ResolveWorkItemContribution[]>} = {};
-    public getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]> {
+    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("Microsoft.VSTS.Common.Closed", username, filter.allProjects);
         if (!(query in this.queryResults)) {

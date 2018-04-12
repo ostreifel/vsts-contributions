@@ -19,7 +19,7 @@ export interface IContributionFilter {
     startDate?: Date;
     endDate?: Date;
     enabledProviders: IEnabledProviders;
-    repository?: {key: string; name: string};
+    repositories: {key: string; name: string}[];
 }
 
 export function deepEqual(x, y): boolean {
@@ -41,8 +41,13 @@ export function filterToIProperties(filter: IContributionFilter): IProperties {
 }
 
 export const defaultFilter: CachedValue<IContributionFilter> = new CachedValue(getDefaultFilter);
-function getDefaultFilter(): Q.IPromise<IContributionFilter> {
-  return defaultRepostory.getValue().then(defaultRepo => ({
+async function getDefaultFilter(): Promise<IContributionFilter> {
+  const defaultRepo = await defaultRepostory.getValue();
+  const repositories: {key: string, name: string}[] = [];
+  if (defaultRepo) {
+    repositories.push({key: defaultRepo.id, name: defaultRepo.name});
+  }
+  const filter: IContributionFilter = {
     identity: {
       displayName: VSS.getWebContext().user.name,
       id: VSS.getWebContext().user.id,
@@ -60,7 +65,8 @@ function getDefaultFilter(): Q.IPromise<IContributionFilter> {
       ResolveWorkItem: true,
       Changeset: false,
     },
-    repository: defaultRepo && {key: defaultRepo.id, name: defaultRepo.name}
-  } as IContributionFilter));
+    repositories,
+  };
+  return filter;
 }
 

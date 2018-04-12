@@ -1,8 +1,6 @@
 import * as Q from "q";
-import { CachedValue } from "../CachedValue";
 
 const collection = "extension-cache";
-const service = new CachedValue<IExtensionDataService>(() => VSS.getService(VSS.ServiceIds.ExtensionData));
 
 interface IExtensionCacheEntry<T> {
     id: string;
@@ -21,7 +19,7 @@ export function store<T>(key: string, value: T, expiration?: Date): Q.IPromise<v
         expiration: expiration ? expiration.toJSON() : "",
         __etag: -1,
     };
-    return service.getValue().then((dataService): Q.IPromise<void> =>
+    return VSS.getService<IExtensionDataService>(VSS.ServiceIds.ExtensionData).then((dataService): Q.IPromise<void> =>
         dataService.setDocument(collection, entry).then(() => Q())
     );
 }
@@ -29,7 +27,7 @@ export function store<T>(key: string, value: T, expiration?: Date): Q.IPromise<v
 export interface IHardGetValue<T> extends Q.IPromise<{
     value: T,
     expiration?: Date,
-}> {};
+}> {}
 
 export function get<T>(key: string, hardGet: () => IHardGetValue<T>): Q.IPromise<T> {
     function hardGetAndStore() {

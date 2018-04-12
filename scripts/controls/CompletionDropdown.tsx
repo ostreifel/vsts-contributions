@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Label } from "OfficeFabric/components/Label"
+import { Label } from "OfficeFabric/components/Label";
 import { TagPicker, ITag } from "OfficeFabric/components/pickers";
 
 interface ICompletionDropdownProps {
-    selected?: ITag;
+    selected?: ITag[];
     width?: string | number;
     readOnly?: boolean;
     placeholder?: string;
@@ -11,7 +11,7 @@ interface ICompletionDropdownProps {
     loadingText?: string;
     searchingText?: string;
     onSelectionCleared?: () => void;
-    onSelectionChanged?: (selection: ITag) => void;
+    onSelectionChanged?: (selection: ITag[]) => void;
     forceValue?: boolean;
     resolveSuggestions: (filter: string) => ITag[] | PromiseLike<ITag[]>;
     inputWidth?: string | number;
@@ -46,12 +46,12 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                 onChange={(items) => {
                     if (items && items.length > 0) {
                         if (this.props.onSelectionChanged) {
-                            this.props.onSelectionChanged(items[0]);
+                            this.props.onSelectionChanged(items);
                         }
                     }
                 }}
                 onEmptyInputFocus={() => this.props.resolveSuggestions("")}
-                defaultSelectedItems={[]}
+                defaultSelectedItems={this.props.selected}
                 inputProps={{
                     placeholder: this.props.placeholder,
                     readOnly: this.props.readOnly,

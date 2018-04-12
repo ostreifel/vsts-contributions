@@ -12,7 +12,7 @@ import {
 import { IIdentity, IdentityPicker } from "./controls/IdentityPicker";
 import * as Q from "q";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
-import { trackEvent } from "./events"
+import { trackEvent } from "./events";
 
 function renderIdentity(identity: IIdentity) {
   const identityContainer = $(".identity-container")[0];
@@ -27,21 +27,19 @@ class ContributionsWidget implements IWidget {
   public preload(/*widgetSettings: WidgetSettings*/): Q.IPromise<WidgetStatus> {
     return WidgetStatusHelper.Success();
   }
-  public load(widgetSettings: WidgetSettings): Q.IPromise<WidgetStatus> {
-    const filterPromise = widgetSettings.customSettings.data
-      ? Q(JSON.parse(widgetSettings.customSettings.data))
-      : defaultFilter.getValue();
-    return filterPromise.then(filter => {
-        this.filter = filter;
-        renderIdentity(this.filter.identity);
-        renderGraph(this.filter, this.gotoHub.bind(this), "small-tiles");
-        return WidgetStatusHelper.Success();
-      });
+  public async load(widgetSettings: WidgetSettings): Promise<WidgetStatus> {
+    const filter: IContributionFilter = widgetSettings.customSettings.data
+      ? JSON.parse(widgetSettings.customSettings.data)
+      : await defaultFilter.getValue();
+    this.filter = filter;
+    renderIdentity(this.filter.identity);
+    renderGraph(this.filter, this.gotoHub.bind(this), "small-tiles");
+    return WidgetStatusHelper.Success();
   }
   public readonly reload = this.load;
 
   private gotoHub(startDate: Date) {
-    const endDate = new Date(startDate);
+    const endDate = new Date(startDate as any);
     endDate.setDate(endDate.getDate() + 1);
 
     const filter: IContributionFilter = { ...this.filter, startDate, endDate };

@@ -6,22 +6,20 @@ import {
     IContributionProvider,
     ContributionName,
 } from "../contracts";
-import * as Q from "q";
-import { CachedValue } from "../CachedValue";
-import { projects } from "../projects";
+import { projectsVal } from "../projects";
 
-const changesets: {[user: string]: {[project: string]: CachedValue<TfvcChangesetRef[]>}} = {};
+const changesetsCache: {[user: string]: {[project: string]: Promise<TfvcChangesetRef[]>}} = {};
 
 const batchSize = 100;
 const batchCount= 6;
-function getChangeSets(username: string, project: string, skip: number = 0): Q.IPromise<TfvcChangesetRef[]> {
-    const promises: Q.IPromise<TfvcChangesetRef[]>[] = [];
+async function getChangeSets(username: string, project: string, skip: number = 0): Promise<TfvcChangesetRef[]> {
+    const promises: PromiseLike<TfvcChangesetRef[]>[] = [];
     for (let i = 0; i < batchCount; i++) {
         promises.push(getClient().getChangesets(project, undefined, skip + batchSize * i, batchSize, undefined, {
             author: username,
         } as TfvcChangesetSearchCriteria));
     }
-    return Q.all(promises).then(
+    return Promise.all(promises).then(
         (changesetsArr) => {
             const changesets: TfvcChangesetRef[] = [];
             for (const arr of changesetsArr) {
@@ -36,39 +34,36 @@ function getChangeSets(username: string, project: string, skip: number = 0): Q.I
                 }
             );
         },
-        (error: TfsError) => {
+        (error: TfsError): TfvcChangesetRef[] => {
             if (Number(error.status) === 404) {
                 return [];
             }
-        return Q.reject(error)
+        throw error;
     });
 }
 export class ChangsetContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "Changeset";
-    public getContributions({ identity, allProjects }: IContributionFilter): Q.IPromise<ChangesetContribution[]> {
+    public async getContributions({ identity, allProjects }: IContributionFilter): Promise<ChangesetContribution[]> {
         const username = identity.uniqueName || identity.displayName;
-        const projectsPromise: Q.IPromise<string[]> = allProjects ?
-            projects.getValue().then(projects => projects.map(p => p.name))
-            : Q([VSS.getWebContext().project.name]);
-        return projectsPromise.then((projects): Q.IPromise<ChangesetContribution[]> => {
-            if (!(username in changesets)) {
-                changesets[username] = {}
+        const projects: string[] = allProjects ?
+            (await projectsVal.getValue()).map(p => p.name)
+            : [VSS.getWebContext().project.name];
+        if (!(username in changesetsCache)) {
+            changesetsCache[username] = {};
+        }
+        for (const project of projects) {
+            if (!(project in changesetsCache[username])) {
+                changesetsCache[username][project] = getChangeSets(username, project);
             }
-            for (const project of projects) {
-                if (!(project in changesets[username])) {
-                    changesets[username][project] = new CachedValue(() => getChangeSets(username, project));
-                }
-            }
-            return Q.all(projects.map((p) =>
-                changesets[username][p].getValue().then(
-                    (changesets) => changesets.map(c => new ChangesetContribution(c, p))
-                ))).then((changesetsArr): ChangesetContribution[] => {
-                const changesets: ChangesetContribution[] = [];
-                for (const arr of changesetsArr) {
-                    changesets.push(...arr);
-                }
-                return changesets;
-            });
-        });
+        }
+        const changesetsArr = await Promise.all(projects.map(async (p) =>
+            changesetsCache[username][p].then(
+                (changesets) => changesets.map(c => new ChangesetContribution(c, p))
+            )));
+        const changesets: ChangesetContribution[] = [];
+        for (const arr of changesetsArr) {
+            changesets.push(...arr);
+        }
+        return changesets;
     }
 }

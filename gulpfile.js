@@ -1,24 +1,18 @@
 const path = require("path");
 const gulp = require('gulp');
-const webpack = require('gulp-webpack');
-const ts = require("gulp-typescript");
 const clean = require("gulp-clean");
 const yargs = require("yargs");
-const exec = require('child_process').exec;
+const {exec, execSync} = require('child_process');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
 const tslint = require('gulp-tslint');
 
 const args =  yargs.argv;
 
-const jsFolder = 'js';
 const distFolder = 'dist';
 
-const tsProject = ts.createProject('tsconfig.json', {
-    typescript: require('typescript')
-});
 gulp.task('clean', () => {
-    return gulp.src([jsFolder, distFolder, '*.vsix'])
+    return gulp.src([distFolder, '*.vsix'])
         .pipe(clean());
 });
 
@@ -36,25 +30,17 @@ gulp.task('tslint', () => {
         .pipe(tslint.report());
 });
 
-gulp.task('build', ['tslint', 'styles'], () => {
-    return tsProject.src()
-        .pipe(tsProject()).js.pipe(gulp.dest(jsFolder));
-});
 
-
-gulp.task('copy', ['build'], () => {
+gulp.task('copy', ['tslint', 'styles'], () => {
     gulp.src(['node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js'])
         .pipe(gulp.dest(`${distFolder}`));
 });
 
 
 gulp.task('webpack', ['copy'], () => {
-    if (yargs.argv.nobundle) {
-        return gulp.src(`${jsFolder}/**/*js`).pipe(gulp.dest(`${distFolder}`));
-    } else {
-        return webpack(require('./webpack.config.js'))
-            .pipe(gulp.dest(`${distFolder}`));
-    }
+    return execSync('webpack', {
+        stdio: [null, process.stdout, process.stderr]
+    });
 });
 
 gulp.task('package', ['webpack', 'styles'], () => {

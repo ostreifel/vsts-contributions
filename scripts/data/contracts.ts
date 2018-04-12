@@ -7,7 +7,7 @@ export type ContributionName = keyof IEnabledProviders;
 
 export interface IContributionProvider {
     readonly name: ContributionName;
-    getContributions(filter: IContributionFilter): Q.IPromise<UserContribution[]>;
+    getContributions(filter: IContributionFilter): PromiseLike<UserContribution[]>;
 }
 
 export interface IUserContributions {

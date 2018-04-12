@@ -60,7 +60,7 @@ export class SearchContributions extends React.Component<
             this.searchData = {
                 contributionsKey: this.props.contributionsKey,
                 documents: this.props.contributions.map(toDocument),
-            }
+            };
         }
         return this.searchData;
     }

@@ -7,8 +7,8 @@ import { toDateString, toCountString, isOneDayRange } from "./messageFormatting"
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
 import { trackEvent } from "../events";
 import { Timings } from "../timings";
-import { IContributionFilter, filterToIProperties } from "../filter"
-import { DelayedFunction } from "VSS/Utils/Core"
+import { IContributionFilter, filterToIProperties } from "../filter";
+import { DelayedFunction } from "VSS/Utils/Core";
 import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
 import { KeyCodes } from "OfficeFabric/Utilities";
 
@@ -40,7 +40,7 @@ function getContributionClassDelegate(contributions: IUserContributions): (count
             }
         }
         throw new Error("No mapping");
-    }
+    };
 }
 
 class Day extends React.Component<{
@@ -293,5 +293,5 @@ export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: D
                 trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
             });
         }
-    })
+    });
 }

@@ -10,13 +10,13 @@ const dow = [
     "Saturday",
 ];
 export function toDateString(date: Date): string {
-    return `${dow[date.getDay()]} ${format(date, " yyyy-MM-dd")}`
+    return `${dow[date.getDay()]} ${format(date, " yyyy-MM-dd")}`;
 }
 
 export function toTimeString(date: Date, showDay: boolean): string {
     const timeString = date.toLocaleTimeString();
     if (showDay) {
-        return `${toDateString(date)} ${timeString}`
+        return `${toDateString(date)} ${timeString}`;
     }
     return timeString;
 }
@@ -29,7 +29,7 @@ export function toCountString(count: number, noun: string): string {
 }
 
 export function isOneDayRange(startDate: Date, endDate: Date) {
-    const startDateP1 = new Date(startDate);
+    const startDateP1 = new Date(startDate as any);
     startDateP1.setDate(startDateP1.getDate() + 1);
     return startDateP1.getTime() === endDate.getTime();
 }

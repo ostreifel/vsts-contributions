@@ -44,7 +44,6 @@ interface IFiltersProps {
   collapsible?: boolean;
 }
 
-let filters: Filters;
 class Filters extends React.Component<
   IFiltersProps, {}
 > {
@@ -68,10 +67,10 @@ class Filters extends React.Component<
         <ProviderToggle {...providerToggleProps} label={"Created changesets"} provider={"Changeset"} />
         <CompletionDropdown
           label="Repository"
-          selected={filter.repository}
+          selected={filter.repositories}
           resolveSuggestions={search => searchRepositories(filter.allProjects, search)}
-          onSelectionChanged={repository => this.updateFilter({repository})}
-          onSelectionCleared={() => this.updateFilter({repository: undefined})}
+          onSelectionChanged={repositories => this.updateFilter({repositories})}
+          onSelectionCleared={() => this.updateFilter({repositories: []})}
           placeholder={"All repositories"}
         />
       </div>;
@@ -108,8 +107,10 @@ class Filters extends React.Component<
   }
 }
 
+
+let props: IFiltersProps;
 export function updateSelectedDate(date?: Date, expand: boolean = false) {
-  let {startDate, endDate} = filters.props.filter;
+  let {startDate, endDate} = props.filter;
   if (!date) {
     startDate = endDate = undefined;
   } else if (!expand || !startDate || !endDate) {
@@ -122,8 +123,8 @@ export function updateSelectedDate(date?: Date, expand: boolean = false) {
     endDate = new Date(date as any);
     endDate.setDate(endDate.getDate() + 1);
   }
-  const filter: IContributionFilter = { ...filters.props.filter, startDate, endDate };
-  filters.updateFilter(filter);
+  const filter: IContributionFilter = { ...props.filter, startDate, endDate };
+  props.onChanged(filter);
 }
 
 export function renderFilters(
@@ -132,9 +133,10 @@ export function renderFilters(
   collapsible: boolean = true,
   callback?: () => void,
 ) {
+  props = {onChanged, filter: initialFilter, collapsible};
   const graphParent = $(".filter-container")[0];
   ReactDOM.render(
-    <Filters onChanged={onChanged} filter={initialFilter} collapsible={collapsible} />,
+    <Filters {...props} />,
     graphParent,
     callback
   );

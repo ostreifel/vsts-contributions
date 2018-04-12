@@ -22,10 +22,10 @@ import {
 import { SearchContributions } from "./search";
 
 interface ITimeWindowProps {
-    startDate?: Date,
-    endDate?: Date,
-    allContributions: IUserContributions,
-    filter: IContributionFilter,
+    startDate?: Date;
+    endDate?: Date;
+    allContributions: IUserContributions;
+    filter: IContributionFilter;
 }
 class TimeWindow extends React.Component<ITimeWindowProps, {
     contributions: UserContribution[]
@@ -77,7 +77,7 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
             if (isOneDayRange(startDate, endDate)) {
                 title += ` on ${toDateString(startDate)}`;
             } else {
-                const displayedEndDate = new Date(endDate);
+                const displayedEndDate = new Date(endDate as any);
                 displayedEndDate.setDate(displayedEndDate.getDate() - 1);
                 title += ` between ${toDateString(startDate)} and ${toDateString(displayedEndDate)}`;
             }
@@ -89,8 +89,8 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
     private getContributions({startDate, endDate, allContributions}: ITimeWindowProps) {
         if (startDate && endDate) {
             const contributions: UserContribution[] = [];
-            for (const date = new Date(startDate); date.getTime() < endDate.getTime(); date.setDate(date.getDate() + 1)) {
-                contributions.push(...(allContributions[date.getTime()] || []))
+            for (const date = new Date(startDate as any); date.getTime() < endDate.getTime(); date.setDate(date.getDate() + 1)) {
+                contributions.push(...(allContributions[date.getTime()] || []));
             }
             return contributions;
         }
