@@ -31,10 +31,6 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {}> {
     render() {
         return <div
             className="identity-picker"
-            style={{
-                width: this.props.width || 250,
-                height: 48
-            }}
         >
             <NormalPeoplePicker
                 onResolveSuggestions={searchIdentities}

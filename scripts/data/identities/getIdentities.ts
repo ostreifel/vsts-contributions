@@ -1,8 +1,8 @@
-import { IdentityRef } from "VSS/WebApi/Contracts";
-import { getClient } from "TFS/Core/RestClient";
-import { WebApiTeam } from "TFS/Core/Contracts";
 import * as Q from "q";
-import { CachedValue } from "../CachedValue";
+import { WebApiTeam } from "TFS/Core/Contracts";
+import { getClient } from "TFS/Core/RestClient";
+import { IdentityRef } from "VSS/WebApi/Contracts";
+
 import * as ExtensionCache from "./extensionCache";
 import { throttlePromises } from "./throttlePromises";
 
@@ -53,14 +53,14 @@ function hardGetAllIdentitiesInAllProjects(): IPromise<IProjectIdentities[]> {
     );
 }
 
-const identities: { [key: string]: CachedValue<IdentityRef[]> } = {};
+const identities: { [key: string]: Promise<IdentityRef[]> } = {};
 const identitiesKey = "identities";
-export function getIdentities(project?: { id: string, name: string }): Q.IPromise<IdentityRef[]> {
+export function getIdentities(project?: { id: string, name: string }): Promise<IdentityRef[]> {
     const key = `${identitiesKey}-${project ? project.name : ""}`;
     if (key in identities) {
-        return identities[key].getValue();
+        return identities[key];
     }
-    function tryGetIdentities() {
+    async function tryGetIdentities() {
         function toIdentityArr(projects: IProjectIdentities[]): IdentityRef[] {
             const idMap: { [id: string]: IdentityRef } = {};
             for (const { teams } of projects) {
@@ -91,7 +91,7 @@ export function getIdentities(project?: { id: string, name: string }): Q.IPromis
         return ExtensionCache.get<IProjectIdentities[]>(key, hardGet).then(toIdentityArr);
     }
     if (!(key in identities)) {
-        identities[key] = new CachedValue(tryGetIdentities);
+        identities[key] = tryGetIdentities();
     }
-    return identities[key].getValue();
+    return identities[key];
 }
