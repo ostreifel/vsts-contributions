@@ -10,7 +10,7 @@ import { WorkItem } from "TFS/WorkItemTracking/Contracts";
 import { getClient } from "TFS/WorkItemTracking/RestClient";
 import { yearStart } from "./dates";
 import { CachedValue } from "./CachedValue";
-import { IContributionFilter } from "../filter";
+import { IIndividualContributionFilter } from "../filter";
 import { format } from "VSS/Utils/Date";
 
 const baseQuery = `SELECT
@@ -84,7 +84,7 @@ function getWorkItemsForQuery(query: string): Promise<WorkItem[]> {
 export class CreateWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CreateWorkItem";
     private readonly queryResults: {[query: string]: CachedValue<CreateWorkItemContribution[]>} = {};
-    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
+    public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("System.Created", username, filter.allProjects);
         if (!(query in this.queryResults)) {
@@ -99,7 +99,7 @@ export class CreateWorkItemContributionProvider implements IContributionProvider
 export class ResolveWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "ResolveWorkItem";
     private readonly queryResults: {[query: string]: CachedValue<ResolveWorkItemContribution[]>} = {};
-    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
+    public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("Microsoft.VSTS.Common.Resolved", username, filter.allProjects);
         if (!(query in this.queryResults)) {
@@ -114,7 +114,7 @@ export class ResolveWorkItemContributionProvider implements IContributionProvide
 export class CloseWorkItemContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "CloseWorkItem";
     private readonly queryResults: {[query: string]: CachedValue<ResolveWorkItemContribution[]>} = {};
-    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
+    public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
         const username = filter.identity.uniqueName || filter.identity.displayName;
         const query = getStateQuery("Microsoft.VSTS.Common.Closed", username, filter.allProjects);
         if (!(query in this.queryResults)) {

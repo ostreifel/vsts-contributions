@@ -1,6 +1,6 @@
 ///<reference types="vss-web-extension-sdk" />
 import { renderFilters } from "./controls/filters";
-import { renderGraph } from "./controls/graph";
+import { renderGraphs } from "./controls/showGraphs";
 import { renderTimeWindow } from "./controls/timeWindow/timeWindow";
 import { updateSelectedDate } from "./controls/filters";
 import { defaultFilter, IContributionFilter } from "./filter";
@@ -9,7 +9,7 @@ async function updateGraphs(filter?: IContributionFilter)  {
   filter = filter || await defaultFilter.getValue();
 
   renderFilters(updateGraphs, filter, true);
-  renderGraph(filter, updateSelectedDate);
+  renderGraphs(filter, updateSelectedDate);
   renderTimeWindow(filter);
 }
 updateGraphs();

@@ -13,13 +13,25 @@ export interface IEnabledProviders {
     Changeset: boolean;
 }
 
+export interface ISelectedRange {
+  identity: string;
+  startDate: Date;
+  endDate: Date;
+}
+
 export interface IContributionFilter {
-    identity: IIdentity;
+    identities: IIdentity[];
+    selected?: ISelectedRange;
     allProjects: boolean;
-    startDate?: Date;
-    endDate?: Date;
     enabledProviders: IEnabledProviders;
     repositories: {key: string; name: string}[];
+}
+
+export interface IIndividualContributionFilter {
+  identity: IIdentity;
+  allProjects: boolean;
+  enabledProviders: IEnabledProviders;
+  repositories: {key: string; name: string}[];
 }
 
 export function deepEqual(x, y): boolean {
@@ -35,7 +47,7 @@ export function filterToIProperties(filter: IContributionFilter): IProperties {
     for (let providerKey in filter.enabledProviders) {
         properties[providerKey] = String(filter.enabledProviders[providerKey]);
     }
-    properties["selectedDate"] = String(!!filter.startDate);
+    properties["selectedDate"] = String(!!filter.selected);
     properties["allProjects"] = String(!!filter.allProjects);
     return properties;
 }
@@ -48,13 +60,13 @@ async function getDefaultFilter(): Promise<IContributionFilter> {
     repositories.push({key: defaultRepo.id, name: defaultRepo.name});
   }
   const filter: IContributionFilter = {
-    identity: {
+    identities: [{
       displayName: VSS.getWebContext().user.name,
       id: VSS.getWebContext().user.id,
       uniqueName: VSS.getWebContext().user.email,
       imageUrl: `${VSS.getWebContext().collection
         .uri}_api/_common/identityImage?size=2&id=${VSS.getWebContext().user.id}`
-    },
+    }],
     allProjects: false,
     enabledProviders: {
       Commit: true,

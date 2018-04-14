@@ -1,16 +1,11 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { Callout } from "OfficeFabric/components/Callout";
-import { getContributions } from "../data/provider";
-import { IUserContributions, UserContribution } from "../data/contracts";
-import { toDateString, toCountString, isOneDayRange } from "./messageFormatting";
-import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
-import { trackEvent } from "../events";
-import { Timings } from "../timings";
-import { IContributionFilter, filterToIProperties } from "../filter";
-import { DelayedFunction } from "VSS/Utils/Core";
 import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
-import { KeyCodes } from "OfficeFabric/Utilities";
+import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
+import * as React from "react";
+
+import { IUserContributions } from "../data/contracts";
+import { ISelectedRange } from "../filter";
+import { Day } from "./Day";
+import { ToggleSelected } from "./showGraphs";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
     const counts: number[] = Object.keys(contributions).map(day => contributions[day].length);
@@ -43,110 +38,6 @@ function getContributionClassDelegate(contributions: IUserContributions): (count
     };
 }
 
-class Day extends React.Component<{
-    toggleSelect: (date?: Date, expand?: boolean) => void,
-    date: Date,
-    startDate?: Date,
-    endDate?: Date,
-    contributions?: UserContribution[],
-    getWorkClass: (count: number) => string
-},
-    { showCallout: boolean }
-> {
-    constructor() {
-        super();
-        this.state = { showCallout: false };
-    }
-    render() {
-        const contributions = this.props.contributions || [];
-        const dayId = `day_${this.props.date.getTime()}`;
-        const contributionCount = toCountString(contributions.length, "contribution");
-        const dateString = toDateString(this.props.date);
-        return <div className="day-container"
-            onMouseEnter={() => this.delayedShowCallout()}
-            onMouseOver={() => this.delayedShowCallout()}
-            onMouseLeave={() => this.delayedShowCallout(false)}
-            onMouseDown={this.onClick.bind(this)}
-            onKeyDown={this.onKeydown.bind(this)}
-            tabIndex={0}
-            data-is-focusable={true}
-            aria-label={`${contributionCount} on ${dateString}`}
-        >
-            <div className={`day ${this.props.getWorkClass(contributions.length)}`} id={dayId}></div>
-            <div className={this.getDayFilterClasses()} />
-            {this.state.showCallout ?
-                <Callout
-                    target={`#${dayId}`}
-                >
-                    <div>{contributionCount}</div>
-                    <div>{dateString}</div>
-                </Callout>
-                : null
-            }
-        </div>;
-    }
-    private getDayFilterClasses(): string {
-        let classes = "day-filter";
-        if (this.state.showCallout) {
-            classes += " hover";
-        }
-        if (this.isSelected()) {
-            classes += " selected";
-        }
-        return classes;
-    }
-    private readonly showCalloutDelay = new DelayedFunction(null, 200, "", () => this.showCalloutNow(true));
-    private delayedShowCallout(show: boolean = true) {
-        if (show) {
-            this.showCalloutDelay.reset();
-        } else {
-            this.showCalloutDelay.cancel();
-            this.showCalloutNow(false);
-        }
-    }
-    private showCalloutNow(show: boolean = true) {
-        if (this.state.showCallout !== show) {
-            this.setState({ ...this.state, showCallout: show });
-        }
-    }
-    private isSelected() {
-        const {startDate, endDate, date} = this.props;
-        return startDate &&
-        endDate &&
-        date.getTime() >= startDate.getTime() &&
-        date.getTime() < endDate.getTime();
-    }
-    /** can't rely on synthetic events b/c they don't have the shift flag set */
-    private onKeydown(e: KeyboardEvent) {
-        if (e.keyCode === KeyCodes.space || e.keyCode === KeyCodes.enter) {
-            this.toggleSelect(e.shiftKey);
-            e.stopPropagation();
-            e.preventDefault();
-        }
-    }
-    private onClick(e: MouseEvent) {
-        this.toggleSelect(e.shiftKey);
-    }
-    private toggleSelect(expand: boolean) {
-        if (expand) {
-            this.props.toggleSelect(this.props.date, true);
-        } else {
-            if (this.isSelected()) {
-                this.props.toggleSelect();
-                if (
-                    this.props.startDate &&
-                    this.props.endDate &&
-                    !isOneDayRange(this.props.startDate, this.props.endDate)
-                ) {
-                    this.props.toggleSelect(this.props.date);
-                }
-            } else {
-                this.props.toggleSelect(this.props.date);
-            }
-        }
-    }
-}
-
 const monthNames: string[] = [
     "Jan",
     "Feb",
@@ -161,14 +52,12 @@ const monthNames: string[] = [
     "Nov",
     "Dec"
 ];
-
-class Graph extends React.Component<{
-    startDate?: Date,
-    endDate?: Date,
+export class Graph extends React.Component<{
+    selected?: ISelectedRange,
     contributions: IUserContributions,
     loading: boolean,
     className?: string,
-    toggleSelect: (date?: Date, expand?: boolean)  => void,
+    toggleSelect: ToggleSelected,
 }, {}> {
     render() {
         const getWorkClass = getContributionClassDelegate(this.props.contributions);
@@ -221,14 +110,15 @@ class Graph extends React.Component<{
 
     private getWeek(date: Date, getWorkClass: (count: number) => string): JSX.Element[] {
         const days: JSX.Element[] = [];
+        const identity = this.props.contributions.user.uniqueName;
+        const toggleSelect = (date?: Date, expand?: boolean) => this.props.toggleSelect(identity, date, expand);
         do {
             days.push(<Day
                 date={new Date(date.getTime())}
-                startDate={this.props.startDate}
-                endDate={this.props.endDate}
-                contributions={this.props.contributions[date.getTime()]}
+                selected={this.props.selected}
+                contributions={this.props.contributions.data[date.getTime()]}
                 getWorkClass={getWorkClass}
-                toggleSelect={this.props.toggleSelect}
+                toggleSelect={toggleSelect}
             />);
             date.setDate(date.getDate() + 1);
         } while (date.getDay() > 0 && date < new Date());
@@ -249,49 +139,4 @@ class Graph extends React.Component<{
         }
         return days;
     }
-}
-
-export type TileSize = "small-tiles" | "medium-tiles";
-
-let previousContributons: IUserContributions = {};
-let renderNum = 0;
-export function renderGraph(filter: IContributionFilter, toggleSelect: (date?: Date, expand?: boolean)  => void, tileSize: TileSize = "medium-tiles") {
-    const graphParent = $(".graph-container")[0];
-    const timings = new Timings();
-    const currentRender = ++renderNum;
-    /** Don't show the spinner all the time -- rendering the graph takes about 300 ms */
-    const showSpinner = new DelayedFunction(null, 100, "showSpinner", () => {
-        if (currentRender === renderNum) {
-            ReactDOM.render(<Graph
-                startDate={filter.startDate}
-                endDate={filter.endDate}
-                contributions={previousContributons}
-                loading={true}
-                toggleSelect={toggleSelect}
-                className={tileSize}
-            />, graphParent,
-            () => {
-                timings.measure("drawSpinner");
-            });
-        }
-    });
-    showSpinner.start();
-    getContributions(filter).then(contributions => {
-        showSpinner.cancel();
-        if (currentRender === renderNum) {
-            timings.measure("getContributions");
-            previousContributons = contributions;
-            ReactDOM.render(<Graph
-                startDate={filter.startDate}
-                endDate={filter.endDate}
-                contributions={contributions}
-                loading={false}
-                className={tileSize}
-                toggleSelect={toggleSelect}
-            />, graphParent, () => {
-                timings.measure("drawGraph");
-                trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
-            });
-        }
-    });
 }

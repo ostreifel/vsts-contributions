@@ -4,7 +4,7 @@ import { CollapsibleHeader } from "./CollapsibleHeader";
 import { Toggle, IToggleProps } from "OfficeFabric/components/toggle";
 import { IdentityPicker } from "./IdentityPicker";
 import { ContributionName } from "../data/contracts";
-import { IContributionFilter, IEnabledProviders } from "../filter";
+import { IContributionFilter, IEnabledProviders, ISelectedRange } from "../filter";
 import { CompletionDropdown } from "./CompletionDropdown";
 import { searchRepositories } from "../data/git/repositories";
 
@@ -76,9 +76,9 @@ class Filters extends React.Component<
     return (
       <div>
         <IdentityPicker
-          identities={[filter.identity]}
+          identities={filter.identities}
           onIdentityChanged={identities => {
-            this.updateFilter({ ...filter, identity: identities[0] });
+            this.updateFilter({ ...filter, identities });
           }}
           forceValue={true}
           width={400}
@@ -108,11 +108,9 @@ class Filters extends React.Component<
 
 
 let props: IFiltersProps;
-export function updateSelectedDate(date?: Date, expand: boolean = false) {
-  let {startDate, endDate} = props.filter;
-  if (!date) {
-    startDate = endDate = undefined;
-  } else if (!expand || !startDate || !endDate) {
+export function updateSelectedDate(identity: string, date: Date, expand: boolean = false) {
+  let {startDate, endDate} = props.filter.selected || ({} as ISelectedRange);
+  if (!expand || !startDate || !endDate) {
     startDate = date;
     endDate = new Date(date as any);
     endDate.setDate(endDate.getDate() + 1);
@@ -122,7 +120,12 @@ export function updateSelectedDate(date?: Date, expand: boolean = false) {
     endDate = new Date(date as any);
     endDate.setDate(endDate.getDate() + 1);
   }
-  const filter: IContributionFilter = { ...props.filter, startDate, endDate };
+  const filter: IContributionFilter = { ...props.filter, selected: {startDate, endDate, identity }};
+  props.onChanged(filter);
+}
+
+export function clearSelectedDate() {
+  const filter: IContributionFilter = {...props.filter, selected: undefined};
   props.onChanged(filter);
 }
 

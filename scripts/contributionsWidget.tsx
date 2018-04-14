@@ -1,7 +1,7 @@
 ///<reference types="vss-web-extension-sdk" />
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { renderGraph } from "./controls/graph";
+import { renderGraphs } from "./controls/showGraphs";
 import { defaultFilter, IContributionFilter, filterToIProperties } from "./filter";
 import { WidgetStatusHelper } from "TFS/Dashboards/WidgetHelpers";
 import {
@@ -14,10 +14,10 @@ import * as Q from "q";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 import { trackEvent } from "./events";
 
-function renderIdentity(identity: IIdentity) {
+function renderIdentity(identities: IIdentity[]) {
   const identityContainer = $(".identity-container")[0];
   ReactDOM.render(
-    <IdentityPicker identities={[identity]} readOnly />,
+    <IdentityPicker identities={identities} readOnly />,
     identityContainer
   );
 }
@@ -32,8 +32,8 @@ class ContributionsWidget implements IWidget {
       ? JSON.parse(widgetSettings.customSettings.data)
       : await defaultFilter.getValue();
     this.filter = filter;
-    renderIdentity(this.filter.identity);
-    renderGraph(this.filter, this.gotoHub.bind(this), "small-tiles");
+    renderIdentity(this.filter.identities);
+    renderGraphs(this.filter, this.gotoHub.bind(this), "small-tiles");
     return WidgetStatusHelper.Success();
   }
   public readonly reload = this.load;
@@ -42,7 +42,10 @@ class ContributionsWidget implements IWidget {
     const endDate = new Date(startDate as any);
     endDate.setDate(endDate.getDate() + 1);
 
-    const filter: IContributionFilter = { ...this.filter, startDate, endDate };
+    const filter: IContributionFilter = {
+      ...this.filter,
+      selected: { startDate, endDate, identity: this.filter.identities[0].uniqueName}
+    };
     trackEvent("widgetDayClick", filterToIProperties(filter));
     VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: HostNavigationService) => {
       const collectionUri = VSS.getWebContext().collection.uri;

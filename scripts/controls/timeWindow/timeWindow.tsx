@@ -1,15 +1,12 @@
+import { IconButton } from "OfficeFabric/components/Button";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { getContributions } from "../../data/provider";
-import { toDateString, toCountString, isOneDayRange } from "../messageFormatting";
-import {
-    IUserContributions,
-    UserContribution,
-} from "../../data/contracts";
-import { IContributionFilter } from "../../filter";
-import { IconButton } from "OfficeFabric/components/Button";
-import { updateSelectedDate } from "../filters";
 
+import { IUserContributions, UserContribution } from "../../data/contracts";
+import { getContributions } from "../../data/provider";
+import { IContributionFilter, ISelectedRange } from "../../filter";
+import { clearSelectedDate } from "../filters";
+import { isOneDayRange, toCountString, toDateString } from "../messageFormatting";
 import {
     Changesets,
     ClosePullRequests,
@@ -22,8 +19,7 @@ import {
 import { SearchContributions } from "./search";
 
 interface ITimeWindowProps {
-    startDate?: Date;
-    endDate?: Date;
+    selected?: ISelectedRange;
     allContributions: IUserContributions;
     filter: IContributionFilter;
 }
@@ -38,18 +34,18 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
         this.setState({contributions: this.getContributions(props)});
     }
     render() {
-        const { startDate, endDate } = this.props;
+        const { selected } = this.props;
         const { contributions } = this.state;
-        const showDay = !startDate || !endDate || !isOneDayRange(startDate, endDate);
+        const showDay = !selected || !isOneDayRange(selected);
         return <div className="time-window">
             <div className="time-header">
                 <h3>{this.getTitleText()}</h3>
                 {
-                    startDate ?
+                    selected ?
                         <IconButton
                             iconProps={{ iconName: "ChromeClose" }}
                             title={"Clear date filter"}
-                            onClick={() => updateSelectedDate()}
+                            onClick={() => clearSelectedDate()}
                         /> : null
                 }
             </div>
@@ -70,26 +66,26 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
         </div>;
     }
     private getTitleText() {
-        const { startDate, endDate } = this.props;
+        const { selected } = this.props;
         const { contributions } = this.state;
         let title = toCountString(contributions.length, "contribution");
-        if (startDate && endDate) {
-            if (isOneDayRange(startDate, endDate)) {
-                title += ` on ${toDateString(startDate)}`;
+        if (selected) {
+            if (isOneDayRange(selected)) {
+                title += ` on ${toDateString(selected.startDate)}`;
             } else {
-                const displayedEndDate = new Date(endDate as any);
+                const displayedEndDate = new Date(selected.endDate.getTime());
                 displayedEndDate.setDate(displayedEndDate.getDate() - 1);
-                title += ` between ${toDateString(startDate)} and ${toDateString(displayedEndDate)}`;
+                title += ` between ${toDateString(selected.startDate)} and ${toDateString(displayedEndDate)}`;
             }
         } else {
             title += " for the year";
         }
         return title;
     }
-    private getContributions({startDate, endDate, allContributions}: ITimeWindowProps) {
-        if (startDate && endDate) {
+    private getContributions({selected, allContributions}: ITimeWindowProps) {
+        if (selected) {
             const contributions: UserContribution[] = [];
-            for (const date = new Date(startDate as any); date.getTime() < endDate.getTime(); date.setDate(date.getDate() + 1)) {
+            for (const date = new Date(selected.startDate.getTime()); date.getTime() < selected.endDate.getTime(); date.setDate(date.getDate() + 1)) {
                 contributions.push(...(allContributions[date.getTime()] || []));
             }
             return contributions;
@@ -109,8 +105,7 @@ export function renderTimeWindow(filter: IContributionFilter) {
     const currentRender = ++renderNum;
     getContributions(filter).then(contributions => {
         if (currentRender === renderNum) {
-            const { startDate, endDate } = filter;
-            ReactDOM.render(<TimeWindow filter={filter} startDate={startDate} endDate={endDate} allContributions={contributions} />, graphParent);
+            ReactDOM.render(<TimeWindow filter={filter} selected={filter.selected} allContributions={contributions} />, graphParent);
         }
     });
 }

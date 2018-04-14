@@ -9,7 +9,7 @@ import { repositoriesVal } from "./repositories";
 import { GitPullRequestSearchCriteria, PullRequestStatus, GitPullRequest, GitRepository } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
 import { yearStart } from "../dates";
-import { IContributionFilter } from "../../filter";
+import { IIndividualContributionFilter } from "../../filter";
 
 export const createdPrs: {
     [username: string]: {
@@ -74,7 +74,7 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
 //         [...pullrequests, ...morePullrequests]);
 // }
 
-export async function getPullRequests(filter: IContributionFilter): Promise<GitPullRequest[]> {
+export async function getPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
     const username = filter.identity.id;
     if (!(username in createdPrs)) {
         createdPrs[username] = {};
@@ -97,7 +97,7 @@ export async function getPullRequests(filter: IContributionFilter): Promise<GitP
 
 export class CreatePullRequestProvider implements IContributionProvider {
     public readonly name: ContributionName = "CreatePullRequest";
-    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
+    public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
         return getPullRequests(filter).then(pullrequests =>
             pullrequests
                 .filter(pr => pr.creationDate)
@@ -106,7 +106,7 @@ export class CreatePullRequestProvider implements IContributionProvider {
 }
 export class ClosePullRequestProvider implements IContributionProvider {
     public readonly name: ContributionName = "ClosePullRequest";
-    public getContributions(filter: IContributionFilter): Promise<UserContribution[]> {
+    public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
         return getPullRequests(filter).then(pullrequests =>
             pullrequests
                 .filter(pr => pr.closedDate)

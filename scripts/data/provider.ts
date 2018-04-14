@@ -1,5 +1,5 @@
 import { trackEvent } from "../events";
-import { IContributionFilter } from "../filter";
+import { IContributionFilter, IIndividualContributionFilter } from "../filter";
 import { IContributionProvider, IUserContributions, UserContribution } from "./contracts";
 import { CommitContributionProvider } from "./git/commits";
 import { ClosePullRequestProvider, CreatePullRequestProvider } from "./git/pullrequests";
@@ -16,7 +16,7 @@ function addContributions(arr: UserContribution[], contributions: IUserContribut
         if (!(day in contributions)) {
             contributions[day] = [];
         }
-        contributions[day].push(contribution);
+        contributions.data[day].push(contribution);
     }
 }
 function sortContributions(contributions: IUserContributions) {
@@ -37,7 +37,7 @@ const providers: IContributionProvider[] = [
     new ChangsetContributionProvider(),
 ];
 
-async function hardGetContributions(filter: IContributionFilter) {
+async function hardGetContributions(filter: IIndividualContributionFilter) {
     const contributionsArr = await Promise.all(
         providers
             .filter(p => filter.enabledProviders[p.name])
@@ -47,7 +47,10 @@ async function hardGetContributions(filter: IContributionFilter) {
                 return [];
             }))
     );
-    const contributions: IUserContributions = {};
+    const contributions: IUserContributions = {
+        user: filter.identity,
+        data: [],
+    };
     for (const arr of contributionsArr) {
         addContributions(arr, contributions);
     }
@@ -56,10 +59,18 @@ async function hardGetContributions(filter: IContributionFilter) {
 }
 
 const contributionsCache: {[filterKey: string]: Promise<IUserContributions>} = {};
-export function getContributions(filter: IContributionFilter): Promise<IUserContributions> {
-    const filterKey = JSON.stringify({...filter, selectedDate: null});
-    if (!(filterKey in contributionsCache)) {
-        contributionsCache[filterKey] = hardGetContributions(filter);
-    }
-    return contributionsCache[filterKey];
+export function getContributions(filter: IContributionFilter): Promise<IUserContributions[]> {
+    return Promise.all(filter.identities.map((identity) => {
+        const individualFilter: IIndividualContributionFilter = {
+            identity,
+            allProjects: filter.allProjects,
+            enabledProviders: filter.enabledProviders,
+            repositories: filter.repositories,
+        };
+        const filterKey = JSON.stringify(individualFilter);
+        if (!(filterKey in contributionsCache)) {
+            contributionsCache[filterKey] = hardGetContributions(individualFilter);
+        }
+        return contributionsCache[filterKey];
+    }));
 }

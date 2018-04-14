@@ -1,4 +1,5 @@
 import { format } from "VSS/Utils/Date";
+import { ISelectedRange } from "../filter";
 
 const dow = [
     "Sunday",
@@ -28,8 +29,8 @@ export function toCountString(count: number, noun: string): string {
     return `${count} ${noun}s`;
 }
 
-export function isOneDayRange(startDate: Date, endDate: Date) {
-    const startDateP1 = new Date(startDate as any);
+export function isOneDayRange({startDate, endDate}: ISelectedRange) {
+    const startDateP1 = new Date(startDate.getTime());
     startDateP1.setDate(startDateP1.getDate() + 1);
     return startDateP1.getTime() === endDate.getTime();
 }

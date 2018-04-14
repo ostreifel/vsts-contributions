@@ -8,7 +8,7 @@ import {
     ContributionName,
 } from "../contracts";
 import { callApi } from "../RestCall";
-import { IContributionFilter } from "../../filter";
+import { IIndividualContributionFilter } from "../../filter";
 
 
 const commits: {
@@ -46,7 +46,7 @@ async function commitsForRepository(username: string, repoId: string, skip = 0):
 
 export class CommitContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "Commit";
-    public async getContributions(filter: IContributionFilter): Promise<CommitContribution[]> {
+    public async getContributions(filter: IIndividualContributionFilter): Promise<CommitContribution[]> {
         const { identity, allProjects } = filter;
         const username = identity.uniqueName || identity.displayName;
         let repositories = await repositoriesVal.getValue();

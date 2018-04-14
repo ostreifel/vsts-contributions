@@ -1,17 +1,21 @@
-import { GitCommitRef, GitRepository, GitPullRequest } from "TFS/VersionControl/Contracts";
+import { GitCommitRef, GitPullRequest, GitRepository, TfvcChangesetRef } from "TFS/VersionControl/Contracts";
 import { WorkItem } from "TFS/WorkItemTracking/Contracts";
-import { TfvcChangesetRef } from "TFS/VersionControl/Contracts";
-import { IContributionFilter, IEnabledProviders } from "../filter";
+
+import { IIdentity } from "../controls/IdentityPicker";
+import { IEnabledProviders, IIndividualContributionFilter } from "../filter";
 
 export type ContributionName = keyof IEnabledProviders;
 
 export interface IContributionProvider {
     readonly name: ContributionName;
-    getContributions(filter: IContributionFilter): PromiseLike<UserContribution[]>;
+    getContributions(filter: IIndividualContributionFilter): PromiseLike<UserContribution[]>;
 }
 
 export interface IUserContributions {
-    [day: number]: UserContribution[];
+    user: IIdentity;
+    data: {
+        [day: number]: UserContribution[];
+    };
 }
 
 export class UserContribution {

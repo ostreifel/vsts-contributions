@@ -1,6 +1,6 @@
 import { TfvcChangesetRef, TfvcChangesetSearchCriteria } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/TfvcRestClient";
-import { IContributionFilter } from "../../filter";
+import { IIndividualContributionFilter } from "../../filter";
 import {
     ChangesetContribution,
     IContributionProvider,
@@ -43,7 +43,7 @@ async function getChangeSets(username: string, project: string, skip: number = 0
 }
 export class ChangsetContributionProvider implements IContributionProvider {
     public readonly name: ContributionName = "Changeset";
-    public async getContributions({ identity, allProjects }: IContributionFilter): Promise<ChangesetContribution[]> {
+    public async getContributions({ identity, allProjects }: IIndividualContributionFilter): Promise<ChangesetContribution[]> {
         const username = identity.uniqueName || identity.displayName;
         const projects: string[] = allProjects ?
             (await projectsVal.getValue()).map(p => p.name)
