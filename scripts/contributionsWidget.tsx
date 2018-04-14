@@ -17,7 +17,7 @@ import { trackEvent } from "./events";
 function renderIdentity(identity: IIdentity) {
   const identityContainer = $(".identity-container")[0];
   ReactDOM.render(
-    <IdentityPicker identity={identity} readOnly />,
+    <IdentityPicker identities={[identity]} readOnly />,
     identityContainer
   );
 }

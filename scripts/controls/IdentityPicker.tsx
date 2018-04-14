@@ -1,9 +1,8 @@
+import { IPersonaProps } from "OfficeFabric/components/Persona";
+import { IBasePickerSuggestionsProps, NormalPeoplePicker } from "OfficeFabric/components/pickers";
 import * as React from "react";
-import { Persona, IPersonaProps } from "OfficeFabric/components/Persona";
-import { IconButton } from "OfficeFabric/components/Button";
-import { NormalPeoplePicker, IBasePickerSuggestionsProps } from "OfficeFabric/components/pickers";
+
 import { searchIdentities } from "../data/identities/identities";
-import { DelayedFunction } from "VSS/Utils/Core";
 
 export interface IIdentity {
     displayName: string;
@@ -13,10 +12,10 @@ export interface IIdentity {
 }
 
 export interface IIdentityPickerProps {
-    identity?: IIdentity;
+    identities: IIdentity[];
     width?: number | string;
     placeholder?: string;
-    onIdentityChanged?: (identity: IIdentity) => void;
+    onIdentityChanged?: (identities: IIdentity[]) => void;
     onIdentityCleared?: () => void;
     readOnly?: boolean;
     forceValue?: boolean;
@@ -28,21 +27,7 @@ const suggestionProps: IBasePickerSuggestionsProps = {
     loadingText: 'Loading'
 };
 
-export class IdentityPicker extends React.Component<IIdentityPickerProps, {
-    identity?: IIdentity,
-    onBlur?: DelayedFunction,
-}> {
-    private autoFocus: boolean;
-    constructor(props: IIdentityPickerProps) {
-        super();
-        this.state = {identity: props.identity};
-    }
-    componentWillReceiveProps(props: IIdentityPickerProps) {
-        this.setState({...this.state, identity: props.identity});
-    }
-    componentDidUpdate() {
-        this.autoFocus = false;
-    }
+export class IdentityPicker extends React.Component<IIdentityPickerProps, {}> {
     render() {
         return <div
             className="identity-picker"
@@ -51,67 +36,24 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
                 height: 48
             }}
         >
-            {this.state.identity ?
-                <div className={`resolved-identity`} style={{ display: "flex" }}>
-                    <Persona
-                        primaryText={this.state.identity.displayName}
-                        secondaryText={this.state.identity.uniqueName}
-                        imageUrl={this.state.identity.imageUrl}
-                    />
-                    {
-                        this.props.readOnly ?
-                            null :
-                            <IconButton
-                                iconProps={{ iconName: "ChromeClose" }}
-                                label={"Clear identity selection"}
-                                autoFocus={this.autoFocus}
-                                title={"Clear identity"}
-                                onClick={() => {
-                                    if (this.props.onIdentityCleared) {
-                                        this.props.onIdentityCleared();
-                                    }
-                                    this.autoFocus = true;
-                                    const identity = this.state.identity;
-                                    this.setState({ ...this.state, identity: undefined, onBlur: new DelayedFunction(null, 500, "", () => {
-                                        if (this.props.forceValue) {
-                                            this.setState({ ...this.state, identity });
-                                        }
-                                    }) });
-                                }}
-                            />
+            <NormalPeoplePicker
+                onResolveSuggestions={searchIdentities}
+                getTextFromItem={(persona: IPersonaProps) => persona.primaryText || "Unkown Identity"}
+                pickerSuggestionsProps={suggestionProps}
+                className={`ms-PeoplePicker identity-selector`}
+                onChange={(items) => {
+                    if (this.props.onIdentityChanged) {
+                        const identities: IIdentity[] = (items || []).map(this._personaToIIdentity.bind(this));
+                        this.props.onIdentityChanged(identities);
                     }
-                </div> :
-                <NormalPeoplePicker
-                    onResolveSuggestions={searchIdentities}
-                    getTextFromItem={(persona: IPersonaProps) => persona.primaryText || "Unkown Identity"}
-                    pickerSuggestionsProps={suggestionProps}
-                    className={`ms-PeoplePicker identity-selector`}
-                    onChange={(items) => {
-                        if (items && items.length > 0) {
-                            if (this.state.onBlur) {
-                                this.state.onBlur.cancel();
-                            }
-                            if (this.props.onIdentityChanged) {
-                                this.props.onIdentityChanged(this._personaToIIdentity(items[0]));
-                            }
-                            this.autoFocus = true;
-                            this.setState({ ...this.state, identity: this._personaToIIdentity(items[0]) });
-                        }
-                    }}
-                    defaultSelectedItems={[]}
-                    inputProps={{
-                        placeholder: this.props.placeholder,
-                        readOnly: this.props.readOnly,
-                        onBlur: () => {
-                            if (this.state.onBlur) {
-                                this.state.onBlur.start();
-                            }
-                        }
-                    }}
-                    ref={(ref) => ref && this.autoFocus && ref.focus()}
-                    key={'normal'}
-                />
-            }
+                }}
+                defaultSelectedItems={this.props.identities.map(this._iIdentityToPersona.bind(this))}
+                inputProps={{
+                    placeholder: this.props.placeholder,
+                    readOnly: this.props.readOnly,
+                }}
+                key={'normal'}
+            />
         </div>;
     }
     private _personaToIIdentity(persona: IPersonaProps): IIdentity {
@@ -123,6 +65,14 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {
             id: persona.id,
             displayName: persona.primaryText,
             imageUrl: persona.imageUrl
+        };
+    }
+    private _iIdentityToPersona(identity: IIdentity): IPersonaProps {
+        return  {
+            id: identity.id,
+            primaryText: identity.displayName,
+            secondaryText: identity.uniqueName,
+            imageUrl: identity.imageUrl,
         };
     }
 }

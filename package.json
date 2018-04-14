@@ -16,7 +16,7 @@
     "requirejs": "^2.3.2",
     "ts-loader": "^4.2.0",
     "tslint": "^5.4.3",
-    "typescript": "^2.0.7",
+    "typescript": "^2.8.1",
     "vss-web-extension-sdk": "^2.117.0",
     "webpack": "^2.6.1"
   },

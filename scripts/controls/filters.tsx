@@ -76,9 +76,9 @@ class Filters extends React.Component<
     return (
       <div>
         <IdentityPicker
-          identity={filter.identity}
-          onIdentityChanged={identity => {
-            this.updateFilter({ ...filter, identity });
+          identities={[filter.identity]}
+          onIdentityChanged={identities => {
+            this.updateFilter({ ...filter, identity: identities[0] });
           }}
           forceValue={true}
           width={400}
