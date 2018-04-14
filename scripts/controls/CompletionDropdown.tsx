@@ -18,13 +18,16 @@ interface ICompletionDropdownProps {
 }
 
 export class CompletionDropdown extends React.Component<ICompletionDropdownProps, {}> {
+    private static counter: number = 0;
+    private readonly key: number;
     constructor(props: ICompletionDropdownProps) {
         super();
+        this.key = CompletionDropdown.counter++;
         this.state = {selected: props.selected};
     }
     render() {
         return <div
-            className="completion-dropdown"
+            className={`completion-dropdown k_${this.key}`}
             style={{
                 width: this.props.width || 250,
                 height: 48
@@ -45,6 +48,11 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
                 onChange={(items) => {
                     if (this.props.onSelectionChanged) {
                         this.props.onSelectionChanged(items || []);
+                        const input = $(`.completion-dropdown.k_${this.key} input`);
+                        setTimeout(() => {
+                            input.blur();
+                            setTimeout(() => input.focus(), 1);
+                        }, 1);
                     }
                 }}
                 onEmptyInputFocus={(selected) => this.props.resolveSuggestions("", selected)}
