@@ -7,15 +7,20 @@ export const repositoriesVal = new CachedValue(() =>
   getClient().getRepositories()
 );
 
-export async function searchRepositories(allProjects: boolean, filter: string): Promise<ITag[]> {
+export async function searchRepositories(allProjects: boolean, filter: string, selected?: ITag[]): Promise<ITag[]> {
   filter = filter.toLocaleLowerCase().trim();
   const proj = VSS.getWebContext().project.id;
-  return sortedRepos
-    .getValue()
-    .then(repositories =>
-      repositories
-        .filter(r => (allProjects || r.project.id === proj) && r.name.toLocaleLowerCase().lastIndexOf(filter, 0) === 0)
-        .map(r => ({ key: r.id, name: r.name }))
+  const repositories = await sortedRepos.getValue();
+  const selectedMap: {[key: string]: undefined} = {};
+  for (const {key} of selected || []) {
+    selectedMap[key] = undefined;
+  }
+  return repositories
+        .filter(r => (allProjects || r.project.id === proj) &&
+          r.name.toLocaleLowerCase().lastIndexOf(filter, 0) === 0
+        )
+        .filter(r => !selectedMap.hasOwnProperty(r.id))
+        .map(r => ({ key: r.id, name: r.name })
     );
 }
 

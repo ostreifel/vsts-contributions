@@ -68,10 +68,9 @@ class Filters extends React.Component<
         <CompletionDropdown
           label="Repository"
           selected={filter.repositories}
-          resolveSuggestions={search => searchRepositories(filter.allProjects, search)}
+          resolveSuggestions={(search, selected) => searchRepositories(filter.allProjects, search, selected)}
           onSelectionChanged={repositories => this.updateFilter({repositories})}
-          onSelectionCleared={() => this.updateFilter({repositories: []})}
-          placeholder={"All repositories"}
+          placeholder={"Search repositories..."}
         />
       </div>;
     return (
