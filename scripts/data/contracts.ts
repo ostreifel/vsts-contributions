@@ -12,6 +12,8 @@ export interface IContributionProvider {
 }
 
 export interface IUserContributions {
+    /** unique identifier for quickly checking if 2 IUserContributions are the same */
+    key: number;
     user: IIdentity;
     data: {
         [day: number]: UserContribution[];

@@ -1,10 +1,8 @@
 import { IconButton } from "OfficeFabric/components/Button";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
 import { IUserContributions, UserContribution } from "../../data/contracts";
-import { getContributions } from "../../data/provider";
-import { IContributionFilter, ISelectedRange } from "../../filter";
+import { ISelectedRange } from "../../filter";
 import { clearSelectedDate } from "../filters";
 import { isOneDayRange, toCountString, toDateString } from "../messageFormatting";
 import {
@@ -21,9 +19,8 @@ import { SearchContributions } from "./search";
 interface ITimeWindowProps {
     selected?: ISelectedRange;
     allContributions: IUserContributions;
-    filter: IContributionFilter;
 }
-class TimeWindow extends React.Component<ITimeWindowProps, {
+export class TimeWindow extends React.Component<ITimeWindowProps, {
     contributions: UserContribution[]
 }> {
     constructor(props: ITimeWindowProps) {
@@ -50,7 +47,7 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
                 }
             </div>
             <SearchContributions
-                contributionsKey={JSON.stringify(this.props.filter)}
+                contributionsKey={this.props.allContributions.key}
                 contributions={this.getContributions(this.props)}
                 update={contributions => this.setState({contributions})}
             />
@@ -86,26 +83,15 @@ class TimeWindow extends React.Component<ITimeWindowProps, {
         if (selected) {
             const contributions: UserContribution[] = [];
             for (const date = new Date(selected.startDate.getTime()); date.getTime() < selected.endDate.getTime(); date.setDate(date.getDate() + 1)) {
-                contributions.push(...(allContributions[date.getTime()] || []));
+                contributions.push(...(allContributions.data[date.getTime()] || []));
             }
             return contributions;
         }
         const contributions: UserContribution[] = [];
-        for (const day in allContributions) {
-            contributions.push(...allContributions[day]);
+        for (const day in allContributions.data) {
+            contributions.push(...allContributions.data[day]);
         }
         contributions.sort((a, b) => a.date.getTime() - b.date.getTime());
         return contributions;
     }
-}
-
-let renderNum = 0;
-export function renderTimeWindow(filter: IContributionFilter) {
-    const graphParent = $(".time-window-container")[0];
-    const currentRender = ++renderNum;
-    getContributions(filter).then(contributions => {
-        if (currentRender === renderNum) {
-            ReactDOM.render(<TimeWindow filter={filter} selected={filter.selected} allContributions={contributions} />, graphParent);
-        }
-    });
 }

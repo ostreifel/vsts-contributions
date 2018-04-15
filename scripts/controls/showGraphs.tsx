@@ -16,7 +16,7 @@ let previousContributons: IUserContributions[] = [];
 let renderNum = 0;
 export type ToggleSelected = (identity: string, date?: Date, expand?: boolean) => void;
 export function renderGraphs(filter: IContributionFilter, toggleSelect: ToggleSelected, tileSize: TileSize = "medium-tiles") {
-    const graphParent = $(".graph-container")[0];
+    const graphParent = $(".graphs-container")[0];
     const timings = new Timings();
     const currentRender = ++renderNum;
     /** Don't show the spinner all the time -- rendering the graph takes about 300 ms */

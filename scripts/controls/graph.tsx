@@ -6,9 +6,11 @@ import { IUserContributions } from "../data/contracts";
 import { ISelectedRange } from "../filter";
 import { Day } from "./Day";
 import { ToggleSelected } from "./showGraphs";
+import { TimeWindow } from "./timeWindow/timeWindow";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
-    const counts: number[] = Object.keys(contributions).map(day => contributions[day].length);
+    const counts: number[] = Object.keys(contributions.data)
+        .map(day => contributions.data[day].length);
     if (counts.length === 0) {
         return () => "";
     }
@@ -73,17 +75,20 @@ export class Graph extends React.Component<{
             date.setDate(date.getDate() - 7);
         }
 
-        return <div className={`graph ${this.props.className}`}>
-            <div className="month-labels">
-                {this.getMonths(monthIdxes)}
+        return <div className="user-contributions">
+            <div className={`graph ${this.props.className}`}>
+                <div className="month-labels">
+                    {this.getMonths(monthIdxes)}
+                </div>
+                <FocusZone
+                    className="year"
+                    direction={FocusZoneDirection.bidirectional}
+                >
+                    {this.getDays(weeks)}
+                    {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
+                </FocusZone>
             </div>
-            <FocusZone
-                className="year"
-                direction={FocusZoneDirection.bidirectional}
-            >
-                {this.getDays(weeks)}
-                {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
-            </FocusZone>
+            <TimeWindow selected={this.props.selected} allContributions={this.props.contributions} />
         </div>;
     }
     /**

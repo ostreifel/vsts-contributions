@@ -5,7 +5,7 @@ import { toDocument, IContributionDocument } from "./searchDocument";
 import { IconButton } from "OfficeFabric/components/Button";
 
 export interface ISearchContributionsProps {
-    contributionsKey: string;
+    contributionsKey: number;
     contributions: UserContribution[];
     update: (contributions: UserContribution[]) => void;
 }
@@ -14,7 +14,7 @@ interface ISearchContributionsState {
     searchText: string;
 }
 interface ISearchData {
-    contributionsKey: string;
+    contributionsKey: number;
     documents: IContributionDocument[];
 }
 

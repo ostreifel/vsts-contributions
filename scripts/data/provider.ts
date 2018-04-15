@@ -13,15 +13,15 @@ import {
 function addContributions(arr: UserContribution[], contributions: IUserContributions) {
     for (const contribution of arr) {
         const day = contribution.day.getTime();
-        if (!(day in contributions)) {
-            contributions[day] = [];
+        if (!(day in contributions.data)) {
+            contributions.data[day] = [];
         }
         contributions.data[day].push(contribution);
     }
 }
 function sortContributions(contributions: IUserContributions) {
-    for (const day in contributions) {
-        contributions[day].sort((a, b) =>
+    for (const day in contributions.data) {
+        contributions.data[day].sort((a, b) =>
             a.date.getTime() - b.date.getTime()
         );
     }
@@ -37,6 +37,7 @@ const providers: IContributionProvider[] = [
     new ChangsetContributionProvider(),
 ];
 
+let contributionCounter = 0;
 async function hardGetContributions(filter: IIndividualContributionFilter) {
     const contributionsArr = await Promise.all(
         providers
@@ -49,7 +50,8 @@ async function hardGetContributions(filter: IIndividualContributionFilter) {
     );
     const contributions: IUserContributions = {
         user: filter.identity,
-        data: [],
+        key: contributionCounter++,
+        data: {},
     };
     for (const arr of contributionsArr) {
         addContributions(arr, contributions);
