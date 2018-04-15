@@ -54,26 +54,6 @@ class Filters extends React.Component<
       providerChange: this.updateProvider.bind(this)
     };
     const collapsibleContent =
-      <div className="filters">
-        <FocusToggle checked={filter.allProjects} label={"All projects"} onChanged={checked => {
-          this.updateFilter({ allProjects: checked });
-        }} />
-        <ProviderToggle {...providerToggleProps} label={"Commits"} provider={"Commit"} />
-        <ProviderToggle {...providerToggleProps} label={"Created pull requests"} provider={"CreatePullRequest"} />
-        <ProviderToggle {...providerToggleProps} label={"Closed pull requests"}  provider={"ClosePullRequest"} />
-        <ProviderToggle {...providerToggleProps} label={"Created work items"} provider={"CreateWorkItem"} />
-        <ProviderToggle {...providerToggleProps} label={"Resolved work items"} provider={"ResolveWorkItem"} />
-        <ProviderToggle {...providerToggleProps} label={"Closed work items"} provider={"CloseWorkItem"} />
-        <ProviderToggle {...providerToggleProps} label={"Created changesets"} provider={"Changeset"} />
-        <CompletionDropdown
-          label="Repository"
-          selected={filter.repositories}
-          resolveSuggestions={(search, selected) => searchRepositories(filter.allProjects, search, selected)}
-          onSelectionChanged={repositories => this.updateFilter({repositories})}
-          placeholder={"Search repositories..."}
-        />
-      </div>;
-    return (
       <div>
         <IdentityPicker
           identities={filter.identities}
@@ -83,11 +63,34 @@ class Filters extends React.Component<
           forceValue={true}
           width={400}
         />
+        <div className="filters">
+          <FocusToggle checked={filter.allProjects} label={"All projects"} onChanged={checked => {
+            this.updateFilter({ allProjects: checked });
+          }} />
+          <ProviderToggle {...providerToggleProps} label={"Commits"} provider={"Commit"} />
+          <ProviderToggle {...providerToggleProps} label={"Created pull requests"} provider={"CreatePullRequest"} />
+          <ProviderToggle {...providerToggleProps} label={"Closed pull requests"}  provider={"ClosePullRequest"} />
+          <ProviderToggle {...providerToggleProps} label={"Created work items"} provider={"CreateWorkItem"} />
+          <ProviderToggle {...providerToggleProps} label={"Resolved work items"} provider={"ResolveWorkItem"} />
+          <ProviderToggle {...providerToggleProps} label={"Closed work items"} provider={"CloseWorkItem"} />
+          <ProviderToggle {...providerToggleProps} label={"Created changesets"} provider={"Changeset"} />
+          <CompletionDropdown
+            label="Repository"
+            selected={filter.repositories}
+            resolveSuggestions={(search, selected) => searchRepositories(filter.allProjects, search, selected)}
+            onSelectionChanged={repositories => this.updateFilter({repositories})}
+            placeholder={"Search repositories..."}
+          />
+        </div>
+      </div>;
+    return (
+      <div>
         {this.props.collapsible ?
           <CollapsibleHeader
             title="Activity Filters"
-            name="Filters"
+            buttonName="Filters"
             className="filter-header"
+            level={4}
           >
           {collapsibleContent}
           </CollapsibleHeader> : collapsibleContent

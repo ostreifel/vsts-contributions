@@ -96,7 +96,7 @@ class Contributions<T> extends React.Component<{
         const count = this.props.items.length;
         const label = count === 1 ? noun : noun + "s";
         const title = label.match(/#/) ? label.replace('#', "" + count) : count + " " + label;
-        return <CollapsibleHeader title={title} name={label.replace("# ", "").toLocaleLowerCase()} className={count === 0 ? "hidden" : ""}>
+        return <CollapsibleHeader title={title} buttonName={label.replace("# ", "").toLocaleLowerCase()} className={count === 0 ? "hidden" : ""} level={4}>
             <FocusZone direction={FocusZoneDirection.vertical} >
                 <List
                     items={this.props.items}

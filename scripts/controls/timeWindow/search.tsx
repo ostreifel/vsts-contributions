@@ -7,7 +7,7 @@ import { IconButton } from "OfficeFabric/components/Button";
 export interface ISearchContributionsProps {
     contributionsKey: number;
     contributions: UserContribution[];
-    update: (contributions: UserContribution[]) => void;
+    update: (search: string, contributions: UserContribution[]) => void;
 }
 
 interface ISearchContributionsState {
@@ -81,9 +81,9 @@ export class SearchContributions extends React.Component<
                 d.title.toLocaleLowerCase().indexOf(searchText) >= 0
             );
             const contributions = searchResults.map(res => res.contribution);
-            this.props.update(contributions);
+            this.props.update(this.state.searchText, contributions);
         } else {
-            this.props.update(this.props.contributions);
+            this.props.update(this.state.searchText, this.props.contributions);
         }
     }
 }

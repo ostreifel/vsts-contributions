@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { IUserContributions } from "../data/contracts";
 import { ISelectedRange } from "../filter";
-import { Graph } from "./graph";
+import { Graph } from "./Graph";
 import { ToggleSelected } from "./showGraphs";
 
 export class Graphs extends React.Component<{

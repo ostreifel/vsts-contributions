@@ -1,3 +1,4 @@
+import { Persona, PersonaSize } from "office-ui-fabric-react/lib-amd/Persona";
 import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
 import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
 import * as React from "react";
@@ -6,7 +7,7 @@ import { IUserContributions } from "../data/contracts";
 import { ISelectedRange } from "../filter";
 import { Day } from "./Day";
 import { ToggleSelected } from "./showGraphs";
-import { TimeWindow } from "./timeWindow/timeWindow";
+import { TimeWindow } from "./timeWindow/TimeWindow";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
     const counts: number[] = Object.keys(contributions.data)
@@ -75,7 +76,14 @@ export class Graph extends React.Component<{
             date.setDate(date.getDate() - 7);
         }
 
+        const { user } = this.props.contributions;
         return <div className="user-contributions">
+            <Persona
+                size={PersonaSize.extraExtraSmall}
+                primaryText={user.displayName}
+                secondaryText={user.uniqueName}
+                imageUrl={user.imageUrl}
+            />
             <div className={`graph ${this.props.className}`}>
                 <div className="month-labels">
                     {this.getMonths(monthIdxes)}

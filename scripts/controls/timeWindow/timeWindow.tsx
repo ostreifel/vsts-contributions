@@ -15,13 +15,15 @@ import {
     ResolveWorkItems,
 } from "./contributions";
 import { SearchContributions } from "./search";
+import { CollapsibleHeader } from "../CollapsibleHeader";
 
 interface ITimeWindowProps {
     selected?: ISelectedRange;
     allContributions: IUserContributions;
 }
 export class TimeWindow extends React.Component<ITimeWindowProps, {
-    contributions: UserContribution[]
+    searchText?: string,
+    contributions: UserContribution[],
 }> {
     constructor(props: ITimeWindowProps) {
         super(props);
@@ -34,22 +36,24 @@ export class TimeWindow extends React.Component<ITimeWindowProps, {
         const { selected } = this.props;
         const { contributions } = this.state;
         const showDay = !selected || !isOneDayRange(selected);
-        return <div className="time-window">
-            <div className="time-header">
-                <h3>{this.getTitleText()}</h3>
-                {
-                    selected ?
-                        <IconButton
-                            iconProps={{ iconName: "ChromeClose" }}
-                            title={"Clear date filter"}
-                            onClick={() => clearSelectedDate()}
-                        /> : null
-                }
-            </div>
+        return <CollapsibleHeader
+            title={this.getTitleText()}
+            className="time-window"
+            buttonName="contributions list"
+            level={3}
+            titleSuffix={
+                selected ?
+                    <IconButton
+                        iconProps={{ iconName: "ChromeClose" }}
+                        title={"Clear date filter"}
+                        onClick={() => clearSelectedDate()}
+                    /> : undefined
+            }
+        >
             <SearchContributions
                 contributionsKey={this.props.allContributions.key}
                 contributions={this.getContributions(this.props)}
-                update={contributions => this.setState({contributions})}
+                update={(searchText, contributions) => this.setState({searchText, contributions})}
             />
             <div className="contribution-section">
                 <Commits allContributions={contributions} showDay={showDay} />
@@ -60,12 +64,16 @@ export class TimeWindow extends React.Component<ITimeWindowProps, {
                 <ResolveWorkItems allContributions={contributions} showDay={showDay} />
                 <CloseWorkItems allContributions={contributions} showDay={showDay} />
             </div>
-        </div>;
+        </CollapsibleHeader>;
     }
     private getTitleText() {
         const { selected } = this.props;
         const { contributions } = this.state;
-        let title = toCountString(contributions.length, "contribution");
+        let title = "";
+        if (this.state.searchText) {
+            title += `'${this.state.searchText}' - `;
+        }
+        title += toCountString(contributions.length, "contribution");
         if (selected) {
             if (isOneDayRange(selected)) {
                 title += ` on ${toDateString(selected.startDate)}`;
