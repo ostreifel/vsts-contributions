@@ -53,6 +53,7 @@ export class TimeWindow extends React.Component<ITimeWindowProps, {
             <SearchContributions
                 contributionsKey={this.props.allContributions.key}
                 contributions={this.getContributions(this.props)}
+                searchText={this.state.searchText}
                 update={(searchText, contributions) => this.setState({searchText, contributions})}
             />
             <div className="contribution-section">

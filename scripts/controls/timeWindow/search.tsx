@@ -6,6 +6,7 @@ import { IconButton } from "OfficeFabric/components/Button";
 
 export interface ISearchContributionsProps {
     contributionsKey: number;
+    searchText?: string;
     contributions: UserContribution[];
     update: (search: string, contributions: UserContribution[]) => void;
 }
@@ -28,16 +29,17 @@ export class SearchContributions extends React.Component<
         this.state = {searchText: ""};
     }
     render(): JSX.Element {
+        const searchText = this.state.searchText || this.props.searchText;
         return (
             <div className="search-contributions">
                 <TextField
                     className="search-box"
                     placeholder="Search contributions..."
-                    value={this.state.searchText}
+                    value={searchText}
                     onChanged={(searchText: string) => searchText !== this.state.searchText && this.setState({searchText})}
                     ref={ref => ref && this.autofocus && ref.focus()}
                 />
-                {this.state.searchText ?
+                {searchText ?
                     <IconButton
                         iconProps={{ iconName: "ChromeClose" }}
                         title={"Clear search text"}
