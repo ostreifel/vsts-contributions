@@ -1,4 +1,4 @@
-import { IconButton } from "OfficeFabric/components/Button";
+import { IconButton } from "office-ui-fabric-react/lib-amd/components/Button";
 import * as React from "react";
 
 import { IUserContributions, UserContribution } from "../../data/contracts";

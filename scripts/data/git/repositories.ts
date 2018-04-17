@@ -1,7 +1,7 @@
 import { CachedValue } from "../CachedValue";
 import { GitRepository } from "TFS/VersionControl/Contracts";
 import { getClient } from "TFS/VersionControl/GitRestClient";
-import { ITag } from "OfficeFabric/components/pickers";
+import { ITag } from "office-ui-fabric-react/lib-amd/components/pickers";
 
 export const repositoriesVal = new CachedValue(() =>
   getClient().getRepositories()

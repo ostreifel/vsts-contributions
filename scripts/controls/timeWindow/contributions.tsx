@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Commit, PullRequest, WorkItemComponent, Changeset } from "./contribution";
-import { List } from "OfficeFabric/components/List";
-import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
+import { List } from "office-ui-fabric-react/lib-amd/components/List";
+import { FocusZone, FocusZoneDirection } from "office-ui-fabric-react/lib-amd/components/FocusZone";
 import { CollapsibleHeader } from "../CollapsibleHeader";
 import {
     UserContribution,

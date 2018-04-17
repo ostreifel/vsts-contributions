@@ -1,5 +1,5 @@
-import { IPersonaProps } from "OfficeFabric/components/Persona";
-import { IBasePickerSuggestionsProps, NormalPeoplePicker } from "OfficeFabric/components/pickers";
+import { IPersonaProps } from "office-ui-fabric-react/lib-amd/components/Persona";
+import { IBasePickerSuggestionsProps, NormalPeoplePicker } from "office-ui-fabric-react/lib-amd/components/pickers";
 import * as React from "react";
 
 import { searchIdentities } from "../data/identities/identities";

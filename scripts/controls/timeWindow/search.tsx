@@ -1,8 +1,8 @@
 import * as React from "react";
 import { UserContribution } from "../../data/contracts";
-import { TextField } from "OfficeFabric/components/TextField";
+import { TextField } from "office-ui-fabric-react/lib-amd/components/TextField";
 import { toDocument, IContributionDocument } from "./searchDocument";
-import { IconButton } from "OfficeFabric/components/Button";
+import { IconButton } from "office-ui-fabric-react/lib-amd/components/Button";
 
 export interface ISearchContributionsProps {
     contributionsKey: number;

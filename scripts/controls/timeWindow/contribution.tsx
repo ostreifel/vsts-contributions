@@ -1,6 +1,6 @@
 import * as React from "react";
-import { KeyCodes } from "OfficeFabric/Utilities";
-import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
+import { KeyCodes } from "office-ui-fabric-react/lib-amd/Utilities";
+import { FocusZone, FocusZoneDirection } from "office-ui-fabric-react/lib-amd/components/FocusZone";
 import { toTimeString } from "../messageFormatting";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 import {

@@ -1,11 +1,11 @@
-import { Callout } from "OfficeFabric/components/Callout";
-import { KeyCodes } from "OfficeFabric/Utilities";
+import { KeyCodes } from "office-ui-fabric-react/lib-amd/Utilities";
 import * as React from "react";
 import { DelayedFunction } from "VSS/Utils/Core";
 
 import { UserContribution } from "../data/contracts";
 import { ISelectedRange } from "../filter";
 import { isOneDayRange, toCountString, toDateString } from "./messageFormatting";
+import { TooltipHost } from "office-ui-fabric-react/lib-amd/components/Tooltip";
 
 export class Day extends React.Component<{
     toggleSelect: (date?: Date, expand?: boolean) => void,
@@ -14,15 +14,14 @@ export class Day extends React.Component<{
     contributions?: UserContribution[],
     getWorkClass: (count: number) => string
 },
-    { showCallout: boolean }
+    { hover: boolean }
 > {
-    constructor() {
-        super();
-        this.state = { showCallout: false };
+    constructor(props) {
+        super(props);
+        this.state = { hover: false };
     }
     render() {
         const contributions = this.props.contributions || [];
-        const dayId = `day_${this.props.date.getTime()}`;
         const contributionCount = toCountString(contributions.length, "contribution");
         const dateString = toDateString(this.props.date);
         return <div className="day-container"
@@ -35,22 +34,23 @@ export class Day extends React.Component<{
             data-is-focusable={true}
             aria-label={`${contributionCount} on ${dateString}`}
         >
-            <div className={`day ${this.props.getWorkClass(contributions.length)}`} id={dayId}></div>
+            <TooltipHost
+                tooltipProps={{
+                    onRenderContent: () => <>
+                        <div>{contributionCount}</div>
+                        <div>{dateString}</div>
+                    </>
+                }}
+            >
+                <div className={`day ${this.props.getWorkClass(contributions.length)}`}></div>
+            </TooltipHost>
             <div className={this.getDayFilterClasses()} />
-            {this.state.showCallout ?
-                <Callout
-                    target={`#${dayId}`}
-                >
-                    <div>{contributionCount}</div>
-                    <div>{dateString}</div>
-                </Callout>
-                : null
             }
         </div>;
     }
     private getDayFilterClasses(): string {
         let classes = "day-filter";
-        if (this.state.showCallout) {
+        if (this.state.hover) {
             classes += " hover";
         }
         if (this.isSelected()) {
@@ -68,8 +68,8 @@ export class Day extends React.Component<{
         }
     }
     private showCalloutNow(show: boolean = true) {
-        if (this.state.showCallout !== show) {
-            this.setState({ ...this.state, showCallout: show });
+        if (this.state.hover !== show) {
+            this.setState({ ...this.state, hover: show });
         }
     }
     private isSelected() {

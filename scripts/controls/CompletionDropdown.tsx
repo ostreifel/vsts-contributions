@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Label } from "OfficeFabric/components/Label";
-import { TagPicker, ITag } from "OfficeFabric/components/pickers";
+import { Label } from "office-ui-fabric-react/lib-amd/components/Label";
+import { TagPicker, ITag } from "office-ui-fabric-react/lib-amd/components/pickers";
 
 interface ICompletionDropdownProps {
     selected?: ITag[];

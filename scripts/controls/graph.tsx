@@ -1,6 +1,6 @@
 import { Persona, PersonaSize } from "office-ui-fabric-react/lib-amd/Persona";
-import { FocusZone, FocusZoneDirection } from "OfficeFabric/components/FocusZone";
-import { Spinner, SpinnerSize } from "OfficeFabric/components/Spinner";
+import { FocusZone, FocusZoneDirection } from "office-ui-fabric-react/lib-amd/components/FocusZone";
+import { Spinner, SpinnerSize } from "office-ui-fabric-react/lib-amd/components/Spinner";
 import * as React from "react";
 
 import { IUserContributions } from "../data/contracts";
@@ -162,12 +162,12 @@ export class Graph extends React.Component<{
         let {startDate, endDate} = this.state.selected || ({} as ISelectedRange);
         if (!expand || !startDate || !endDate) {
             startDate = date;
-            endDate = new Date(date as any);
+            endDate = new Date(date.getTime());
             endDate.setDate(endDate.getDate() + 1);
         } else if (date.getTime() < startDate.getTime()) {
             startDate = date;
         } else if (date.getTime() >= endDate.getTime()) {
-            endDate = new Date(date as any);
+            endDate = new Date(date.getTime());
             endDate.setDate(endDate.getDate() + 1);
         }
         this.setState({selected: {startDate, endDate}});

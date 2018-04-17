@@ -1,6 +1,5 @@
 import * as React from "react";
-import { IconButton } from "OfficeFabric/components/Button";
-
+import { IconButton } from "office-ui-fabric-react/lib-amd/components/Button";
 
 export class CollapsibleHeader extends React.Component<{
     title: string,
@@ -11,8 +10,8 @@ export class CollapsibleHeader extends React.Component<{
 }, {
     showChildren: boolean,
 }> {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = { showChildren: false };
     }
     render() {

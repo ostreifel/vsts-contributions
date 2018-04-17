@@ -1,5 +1,5 @@
 import { CachedValue } from "../CachedValue";
-import { IPersonaProps } from "OfficeFabric/components/Persona";
+import { IPersonaProps } from "office-ui-fabric-react/lib-amd/components/Persona";
 import { getIdentities } from "./getIdentities";
 
 async function getPersonas() {
