@@ -6,7 +6,6 @@ import * as React from "react";
 import { IUserContributions } from "../data/contracts";
 import { ISelectedRange } from "../filter";
 import { Day } from "./Day";
-import { ToggleSelected } from "./showGraphs";
 import { TimeWindow } from "./timeWindow/TimeWindow";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
@@ -56,12 +55,16 @@ const monthNames: string[] = [
     "Dec"
 ];
 export class Graph extends React.Component<{
-    selected?: ISelectedRange,
     contributions: IUserContributions,
     loading: boolean,
     className?: string,
-    toggleSelect: ToggleSelected,
-}, {}> {
+}, {
+    selected?: ISelectedRange,
+}> {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
     render() {
         const getWorkClass = getContributionClassDelegate(this.props.contributions);
         const date = new Date();
@@ -96,7 +99,11 @@ export class Graph extends React.Component<{
                     {this.props.loading ? <Spinner className="graph-spinner" size={SpinnerSize.large} /> : null}
                 </FocusZone>
             </div>
-            <TimeWindow selected={this.props.selected} allContributions={this.props.contributions} />
+            <TimeWindow
+                selected={this.state.selected}
+                allContributions={this.props.contributions}
+                clearSelectedDate={this.clearSelectedDate.bind(this)}
+            />
         </div>;
     }
     /**
@@ -123,15 +130,13 @@ export class Graph extends React.Component<{
 
     private getWeek(date: Date, getWorkClass: (count: number) => string): JSX.Element[] {
         const days: JSX.Element[] = [];
-        const identity = this.props.contributions.user.uniqueName;
-        const toggleSelect = (date?: Date, expand?: boolean) => this.props.toggleSelect(identity, date, expand);
         do {
             days.push(<Day
                 date={new Date(date.getTime())}
-                selected={this.props.selected}
+                selected={this.state.selected}
                 contributions={this.props.contributions.data[date.getTime()]}
                 getWorkClass={getWorkClass}
-                toggleSelect={toggleSelect}
+                toggleSelect={this.updateSelectedDate.bind(this)}
             />);
             date.setDate(date.getDate() + 1);
         } while (date.getDay() > 0 && date < new Date());
@@ -151,5 +156,24 @@ export class Graph extends React.Component<{
             }
         }
         return days;
+    }
+
+    private updateSelectedDate(date: Date, expand: boolean = false) {
+        let {startDate, endDate} = this.state.selected || ({} as ISelectedRange);
+        if (!expand || !startDate || !endDate) {
+            startDate = date;
+            endDate = new Date(date as any);
+            endDate.setDate(endDate.getDate() + 1);
+        } else if (date.getTime() < startDate.getTime()) {
+            startDate = date;
+        } else if (date.getTime() >= endDate.getTime()) {
+            endDate = new Date(date as any);
+            endDate.setDate(endDate.getDate() + 1);
+        }
+        this.setState({selected: {startDate, endDate}});
+    }
+
+    private clearSelectedDate() {
+        this.setState({selected: undefined});
     }
 }

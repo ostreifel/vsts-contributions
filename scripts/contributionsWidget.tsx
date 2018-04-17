@@ -1,18 +1,13 @@
 ///<reference types="vss-web-extension-sdk" />
+import * as Q from "q";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { renderGraphs } from "./controls/showGraphs";
-import { defaultFilter, IContributionFilter, filterToIProperties } from "./filter";
+import { IWidget, WidgetSettings, WidgetStatus } from "TFS/Dashboards/WidgetContracts";
 import { WidgetStatusHelper } from "TFS/Dashboards/WidgetHelpers";
-import {
-  IWidget,
-  WidgetSettings,
-  WidgetStatus
-} from "TFS/Dashboards/WidgetContracts";
-import { IIdentity, IdentityPicker } from "./controls/IdentityPicker";
-import * as Q from "q";
-import { HostNavigationService } from "VSS/SDK/Services/Navigation";
-import { trackEvent } from "./events";
+
+import { IdentityPicker, IIdentity } from "./controls/IdentityPicker";
+import { renderGraphs } from "./controls/showGraphs";
+import { defaultFilter, IContributionFilter } from "./filter";
 
 function renderIdentity(identities: IIdentity[]) {
   const identityContainer = $(".identity-container")[0];
@@ -33,18 +28,18 @@ class ContributionsWidget implements IWidget {
       : await defaultFilter.getValue();
     this.filter = filter;
     renderIdentity(this.filter.identities);
-    renderGraphs(this.filter, this.gotoHub.bind(this), "small-tiles");
+    renderGraphs(this.filter, "small-tiles");
     return WidgetStatusHelper.Success();
   }
   public readonly reload = this.load;
 
+  /*
   private gotoHub(startDate: Date) {
     const endDate = new Date(startDate as any);
     endDate.setDate(endDate.getDate() + 1);
 
     const filter: IContributionFilter = {
       ...this.filter,
-      selected: { startDate, endDate, identity: this.filter.identities[0].uniqueName}
     };
     trackEvent("widgetDayClick", filterToIProperties(filter));
     VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: HostNavigationService) => {
@@ -56,6 +51,7 @@ class ContributionsWidget implements IWidget {
       navigationService.openNewWindow(url, "");
     });
   }
+  */
 }
 
 VSS.register("ContributionsWidget", new ContributionsWidget());

@@ -1,12 +1,13 @@
+import { IToggleProps, Toggle } from "OfficeFabric/components/toggle";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { CollapsibleHeader } from "./CollapsibleHeader";
-import { Toggle, IToggleProps } from "OfficeFabric/components/toggle";
-import { IdentityPicker } from "./IdentityPicker";
+
 import { ContributionName } from "../data/contracts";
-import { IContributionFilter, IEnabledProviders, ISelectedRange } from "../filter";
-import { CompletionDropdown } from "./CompletionDropdown";
 import { searchRepositories } from "../data/git/repositories";
+import { IContributionFilter, IEnabledProviders } from "../filter";
+import { CollapsibleHeader } from "./CollapsibleHeader";
+import { CompletionDropdown } from "./CompletionDropdown";
+import { IdentityPicker } from "./IdentityPicker";
 
 /** Toggle except it adds a the css class 'focus' to the container when the toggle is focused */
 class FocusToggle extends React.Component<IToggleProps, {focus: boolean}> {
@@ -110,35 +111,13 @@ class Filters extends React.Component<
 }
 
 
-let props: IFiltersProps;
-export function updateSelectedDate(identity: string, date: Date, expand: boolean = false) {
-  let {startDate, endDate} = props.filter.selected || ({} as ISelectedRange);
-  if (!expand || !startDate || !endDate) {
-    startDate = date;
-    endDate = new Date(date as any);
-    endDate.setDate(endDate.getDate() + 1);
-  } else if (date.getTime() < startDate.getTime()) {
-    startDate = date;
-  } else if (date.getTime() >= endDate.getTime()) {
-    endDate = new Date(date as any);
-    endDate.setDate(endDate.getDate() + 1);
-  }
-  const filter: IContributionFilter = { ...props.filter, selected: {startDate, endDate, identity }};
-  props.onChanged(filter);
-}
-
-export function clearSelectedDate() {
-  const filter: IContributionFilter = {...props.filter, selected: undefined};
-  props.onChanged(filter);
-}
-
 export function renderFilters(
   onChanged: (filter: IContributionFilter) => void,
   initialFilter: IContributionFilter,
   collapsible: boolean = true,
   callback?: () => void,
 ) {
-  props = {onChanged, filter: initialFilter, collapsible};
+  const props = {onChanged, filter: initialFilter, collapsible};
   const graphParent = $(".filter-container")[0];
   ReactDOM.render(
     <Filters {...props} />,

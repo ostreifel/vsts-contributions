@@ -3,7 +3,6 @@ import * as React from "react";
 
 import { IUserContributions, UserContribution } from "../../data/contracts";
 import { ISelectedRange } from "../../filter";
-import { clearSelectedDate } from "../filters";
 import { isOneDayRange, toCountString, toDateString } from "../messageFormatting";
 import {
     Changesets,
@@ -20,6 +19,7 @@ import { CollapsibleHeader } from "../CollapsibleHeader";
 interface ITimeWindowProps {
     selected?: ISelectedRange;
     allContributions: IUserContributions;
+    clearSelectedDate: () => void;
 }
 export class TimeWindow extends React.Component<ITimeWindowProps, {
     searchText?: string,
@@ -46,7 +46,7 @@ export class TimeWindow extends React.Component<ITimeWindowProps, {
                     <IconButton
                         iconProps={{ iconName: "ChromeClose" }}
                         title={"Clear date filter"}
-                        onClick={() => clearSelectedDate()}
+                        onClick={this.props.clearSelectedDate}
                     /> : undefined
             }
         >

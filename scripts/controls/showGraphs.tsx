@@ -14,8 +14,7 @@ export type TileSize = "small-tiles" | "medium-tiles";
 
 let previousContributons: IUserContributions[] = [];
 let renderNum = 0;
-export type ToggleSelected = (identity: string, date?: Date, expand?: boolean) => void;
-export function renderGraphs(filter: IContributionFilter, toggleSelect: ToggleSelected, tileSize: TileSize = "medium-tiles") {
+export function renderGraphs(filter: IContributionFilter, tileSize: TileSize = "medium-tiles") {
     const graphParent = $(".graphs-container")[0];
     const timings = new Timings();
     const currentRender = ++renderNum;
@@ -23,10 +22,8 @@ export function renderGraphs(filter: IContributionFilter, toggleSelect: ToggleSe
     const showSpinner = new DelayedFunction(null, 100, "showSpinner", () => {
         if (currentRender === renderNum) {
             ReactDOM.render(<Graphs
-                selected={filter.selected}
                 contributions={previousContributons}
                 loading={true}
-                toggleSelect={toggleSelect}
                 className={tileSize}
             />, graphParent,
             () => {
@@ -41,11 +38,9 @@ export function renderGraphs(filter: IContributionFilter, toggleSelect: ToggleSe
             timings.measure("getContributions");
             previousContributons = contributions;
             ReactDOM.render(<Graphs
-                selected={filter.selected}
                 contributions={contributions}
                 loading={false}
                 className={tileSize}
-                toggleSelect={toggleSelect}
             />, graphParent, () => {
                 timings.measure("drawGraph");
                 trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
