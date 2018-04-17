@@ -79,6 +79,7 @@ body.contributions-body {
         }
         .year {
             display: flex;
+            position: relative;
             flex-flow: row wrap;
             .day-container {
                 cursor: pointer;
@@ -118,15 +119,15 @@ body.contributions-body {
             }
         }
         .graph-spinner {
-            position: relative;
+            position: absolute;
         }
     }
     .graph.medium-tiles .year {
         height: ($medium-tiles + 2) * 7;
         width: ($medium-tiles + 2) * 52;
         .graph-spinner {
-            left: -482px;
-            top: 46px;
+            left: 437px;
+            bottom: 42px;
         }
         .day-container {
             width: $medium-tiles + 2;
