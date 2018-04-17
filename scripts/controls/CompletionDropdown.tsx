@@ -21,7 +21,7 @@ export class CompletionDropdown extends React.Component<ICompletionDropdownProps
     private static counter: number = 0;
     private readonly key: number;
     constructor(props: ICompletionDropdownProps) {
-        super();
+        super(props);
         this.key = CompletionDropdown.counter++;
         this.state = {selected: props.selected};
     }

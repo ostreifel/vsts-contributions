@@ -4,8 +4,6 @@ const path = require("path");
 module.exports = {
     entry: {
         contributionsHub: "./scripts/contributionsHub.tsx",
-        contributionsWidget: "./scripts/contributionsWidget.tsx",
-        contributionsWidgetConfiguration: "./scripts/contributionsWidgetConfiguration.tsx",
     },
     output: {
         libraryTarget: "amd",
@@ -21,7 +19,6 @@ module.exports = {
         /^VSS\//  // Ignore VSS/* since they are coming from VSTS host
     ],
     resolve: {
-        alias: { "OfficeFabric": path.join(process.cwd(), 'node_modules', 'office-ui-fabric-react', 'lib-amd') },
         extensions: [".ts", ".tsx", ".js"],
     },
     mode: "development",

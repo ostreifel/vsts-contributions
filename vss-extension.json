@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "1.6.94",
+    "version": "1.6.99",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
@@ -62,17 +62,6 @@
         "Collaborate"
     ],
     "contributions": [
-        {
-          "id": "moved-hubs-banner",
-          "type": "ms.vss-web.global-message-banner",
-          "targets": [
-            "ms.vss-web.home-hub-group"
-          ],
-          "properties": {
-            "message": "i18n:The Contributions Graph pivot has moved from the dashboards hub to the work hub.",
-            "level": "info"
-          }
-        },
         {
             "id": "contributions-hub",
             "type": "ms.vss-web.hub",

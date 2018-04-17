@@ -24,29 +24,28 @@ export class Day extends React.Component<{
         const contributions = this.props.contributions || [];
         const contributionCount = toCountString(contributions.length, "contribution");
         const dateString = toDateString(this.props.date);
-        return <div className="day-container"
-            onMouseEnter={() => this.delayedShowCallout()}
-            onMouseOver={() => this.delayedShowCallout()}
-            onMouseLeave={() => this.delayedShowCallout(false)}
-            onMouseDown={this.onClick.bind(this)}
-            onKeyDown={this.onKeydown.bind(this)}
-            tabIndex={0}
-            data-is-focusable={true}
-            aria-label={`${contributionCount} on ${dateString}`}
+        return <TooltipHost
+            tooltipProps={{
+                onRenderContent: () => <div>
+                    <div>{contributionCount}</div>
+                    <div>{dateString}</div>
+                </div>
+            }}
         >
-            <TooltipHost
-                tooltipProps={{
-                    onRenderContent: () => <>
-                        <div>{contributionCount}</div>
-                        <div>{dateString}</div>
-                    </>
-                }}
+            <div className="day-container"
+                onMouseEnter={() => this.delayedShowCallout()}
+                onMouseOver={() => this.delayedShowCallout()}
+                onMouseLeave={() => this.delayedShowCallout(false)}
+                onMouseDown={this.onClick.bind(this)}
+                onKeyDown={this.onKeydown.bind(this)}
+                tabIndex={0}
+                data-is-focusable={true}
+                aria-label={`${contributionCount} on ${dateString}`}
             >
                 <div className={`day ${this.props.getWorkClass(contributions.length)}`}></div>
-            </TooltipHost>
-            <div className={this.getDayFilterClasses()} />
-            }
-        </div>;
+                <div className={this.getDayFilterClasses()} />
+            </div>
+        </TooltipHost>;
     }
     private getDayFilterClasses(): string {
         let classes = "day-filter";
