@@ -1,6 +1,4 @@
-[![Donate](img/donate.png)](https://www.paypal.me/OttoStreifel/5)  
-
-# Contributions Details
+# Filter
 
 ![contribution graph](img/contributionGraph.png)
 
@@ -12,16 +10,24 @@ Click the selected day to show contributions for the whole year.
 
 Click that any day on the graph to show only the contribution details for that particular day
 
-## Time Range
+# Time Range
 
 Once one day is selected hold shift while selecting another day with the keyboard or mouse. This will expand the select time range to include that day.
 
 ![hover over new time range](img/hoverTimeRange.png)  
 ![3 day time range selected](img/timeRange.png)  
 
+# Multiple Users
+The graph will now accept and render multiple users.
+![](img/multipleUsers.png)
+
+
+# Share Urls
+Each update to the filter will update the url and create a navigation event. This bookmark can be shared and bookmarked.
 
 
 # Version History
+(04/17/2018) v2.0.1  Allow multiple user identities
 (01/02/2018) v1.6.40 Filter out merge commits  
 (10/30/2017) v1.6.38 Move from dash boards hub to work hub  
 (09/19/2017) v1.6.26 Squash bug filtering tfvc changeset contributions  
