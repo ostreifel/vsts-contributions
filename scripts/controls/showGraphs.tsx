@@ -12,17 +12,17 @@ import { Graphs } from "./Graphs";
 
 export type TileSize = "small-tiles" | "medium-tiles";
 
-let previousContributons: IUserContributions[] = [];
 let renderNum = 0;
 export function renderGraphs(filter: IContributionFilter, tileSize: TileSize = "medium-tiles") {
     const graphParent = $(".graphs-container")[0];
     const timings = new Timings();
     const currentRender = ++renderNum;
     /** Don't show the spinner all the time -- rendering the graph takes about 300 ms */
-    const showSpinner = new DelayedFunction(null, 100, "showSpinner", () => {
+    const showSpinner = new DelayedFunction(null, 400, "showSpinner", () => {
         if (currentRender === renderNum) {
+            const loadingContributions = filter.identities.map((user): IUserContributions => ({key: -1, data: {}, user}));
             ReactDOM.render(<Graphs
-                contributions={previousContributons}
+                contributions={loadingContributions}
                 loading={true}
                 className={tileSize}
             />, graphParent,
@@ -36,7 +36,6 @@ export function renderGraphs(filter: IContributionFilter, tileSize: TileSize = "
         showSpinner.cancel();
         if (currentRender === renderNum) {
             timings.measure("getContributions");
-            previousContributons = contributions;
             ReactDOM.render(<Graphs
                 contributions={contributions}
                 loading={false}
