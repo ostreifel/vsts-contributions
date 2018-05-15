@@ -23,7 +23,7 @@ The graph will now accept and render multiple users.
 
 
 # Share Urls
-Each update to the filter will update the url and create a navigation event. This bookmark can be shared and bookmarked.
+Each update to the filter will update the url and create a navigation event. This url can be shared and bookmarked.
 
 
 # Version History

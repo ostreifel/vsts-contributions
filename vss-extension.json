@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
