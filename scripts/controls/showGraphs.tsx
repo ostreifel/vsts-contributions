@@ -45,5 +45,15 @@ export function renderGraphs(filter: IContributionFilter, tileSize: TileSize = "
                 trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);
             });
         }
+    }, (error) => {
+        const message = (
+            typeof error === "string" ? error : (error.serverError || error || {}).message
+        ) ||
+        error + "" ||
+        "unknown error";
+
+        // tslint:disable-next-line:no-console
+        console.error(error);
+        trackEvent("error", {message, stack: error && error.stack});
     });
 }
