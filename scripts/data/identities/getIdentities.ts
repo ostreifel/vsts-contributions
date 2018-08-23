@@ -77,7 +77,7 @@ function hardGetAllIdentitiesInAllProjects(): IPromise<IProjectIdentities[]> {
 const identities: { [key: string]: Promise<IdentityRef[]> } = {};
 const identitiesKey = "identities";
 export function getIdentities(project?: { id: string, name: string }): Promise<IdentityRef[]> {
-    const key = `${identitiesKey}-${project ? project.name : ""}`;
+    const key = `${identitiesKey}-${project ? project.name : ""}-v2`;
     if (key in identities) {
         return identities[key];
     }
@@ -96,7 +96,7 @@ export function getIdentities(project?: { id: string, name: string }): Promise<I
         }
         async function hardGet(): Promise<ExtensionCache.IHardGetValue<IProjectIdentities[]>> {
             const expiration = new Date();
-            expiration.setDate(expiration.getDate() + 1);
+            expiration.setMinutes(expiration.getMinutes() + 2);
             if (project) {
                 return hardGetAllIdentitiesInProject(project).then((project) => ({
                     value: [project],
@@ -109,7 +109,8 @@ export function getIdentities(project?: { id: string, name: string }): Promise<I
                 }));
             }
         }
-        return ExtensionCache.get<IProjectIdentities[]>(key, hardGet).then(toIdentityArr);
+        // return ExtensionCache.get<IProjectIdentities[]>(key, hardGet).then(toIdentityArr);
+        return hardGet().then(({value}) => toIdentityArr(value));
     }
     if (!(key in identities)) {
         identities[key] = tryGetIdentities();

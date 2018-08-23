@@ -98,7 +98,6 @@ export class Day extends React.Component<{
             this.props.toggleSelect(this.props.date, true);
         } else {
             if (this.isSelected()) {
-                this.props.toggleSelect();
                 if (
                     this.props.selected &&
                     !isOneDayRange(this.props.selected)
