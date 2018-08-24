@@ -25,9 +25,10 @@ export function flushNow() {
 export function trackEvent(name: string, properties?: IProperties, measurements?: IMeasurements) {
     const insights = getInsights();
     if (insights) {
+        const { host } = VSS.getWebContext();
         properties = {
             ...(properties || {}),
-            host: VSS.getWebContext().host.authority,
+            host: host.name || host.authority,
             contributionLocation: window['contributionLocation']
         };
         insights.trackEvent(name, properties, measurements);
