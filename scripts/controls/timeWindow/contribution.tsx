@@ -29,14 +29,23 @@ class ContributionItem extends React.Component<{
             aria-label={this.props.title}
         >
             <FocusZone direction={FocusZoneDirection.horizontal}>
-                <a className="title" href={titleUrl} target="_blank">{title}</a>
+                <a className="title" href={titleUrl} target="_blank" onClick={this._onClick(titleUrl)}>{title}</a>
                 <div className="location-time">
                     {" in "}
-                    <a className="location" href={locationUrl} target="_blank">{location}</a>
+                    <a className="location" href={locationUrl} target="_blank" onClick={this._onClick(locationUrl)}>{location}</a>
                     {` ${showDay ? "on" : "at"} ${toTimeString(date, showDay)}`}
                 </div>
             </FocusZone>
         </div>;
+    }
+
+    private _onClick(url: string) {
+        return async (e: React.MouseEvent<HTMLAnchorElement>) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const service = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
+            service.openNewWindow(url, "");
+        };
     }
 
     private _onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
