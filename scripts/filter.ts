@@ -46,6 +46,8 @@ export function filterToIProperties(filter: IContributionFilter): IProperties {
         properties[providerKey] = String(filter.enabledProviders[providerKey]);
     }
     properties["allProjects"] = String(!!filter.allProjects);
+    properties["identityCount"] = filter.identities.length + "";
+    properties["plainTextIdentityCount"] = filter.identities.filter(({id}) => !id).length + "";
     return properties;
 }
 

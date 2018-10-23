@@ -75,7 +75,7 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
 // }
 
 export async function getPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
-    const username = filter.identity.id;
+    const username = filter.identity.id || filter.identity.uniqueName || filter.identity.displayName;
     if (!(username in createdPrs)) {
         createdPrs[username] = {};
     }

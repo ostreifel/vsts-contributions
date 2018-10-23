@@ -53,14 +53,16 @@ export class IdentityPicker extends React.Component<IIdentityPickerProps, {}> {
         </div>;
     }
     private _personaToIIdentity(persona: IPersonaProps): IIdentity {
-        if (!persona.secondaryText || !persona.id || !persona.primaryText || !persona.imageUrl) {
+        if (!persona.primaryText) {
             throw new Error("Identity properties not set");
+        } else if (!persona.secondaryText || !persona.id || !persona.imageUrl) {
+            console.warn(`${persona.primaryText} is not a direct member of a team. (Support for aad groups is limited)`);
         }
         return {
-            uniqueName: persona.secondaryText,
-            id: persona.id,
+            uniqueName: persona.secondaryText || "",
+            id: persona.id || "",
             displayName: persona.primaryText,
-            imageUrl: persona.imageUrl
+            imageUrl: persona.imageUrl || ""
         };
     }
     private _iIdentityToPersona(identity: IIdentity): IPersonaProps {

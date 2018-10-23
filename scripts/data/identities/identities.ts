@@ -24,5 +24,13 @@ export function searchIdentities(filter: string): IPromise<IPersonaProps[]> {
     function match(str?: string) {
         return str && str.toLocaleLowerCase().lastIndexOf(lowerFilter, 0) >= 0;
     }
-    return personas.getValue().then(personas => personas.filter(p => match(p.primaryText) || match(p.secondaryText)));
+    return personas.getValue().then(personas => {
+        const matched = personas.filter(p => match(p.primaryText) || match(p.secondaryText));
+        if (matched.length === 0) {
+            matched.push({
+                primaryText: filter,
+            });
+        }
+        return matched;
+    });
 }
