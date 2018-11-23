@@ -1,4 +1,5 @@
 ///<reference types="vss-web-extension-sdk" />
+import "promise-polyfill/src/polyfill";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 
 import { renderFilters } from "./controls/filters";
