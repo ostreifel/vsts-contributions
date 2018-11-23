@@ -57,7 +57,6 @@ const monthNames: string[] = [
 export class Graph extends React.Component<{
     contributions: IUserContributions,
     loading: boolean,
-    className?: string,
 }, {
     selected?: ISelectedRange,
 }> {
@@ -87,7 +86,7 @@ export class Graph extends React.Component<{
                 secondaryText={user.uniqueName}
                 imageUrl={user.imageUrl}
             />
-            <div className={`graph ${this.props.className}`}>
+            <div className={`graph`}>
                 <div className="month-labels">
                     {this.getMonths(monthIdxes)}
                 </div>

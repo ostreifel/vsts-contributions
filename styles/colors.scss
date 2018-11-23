@@ -1,0 +1,49 @@
+@function createColor($name, $defaultR, $defaultG, $defaultB, $defaultA: 1) {
+    @return (
+        variable: rgba(var($name, $defaultR, $defaultG, $defaultB), $defaultA),
+        literal: rgba($defaultR, $defaultG, $defaultB, $defaultA),
+    );
+}
+$colors: (
+    /* Alias theme variables with defaults */
+    /* Names assume light theme */
+    black: createColor(--palette-neutral-100, 0, 0, 0),
+    white: createColor(--palette-neutral-0, 255, 255, 255),
+    work75: createColor(--palette-primary-shade-30, 0, 69, 120),
+    work50: createColor(--palette-primary-shade-10, 0, 120, 212),
+    work25: createColor(--palette-primary-tint-10, 43, 136, 216),
+    work0: createColor(--palette-primary-tint-20, 199, 224, 244),
+    aliceblue: createColor(--palette-primary-tint-40, 239, 246, 252),
+    darkaliceblue: createColor(--palette-primary-tint-30, 222, 236, 249),
+    red: createColor(--palette-accent1, 218, 10, 0),
+    lightgray: createColor(--palette-neutral-8, 234, 234, 234),
+    darkgray: createColor(--palette-neutral-80, 51, 51, 51),
+    gray: createColor(--palette-neutral-10, 218, 218, 218),
+);
+@function getColorLiteral($name) {
+    @return map-get(map-get($colors, $name), literal);
+}
+@function getColorVariable($name) {
+    @return map-get(map-get($colors, $name), variable);
+}
+
+@mixin color($colorName) {
+    color: getColorLiteral($colorName);
+    color: getColorVariable($colorName);
+}
+@mixin border($style, $width, $colorName) {
+    border: $style $width getColorLiteral($colorName);
+    border: $style $width getColorVariable($colorName);
+}
+@mixin outline($style, $width, $colorName) {
+    outline: $style $width getColorLiteral($colorName);
+    outline: $style $width getColorVariable($colorName);
+}
+@mixin background-color($colorName) {
+    background-color: getColorLiteral($colorName);
+    background-color: getColorVariable($colorName);
+}
+@mixin border-color($colorName) {
+    border-color: getColorLiteral($colorName);
+    border-color: getColorVariable($colorName);
+}

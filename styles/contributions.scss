@@ -1,10 +1,12 @@
+@import "colors";
+
 $tile-size: 15px;
 @mixin hover-style {
-    background-color: aliceblue;
+    @include background-color(aliceblue);
 }
 @mixin focused-style {
     @include hover-style;
-    outline: 1px solid black;
+    @include outline(solid, 1px, black);
 }
 @mixin focus-element {
     &:hover {
@@ -86,22 +88,22 @@ body.contributions-body {
                     visibility: hidden;
                 }
                 &:focus {
-                    outline: 2px solid #00FFFF
+                    @include outline(solid, 2px, darkgray);
                 }
                 .day {
-                    background-color: #e6e6e6;
+                    @include background-color(lightgray);
                     margin: 1px;
                     &.work_0 {
-                        background-color: #C0C0FF;
+                        @include background-color(work0);
                     }
                     &.work_25 {
-                        background-color: #8080FF;
+                        @include background-color(work25);
                     }
                     &.work_50 {
-                        background-color: #4040FF;
+                        @include background-color(work50);
                     }
                     &.work_75 {
-                        background-color: #0000FF;
+                        @include background-color(work75);
                     }
                 }
                 .day-filter {
@@ -109,10 +111,10 @@ body.contributions-body {
                     position: relative;
                     &.hover:not(.selected) {
                         opacity: 0.3;
-                        background-color: black;
+                        @include background-color(black);
                     }
                     &.selected {
-                        border: 3px solid black;
+                        @include border(solid, 3px, black);
                     }
                 }
             }
@@ -151,6 +153,10 @@ body.contributions-body {
             display: flex;
             .search-box {
                 width: 400px;
+                input {
+                    @include color(black);
+                    @include background-color(white);
+                }
             }
         }
         .contribution-section {
@@ -161,14 +167,14 @@ body.contributions-body {
                 padding: 2px 0px 2px 20px;
                 @include focus-element;
                 a.title {
-                    color: black;
+                    @include color(black);
                     &:hover, &:visited, &:hover, &:focus, &:active {
-                        color: black;
+                        @include color(black);
                     }
                 }
                 .location-time {
                     font-size: smaller;
-                    color: gray;
+                    @include color(darkgray);
                 }
             }
         }

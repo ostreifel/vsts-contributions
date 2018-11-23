@@ -6,14 +6,12 @@ import { Graph } from "./Graph";
 export class Graphs extends React.Component<{
     contributions: IUserContributions[],
     loading: boolean,
-    className?: string,
 }, {}> {
     public render() {
         return <div className="graphs">
             {this.props.contributions.map((contributions) => <Graph
                 contributions={contributions}
                 loading={this.props.loading}
-                className={this.props.className}
             />)}
         </div>;
     }
