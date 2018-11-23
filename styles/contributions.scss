@@ -48,14 +48,30 @@ body.contributions-body {
     }
     .filter-container {
         .filter-header {
+            input {
+                @include color(black);
+            }
             .filters {
                 display: table;
                 > * {
                     display: table-row;
                     > * {
+                        @include color(black);
                         display: table-cell;
                         vertical-align: top;
                         padding: 3px 5px;
+                    }
+                }
+                .ms-TagItem {
+                    @include background-color(palette-neutral-4);
+                    &:hover {
+                        @include background-color(palette-neutral-8);
+                    }
+                    &.is-selected {
+                        @include background-color(palette-neutral-20);
+                    }
+                    .ms-TagItem-close {
+                        @include color(palette-neutral-60);
                     }
                 }
                 .ms-Toggle {
@@ -71,6 +87,10 @@ body.contributions-body {
     }
     .user-contributions {
         margin: 0 5px;
+        
+        .ms-Persona-primaryText {
+            @include color(black);
+        }
     }
     
     .graph {
