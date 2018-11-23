@@ -9,11 +9,8 @@ import { filterToIProperties, IContributionFilter } from "../filter";
 import { Timings } from "../timings";
 import { Graphs } from "./Graphs";
 
-
-export type TileSize = "small-tiles" | "medium-tiles";
-
 let renderNum = 0;
-export function renderGraphs(filter: IContributionFilter, tileSize: TileSize = "medium-tiles") {
+export function renderGraphs(filter: IContributionFilter) {
     const graphParent = $(".graphs-container")[0];
     const timings = new Timings();
     const currentRender = ++renderNum;
@@ -24,7 +21,6 @@ export function renderGraphs(filter: IContributionFilter, tileSize: TileSize = "
             ReactDOM.render(<Graphs
                 contributions={loadingContributions}
                 loading={true}
-                className={tileSize}
             />, graphParent,
             () => {
                 timings.measure("drawSpinner");
@@ -39,7 +35,6 @@ export function renderGraphs(filter: IContributionFilter, tileSize: TileSize = "
             ReactDOM.render(<Graphs
                 contributions={contributions}
                 loading={false}
-                className={tileSize}
             />, graphParent, () => {
                 timings.measure("drawGraph");
                 trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);

@@ -1,5 +1,4 @@
-$small-tiles: 10px;
-$medium-tiles: 15px;
+$tile-size: 15px;
 @mixin hover-style {
     background-color: aliceblue;
 }
@@ -122,45 +121,24 @@ body.contributions-body {
             position: absolute;
         }
     }
-    .graph.medium-tiles .year {
-        height: ($medium-tiles + 2) * 7;
-        width: ($medium-tiles + 2) * 52;
+    .graph .year {
+        height: ($tile-size + 2) * 7;
+        width: ($tile-size + 2) * 52;
         .graph-spinner {
             left: 437px;
             bottom: 42px;
         }
         .day-container {
-            width: $medium-tiles + 2;
-            height: $medium-tiles + 2;
+            width: $tile-size + 2;
+            height: $tile-size + 2;
             .day {
-                width: $medium-tiles;
-                height: $medium-tiles;
+                width: $tile-size;
+                height: $tile-size;
             }
             .day-filter {
-                width: $medium-tiles;
-                height: $medium-tiles;
-                top: -  $medium-tiles - 1;
-            }
-        }
-    }
-    .graph.small-tiles .year {
-        height: ($small-tiles + 2) * 7;
-        width: ($small-tiles + 2) * 52;
-        .graph-spinner {
-            left: -320px;
-            top: 30px;
-        }
-        .day-container {
-            width: $small-tiles + 2;
-            height: $small-tiles + 2;
-            .day {
-                width: $small-tiles;
-                height: $small-tiles;
-            }
-            .day-filter {
-                width: $small-tiles;
-                height: $small-tiles;
-                top: -  $small-tiles - 1;
+                width: $tile-size;
+                height: $tile-size;
+                top: -  $tile-size - 1;
             }
         }
     }
