@@ -52,10 +52,6 @@
         {
             "path": "img",
             "addressable": true
-        },
-        {
-            "path": "html",
-            "addressable": true
         }
     ],
     "categories": [
@@ -72,7 +68,7 @@
             "properties": {
                 "group": "contributed",
                 "name": "Contributions Graph",
-                "uri": "html/contributionsHub.html"
+                "uri": "dist/contributionsHub.html"
             }
         }
     ]

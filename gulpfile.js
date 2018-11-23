@@ -5,7 +5,7 @@ const yargs = require("yargs");
 const {exec, execSync} = require('child_process');
 const sass = require('gulp-sass');
 const tslint = require('gulp-tslint');
-
+const inlinesource = require('gulp-inline-source');
 
 const distFolder = 'dist';
 
@@ -28,11 +28,21 @@ gulp.task('tslint', gulp.series(() => {
 }));
 
 
-gulp.task('copy', gulp.series(() => {
-    gulp.src(['node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js'])
+gulp.task('copy-sdk', gulp.series(() => {
+    return gulp.src(['node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js'])
         .pipe(gulp.dest(`${distFolder}`));
 }));
 
+gulp.task('copy-html', gulp.series(() => {
+    return gulp.src("*.html")
+        .pipe(inlinesource())
+        .pipe(gulp.dest(distFolder));
+}));
+
+gulp.task('copy', gulp.series(
+    gulp.parallel('styles', 'copy-sdk'),
+    'copy-html')
+);
 
 gulp.task('webpack', gulp.series(async () => {``
     const option = yargs.argv.release ? "-p" : "-d";
@@ -41,7 +51,7 @@ gulp.task('webpack', gulp.series(async () => {``
     });
 }));
 
-gulp.task('build', gulp.parallel('webpack', 'copy', 'styles', 'tslint'));
+gulp.task('build', gulp.parallel('webpack', 'copy', 'tslint'));
 
 gulp.task('package', gulp.series('clean', 'build', () => {
     const overrides = {}
