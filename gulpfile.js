@@ -1,49 +1,49 @@
 const path = require("path");
 const gulp = require('gulp');
-const clean = require("gulp-clean");
+const del = require("del");
 const yargs = require("yargs");
 const {exec, execSync} = require('child_process');
-const rename = require('gulp-rename');
 const sass = require('gulp-sass');
 const tslint = require('gulp-tslint');
 
-const args =  yargs.argv;
 
 const distFolder = 'dist';
 
-gulp.task('clean', () => {
-    return gulp.src([distFolder, '*.vsix'])
-        .pipe(clean());
-});
+gulp.task('clean', gulp.series(() => {
+    return del([distFolder, "*.vsix"]);
+}));
 
-gulp.task('styles', ['clean'], () => {
+gulp.task('styles', gulp.series(() => {
     return gulp.src("styles/**/*scss")
         .pipe(sass())
         .pipe(gulp.dest(distFolder));
-});
+}));
 
-gulp.task('tslint', () => {
+gulp.task('tslint', gulp.series(() => {
     return gulp.src(["scripts/**/*ts", "scripts/**/*tsx"])
         .pipe(tslint({
             formatter: "verbose"
         }))
         .pipe(tslint.report());
-});
+}));
 
 
-gulp.task('copy', ['tslint', 'styles'], () => {
+gulp.task('copy', gulp.series(() => {
     gulp.src(['node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js'])
         .pipe(gulp.dest(`${distFolder}`));
-});
+}));
 
 
-gulp.task('webpack', ['copy'], () => {
-    return execSync('webpack', {
+gulp.task('webpack', gulp.series(async () => {``
+    const option = yargs.argv.release ? "-p" : "-d";
+    execSync(`node ./node_modules/webpack-cli/bin/cli.js ${option}`, {
         stdio: [null, process.stdout, process.stderr]
     });
-});
+}));
 
-gulp.task('package', ['webpack', 'styles'], () => {
+gulp.task('build', gulp.parallel('webpack', 'copy', 'styles', 'tslint'));
+
+gulp.task('package', gulp.series('clean', 'build', () => {
     const overrides = {}
     if (yargs.argv.release) {
         overrides.public = true;
@@ -65,7 +65,6 @@ gulp.task('package', ['webpack', 'styles'], () => {
             console.log(stderr);
             
         });
+}));
 
-});
-
-gulp.task('default', ['package']);
+gulp.task('default', gulp.series('package'));

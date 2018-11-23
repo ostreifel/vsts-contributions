@@ -1,25 +1,30 @@
 {
+  "scripts": {
+    "postinstall": "npm run package-dev",
+    "package-dev": "node ./node_modules/gulp/bin/gulp.js",
+    "package-release": "node ./node_modules/gulp/bin/gulp.js --release"
+  },
   "devDependencies": {
-    "@types/applicationinsights-js": "^1.0.4",
-    "@types/jquery": "^2.0.41",
+    "@types/applicationinsights-js": "^1.0.7",
+    "@types/jquery": "^3.3.22",
     "@types/knockout": "^3.4.40",
     "@types/react-dom": "^16.0.4",
     "@types/requirejs": "^2.1.28",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^3.1.0",
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "gulp-sass": "^4.0.2",
     "gulp-tslint": "^8.1.1",
     "gulp-webpack": "^1.5.0",
     "office-ui-fabric-react": "^4.51.1",
     "requirejs": "^2.3.2",
     "ts-loader": "^4.2.0",
     "tslint": "^5.4.3",
-    "typescript": "^2.8.1",
+    "typescript": "^3.1.6",
     "vss-web-extension-sdk": "^5.131.0",
-    "webpack": "^2.6.1"
+    "webpack": "^4.26.0",
+    "webpack-cli": "^3.1.2"
   },
-  "name": "vsts-extension-ts-seed-simple",
+  "name": "contributions-graph",
   "private": true,
   "version": "0.7.0",
   "dependencies": {}
