@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "contributions",
-    "version": "2.0.20",
+    "version": "2.1.3",
     "name": "Contributions Graph",
     "scopes": [
         "vso.work",
@@ -68,7 +68,8 @@
             "properties": {
                 "group": "contributed",
                 "name": "Contributions Graph",
-                "uri": "dist/contributionsHub.html"
+                "uri": "dist/contributionsHub.html",
+                "icon": "asset://img/logo.png"
             }
         }
     ]

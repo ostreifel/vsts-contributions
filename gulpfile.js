@@ -53,7 +53,7 @@ gulp.task('webpack', gulp.series(async () => {``
 
 gulp.task('build', gulp.parallel('webpack', 'copy', 'tslint'));
 
-gulp.task('package', gulp.series('clean', 'build', () => {
+gulp.task('package', gulp.series('clean', 'build', async () => {
     const overrides = {}
     if (yargs.argv.release) {
         overrides.public = true;
@@ -65,7 +65,7 @@ gulp.task('package', gulp.series('clean', 'build', () => {
     const overridesArg = `--override "${JSON.stringify(overrides).replace(/"/g, '\\"')}"`;
     const manifestsArg = `--manifests vss-extension.json`;
 
-    exec(`tfx extension create ${overridesArg} ${manifestsArg} --rev-version`,
+    execSync(`tfx extension create ${overridesArg} ${manifestsArg} --rev-version`,
         (err, stdout, stderr) => {
             if (err) {
                 console.log(err);

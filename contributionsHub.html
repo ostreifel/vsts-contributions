@@ -41,7 +41,11 @@
         });
         
         // Load main entry point for extension
-        VSS.require(["dist/contributionsHub"], function () {
+        VSS.require([
+            "react",
+            "react-dom",
+            "dist/contributionsHub"
+        ], function () {
             // Loading succeeded
             VSS.notifyLoadSucceeded();
         });
