@@ -16,7 +16,9 @@ VSS.getService<HostNavigationService>(VSS.ServiceIds.Navigation).then(async (nav
     try {
       return JSON.parse(decodeURIComponent(hash));
     } catch (e) {
-      console.log("could not parse hash", hash, e);
+      if (hash) {
+        console.log("could not parse hash", hash, e);
+      }
       return defaultFilter.getValue();
     }
   }
