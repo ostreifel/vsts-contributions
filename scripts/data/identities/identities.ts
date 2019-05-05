@@ -1,17 +1,19 @@
 import { CachedValue } from "../CachedValue";
 import { IPersonaProps } from "office-ui-fabric-react/lib-amd/components/Persona";
-import { getIdentities } from "./getIdentities";
+// import { getIdentities } from "./getIdentities";
+import { getGraphIdentities } from './getGraphIdentities';
 
 async function getPersonas() {
-    const identities = await getIdentities();
+    // const identities = await getIdentities();
+    const identities = await getGraphIdentities();
     const personas: IPersonaProps[] = [];
     for (const id in identities) {
         const identity = identities[id];
         personas.push({
             primaryText: identity.displayName,
-            secondaryText: identity.uniqueName,
-            imageUrl: identity.imageUrl,
-            id: identity.id
+            secondaryText: identity['principalName'],
+            // imageUrl: identity.imageUrl,
+            id: identity.descriptor,
         });
     }
     return personas;
