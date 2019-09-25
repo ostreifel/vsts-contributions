@@ -5,7 +5,7 @@
 /img                - Image assets for extension and description
 /typings            - Typescript typings
 
-details.md          - Description to be shown in marketplace   
+details.md          - Description to be shown in marketplace
 index.html          - Main entry point
 vss-extension.json  - Extension manifest
 ```
@@ -19,11 +19,14 @@ vss-extension.json  - Extension manifest
 ```
 
 ### Usage ###
-
 1. Clone the repository
-1. `npm install` to install required local dependencies
-2. `npm i -g gulp typescript tslint tfx-cli` to setup require globals
-2. `gulp` to build and package the application
+2. `npm i -g gulp typescript tslint tfx-cli` to setup required globals
+3. `npm install` to install required local dependencies and get an initial build
+4. `npm run package-dev` to to rebuild once code changes are made
+5. Upload the -dev vsix to https://marketplace.visualstudio.com/manage
+  - this will require the author field to be set to your publisher name
+6. Share the dev version of the extension with a test account
+7. Submit changes as pull request to master
 
 #### Including framework modules ####
 
