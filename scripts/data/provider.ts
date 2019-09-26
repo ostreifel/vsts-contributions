@@ -2,7 +2,7 @@ import { trackEvent } from "../events";
 import { IContributionFilter, IIndividualContributionFilter } from "../filter";
 import { IContributionProvider, IUserContributions, UserContribution } from "./contracts";
 import { CommitContributionProvider } from "./git/commits";
-import { ClosePullRequestProvider, CreatePullRequestProvider } from "./git/pullrequests";
+import { ClosePullRequestProvider, CreatePullRequestProvider, ReviewPullRequestProvider } from "./git/pullrequests";
 import { ChangsetContributionProvider } from "./tfvc/changsets";
 import {
     CloseWorkItemContributionProvider,
@@ -30,6 +30,7 @@ function sortContributions(contributions: IUserContributions) {
 const providers: IContributionProvider[] = [
     new ClosePullRequestProvider(),
     new CreatePullRequestProvider(),
+    new ReviewPullRequestProvider(),
     new CommitContributionProvider(),
     new CreateWorkItemContributionProvider(),
     new ResolveWorkItemContributionProvider(),
@@ -42,9 +43,9 @@ async function hardGetContributions(filter: IIndividualContributionFilter) {
     const contributionsArr = await Promise.all(
         providers
             .filter(p => filter.enabledProviders[p.name])
-            .map(p => p.getContributions(filter).then((r)=>r, (e) => {
+            .map(p => p.getContributions(filter).then((r) => r, (e) => {
                 console.log("Error ", e);
-                trackEvent("contributionError", {"message": "" + e}, undefined);
+                trackEvent("contributionError", { "message": "" + e }, undefined);
                 return [];
             }))
     );
@@ -60,7 +61,7 @@ async function hardGetContributions(filter: IIndividualContributionFilter) {
     return contributions;
 }
 
-const contributionsCache: {[filterKey: string]: Promise<IUserContributions>} = {};
+const contributionsCache: { [filterKey: string]: Promise<IUserContributions> } = {};
 export function getContributions(filter: IContributionFilter): Promise<IUserContributions[]> {
     return Promise.all(filter.identities.map((identity) => {
         const individualFilter: IIndividualContributionFilter = {

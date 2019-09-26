@@ -53,6 +53,13 @@ export class ClosePullRequestContribution extends PullRequestContribution {
     }
 }
 
+export class ReviewPullRequestContribution extends PullRequestContribution {
+    constructor(pullrequest: GitPullRequest) {
+        // TODO: Is there a better date to put here than the Closed Date?
+        super(`pr-review-${pullrequest.pullRequestId}`, pullrequest.closedDate, pullrequest);
+    }
+}
+
 export abstract class WorkItemContribution extends UserContribution {
     constructor(id: string, dateStr: string, readonly wi: WorkItem) {
         super(id, new Date(dateStr));

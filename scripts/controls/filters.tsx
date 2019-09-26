@@ -10,17 +10,17 @@ import { CompletionDropdown } from "./CompletionDropdown";
 import { IdentityPicker } from "./IdentityPicker";
 
 /** Toggle except it adds a the css class 'focus' to the container when the toggle is focused */
-class FocusToggle extends React.Component<IToggleProps, {focus: boolean}> {
+class FocusToggle extends React.Component<IToggleProps, { focus: boolean }> {
   constructor(props: IToggleProps) {
     super(props);
-    this.state = {focus: false};
+    this.state = { focus: false };
   }
   render() {
     const classes = this.props.className || "";
     return <Toggle {...this.props}
-      className={this.state.focus ? `focus ${classes}`: classes}
-      onFocus={() => this.setState({focus: true})}
-      onBlur={() => this.setState({focus: false})}
+      className={this.state.focus ? `focus ${classes}` : classes}
+      onFocus={() => this.setState({ focus: true })}
+      onBlur={() => this.setState({ focus: false })}
     />;
   }
 }
@@ -47,7 +47,7 @@ interface IFiltersProps {
 
 class Filters extends React.Component<
   IFiltersProps, {}
-> {
+  > {
   render() {
     const filter = this.props.filter;
     const providerToggleProps = {
@@ -70,7 +70,8 @@ class Filters extends React.Component<
           }} />
           <ProviderToggle {...providerToggleProps} label={"Commits"} provider={"Commit"} />
           <ProviderToggle {...providerToggleProps} label={"Created pull requests"} provider={"CreatePullRequest"} />
-          <ProviderToggle {...providerToggleProps} label={"Closed pull requests"}  provider={"ClosePullRequest"} />
+          <ProviderToggle {...providerToggleProps} label={"Closed pull requests"} provider={"ClosePullRequest"} />
+          <ProviderToggle {...providerToggleProps} label={"Reviewed pull requests"} provider={"ReviewPullRequest"} />
           <ProviderToggle {...providerToggleProps} label={"Created work items"} provider={"CreateWorkItem"} />
           <ProviderToggle {...providerToggleProps} label={"Resolved work items"} provider={"ResolveWorkItem"} />
           <ProviderToggle {...providerToggleProps} label={"Closed work items"} provider={"CloseWorkItem"} />
@@ -79,7 +80,7 @@ class Filters extends React.Component<
             label="Repository"
             selected={filter.repositories}
             resolveSuggestions={(search, selected) => searchRepositories(filter.allProjects, search, selected)}
-            onSelectionChanged={repositories => this.updateFilter({repositories})}
+            onSelectionChanged={repositories => this.updateFilter({ repositories })}
             placeholder={"Search repositories..."}
           />
         </div>
@@ -93,18 +94,18 @@ class Filters extends React.Component<
             className="filter-header"
             level={4}
           >
-          {collapsibleContent}
+            {collapsibleContent}
           </CollapsibleHeader> : collapsibleContent
         }
       </div>
     );
   }
   updateFilter(filter: Partial<IContributionFilter>) {
-    const updatedFilter = {...this.props.filter, ...filter};
+    const updatedFilter = { ...this.props.filter, ...filter };
     this.props.onChanged(updatedFilter);
   }
   updateProvider(provider: ContributionName, enabled: boolean) {
-    const filter = {enabledProviders: {...this.props.filter.enabledProviders}};
+    const filter = { enabledProviders: { ...this.props.filter.enabledProviders } };
     filter.enabledProviders[provider] = enabled;
     this.updateFilter(filter);
   }
@@ -117,7 +118,7 @@ export function renderFilters(
   collapsible: boolean = true,
   callback?: () => void,
 ) {
-  const props = {onChanged, filter: initialFilter, collapsible};
+  const props = { onChanged, filter: initialFilter, collapsible };
   const graphParent = $(".filter-container")[0];
   ReactDOM.render(
     <Filters {...props} />,
