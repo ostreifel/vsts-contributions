@@ -60,7 +60,7 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
 function getReviewedPullRequestsForRepository(username: string, repoId: string, skip = 0): Promise<GitPullRequest[]> {
     const criteria = {
         reviewerId: username,
-        status: PullRequestStatus.Completed,
+        status: PullRequestStatus.All,
     } as GitPullRequestSearchCriteria;
 
     return Promise.all([
