@@ -1,6 +1,7 @@
 import {
     ClosePullRequestContribution,
     CreatePullRequestContribution,
+    ReviewPullRequestContribution,
     IContributionProvider,
     ContributionName,
     UserContribution,
@@ -17,7 +18,13 @@ export const createdPrs: {
     }
 } = {};
 
-function toRepoMap(repos: GitRepository[]): {[id: string]: GitRepository} {
+export const reviewedPrs: {
+    [username: string]: {
+        [repoId: string]: Promise<GitPullRequest[]>
+    }
+} = {};
+
+function toRepoMap(repos: GitRepository[]): { [id: string]: GitRepository } {
     const map = {};
     for (const repo of repos) {
         map[repo.id] = repo;
@@ -31,6 +38,31 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
         status: PullRequestStatus.All,
 
     } as GitPullRequestSearchCriteria;
+    return Promise.all([
+        getClient().getPullRequests(repoId, criteria, undefined, 0, skip, batchSize),
+        repositoriesVal.getValue()
+    ]).then(([pullrequests, repositories]) => {
+        const repoMap = toRepoMap(repositories);
+        pullrequests = pullrequests.filter(pr => pr.creationDate >= yearStart);
+        for (const pr of pullrequests) {
+            // backcompat with older tfs versions that do not have the project included in the repo reference
+            pr.repository = repoMap[pr.repository.id];
+        }
+        if (pullrequests.length < batchSize) {
+            return pullrequests;
+        }
+        return getPullRequestsForRepository(username, repoId, skip + batchSize).then(morePullrequests =>
+            [...pullrequests, ...morePullrequests]);
+
+    });
+}
+
+function getReviewedPullRequestsForRepository(username: string, repoId: string, skip = 0): Promise<GitPullRequest[]> {
+    const criteria = {
+        reviewerId: username,
+        status: PullRequestStatus.Completed,
+    } as GitPullRequestSearchCriteria;
+
     return Promise.all([
         getClient().getPullRequests(repoId, criteria, undefined, 0, skip, batchSize),
         repositoriesVal.getValue()
@@ -81,11 +113,32 @@ export async function getPullRequests(filter: IIndividualContributionFilter): Pr
     }
 
     const prProms: Promise<GitPullRequest[]>[] = [];
-    for (const {key: repoId } of filter.repositories) {
+    for (const { key: repoId } of filter.repositories) {
         if (!(repoId in createdPrs[username])) {
             createdPrs[username][repoId] = getPullRequestsForRepository(username, repoId);
         }
         prProms.push(createdPrs[username][repoId]);
+    }
+    const pullrequestsArr = await Promise.all(prProms);
+    const pullrequests: GitPullRequest[] = [];
+    for (const arr of pullrequestsArr) {
+        pullrequests.push(...arr);
+    }
+    return pullrequests;
+}
+
+export async function getReviewedPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
+    const username = filter.identity.id || filter.identity.uniqueName || filter.identity.displayName;
+    if (!(username in reviewedPrs)) {
+        reviewedPrs[username] = {};
+    }
+
+    const prProms: Promise<GitPullRequest[]>[] = [];
+    for (const { key: repoId } of filter.repositories) {
+        if (!(repoId in reviewedPrs[username])) {
+            reviewedPrs[username][repoId] = getReviewedPullRequestsForRepository(username, repoId);
+        }
+        prProms.push(reviewedPrs[username][repoId]);
     }
     const pullrequestsArr = await Promise.all(prProms);
     const pullrequests: GitPullRequest[] = [];
@@ -111,5 +164,14 @@ export class ClosePullRequestProvider implements IContributionProvider {
             pullrequests
                 .filter(pr => pr.closedDate)
                 .map(pr => new ClosePullRequestContribution(pr)));
+    }
+}
+
+export class ReviewPullRequestProvider implements IContributionProvider {
+    public readonly name: ContributionName = "ReviewPullRequest";
+    public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
+        return getReviewedPullRequests(filter).then(pullrequests =>
+            pullrequests
+                .map(pr => new ReviewPullRequestContribution(pr)));
     }
 }
