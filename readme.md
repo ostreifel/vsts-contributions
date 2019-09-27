@@ -18,14 +18,18 @@ vss-extension.json  - Extension manifest
 0.1.1 - Automatically increase extension's minor version when packaging.
 ```
 
-### Usage ###
+### Getting Started ###
 1. Clone the repository
 2. `npm i -g gulp typescript tslint tfx-cli` to setup required globals
 3. `npm install` to install required local dependencies and get an initial build
 4. `npm run package-dev` to to rebuild once code changes are made
 5. Upload the -dev vsix to https://marketplace.visualstudio.com/manage
-  - this will require the author field to be set to your publisher name
-6. Share the dev version of the extension with a test account
+   - this will require the `publisher` field in `vss-extension.json` to be set to your publisher name
+    ![publisher id](img/publisher_id.png)
+   - Share the dev version of the extension with a test account
+    ![share](img/share.png)
+   - Go to the extensions page of the test account, look for the shared extension and install it.
+    ![shared tab](img/shared_tab.png)
 7. Submit changes as pull request to master
 
 #### Including framework modules ####
