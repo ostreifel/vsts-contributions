@@ -32,14 +32,9 @@ function toRepoMap(repos: GitRepository[]): { [id: string]: GitRepository } {
     return map;
 }
 const batchSize = 101;
-function getPullRequestsForRepository(username: string, repoId: string, skip = 0): Promise<GitPullRequest[]> {
-    const criteria = {
-        creatorId: username,
-        status: PullRequestStatus.All,
-
-    } as GitPullRequestSearchCriteria;
+function getPullRequestsForRepository(username: string, repoId: string, searchCriteria: GitPullRequestSearchCriteria, skip = 0): Promise<GitPullRequest[]> {
     return Promise.all([
-        getClient().getPullRequests(repoId, criteria, undefined, 0, skip, batchSize),
+        getClient().getPullRequests(repoId, searchCriteria, undefined, 0, skip, batchSize),
         repositoriesVal.getValue()
     ]).then(([pullrequests, repositories]) => {
         const repoMap = toRepoMap(repositories);
@@ -51,32 +46,7 @@ function getPullRequestsForRepository(username: string, repoId: string, skip = 0
         if (pullrequests.length < batchSize) {
             return pullrequests;
         }
-        return getPullRequestsForRepository(username, repoId, skip + batchSize).then(morePullrequests =>
-            [...pullrequests, ...morePullrequests]);
-
-    });
-}
-
-function getReviewedPullRequestsForRepository(username: string, repoId: string, skip = 0): Promise<GitPullRequest[]> {
-    const criteria = {
-        reviewerId: username,
-        status: PullRequestStatus.All,
-    } as GitPullRequestSearchCriteria;
-
-    return Promise.all([
-        getClient().getPullRequests(repoId, criteria, undefined, 0, skip, batchSize),
-        repositoriesVal.getValue()
-    ]).then(([pullrequests, repositories]) => {
-        const repoMap = toRepoMap(repositories);
-        pullrequests = pullrequests.filter(pr => pr.creationDate >= yearStart);
-        for (const pr of pullrequests) {
-            // backcompat with older tfs versions that do not have the project included in the repo reference
-            pr.repository = repoMap[pr.repository.id];
-        }
-        if (pullrequests.length < batchSize) {
-            return pullrequests;
-        }
-        return getPullRequestsForRepository(username, repoId, skip + batchSize).then(morePullrequests =>
+        return getPullRequestsForRepository(username, repoId, searchCriteria, skip + batchSize).then(morePullrequests =>
             [...pullrequests, ...morePullrequests]);
 
     });
@@ -106,16 +76,20 @@ function getReviewedPullRequestsForRepository(username: string, repoId: string, 
 //         [...pullrequests, ...morePullrequests]);
 // }
 
-export async function getPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
+export async function getCreatedPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
     const username = filter.identity.id || filter.identity.uniqueName || filter.identity.displayName;
     if (!(username in createdPrs)) {
         createdPrs[username] = {};
     }
 
     const prProms: Promise<GitPullRequest[]>[] = [];
+    const searchCriteria = {
+        creatorId: username,
+        status: PullRequestStatus.All
+    } as GitPullRequestSearchCriteria;
     for (const { key: repoId } of filter.repositories) {
         if (!(repoId in createdPrs[username])) {
-            createdPrs[username][repoId] = getPullRequestsForRepository(username, repoId);
+            createdPrs[username][repoId] = getPullRequestsForRepository(username, repoId, searchCriteria);
         }
         prProms.push(createdPrs[username][repoId]);
     }
@@ -134,9 +108,13 @@ export async function getReviewedPullRequests(filter: IIndividualContributionFil
     }
 
     const prProms: Promise<GitPullRequest[]>[] = [];
+    const searchCriteria = {
+        reviewerId: username,
+        status: PullRequestStatus.All,
+    } as GitPullRequestSearchCriteria;
     for (const { key: repoId } of filter.repositories) {
         if (!(repoId in reviewedPrs[username])) {
-            reviewedPrs[username][repoId] = getReviewedPullRequestsForRepository(username, repoId);
+            reviewedPrs[username][repoId] = getPullRequestsForRepository(username, repoId, searchCriteria);
         }
         prProms.push(reviewedPrs[username][repoId]);
     }
@@ -151,7 +129,7 @@ export async function getReviewedPullRequests(filter: IIndividualContributionFil
 export class CreatePullRequestProvider implements IContributionProvider {
     public readonly name: ContributionName = "CreatePullRequest";
     public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
-        return getPullRequests(filter).then(pullrequests =>
+        return getCreatedPullRequests(filter).then(pullrequests =>
             pullrequests
                 .filter(pr => pr.creationDate)
                 .map(pr => new CreatePullRequestContribution(pr)));
@@ -160,7 +138,7 @@ export class CreatePullRequestProvider implements IContributionProvider {
 export class ClosePullRequestProvider implements IContributionProvider {
     public readonly name: ContributionName = "ClosePullRequest";
     public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
-        return getPullRequests(filter).then(pullrequests =>
+        return getCreatedPullRequests(filter).then(pullrequests =>
             pullrequests
                 .filter(pr => pr.closedDate)
                 .map(pr => new ClosePullRequestContribution(pr)));
@@ -172,6 +150,7 @@ export class ReviewPullRequestProvider implements IContributionProvider {
     public getContributions(filter: IIndividualContributionFilter): Promise<UserContribution[]> {
         return getReviewedPullRequests(filter).then(pullrequests =>
             pullrequests
+                .filter(pr => pr.closedDate)
                 .map(pr => new ReviewPullRequestContribution(pr)));
     }
 }
