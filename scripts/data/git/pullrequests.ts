@@ -32,7 +32,7 @@ function toRepoMap(repos: GitRepository[]): { [id: string]: GitRepository } {
     return map;
 }
 const batchSize = 101;
-function getPullRequestsForRepository(username: string, repoId: string, searchCriteria: GitPullRequestSearchCriteria, skip = 0): Promise<GitPullRequest[]> {
+function getPullRequestsForRepository(repoId: string, searchCriteria: GitPullRequestSearchCriteria, skip = 0): Promise<GitPullRequest[]> {
     return Promise.all([
         getClient().getPullRequests(repoId, searchCriteria, undefined, 0, skip, batchSize),
         repositoriesVal.getValue()
@@ -46,7 +46,7 @@ function getPullRequestsForRepository(username: string, repoId: string, searchCr
         if (pullrequests.length < batchSize) {
             return pullrequests;
         }
-        return getPullRequestsForRepository(username, repoId, searchCriteria, skip + batchSize).then(morePullrequests =>
+        return getPullRequestsForRepository(repoId, searchCriteria, skip + batchSize).then(morePullrequests =>
             [...pullrequests, ...morePullrequests]);
 
     });
@@ -89,7 +89,7 @@ export async function getCreatedPullRequests(filter: IIndividualContributionFilt
     } as GitPullRequestSearchCriteria;
     for (const { key: repoId } of filter.repositories) {
         if (!(repoId in createdPrs[username])) {
-            createdPrs[username][repoId] = getPullRequestsForRepository(username, repoId, searchCriteria);
+            createdPrs[username][repoId] = getPullRequestsForRepository(repoId, searchCriteria);
         }
         prProms.push(createdPrs[username][repoId]);
     }
@@ -114,7 +114,7 @@ export async function getReviewedPullRequests(filter: IIndividualContributionFil
     } as GitPullRequestSearchCriteria;
     for (const { key: repoId } of filter.repositories) {
         if (!(repoId in reviewedPrs[username])) {
-            reviewedPrs[username][repoId] = getPullRequestsForRepository(username, repoId, searchCriteria);
+            reviewedPrs[username][repoId] = getPullRequestsForRepository(repoId, searchCriteria);
         }
         prProms.push(reviewedPrs[username][repoId]);
     }
