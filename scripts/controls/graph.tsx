@@ -6,7 +6,7 @@ import * as React from "react";
 import { IUserContributions } from "../data/contracts";
 import { ISelectedRange } from "../filter";
 import { Day } from "./Day";
-import { TimeWindow } from "./timeWindow/TimeWindow";
+import { TimeWindow } from "./timeWindow/timeWindow";
 
 function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
     const counts: number[] = Object.keys(contributions.data)

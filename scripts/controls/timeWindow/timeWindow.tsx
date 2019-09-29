@@ -12,6 +12,7 @@ import {
     CreatePullRequests,
     CreateWorkItems,
     ResolveWorkItems,
+    ReviewPullRequests,
 } from "./contributions";
 import { SearchContributions } from "./search";
 import { CollapsibleHeader } from "../CollapsibleHeader";
@@ -61,6 +62,7 @@ export class TimeWindow extends React.Component<ITimeWindowProps, {
                 <Changesets allContributions={contributions} showDay={showDay} />
                 <CreatePullRequests allContributions={contributions} showDay={showDay} />
                 <ClosePullRequests allContributions={contributions} showDay={showDay} />
+                <ReviewPullRequests allContributions={contributions} showDay={showDay} />
                 <CreateWorkItems allContributions={contributions} showDay={showDay} />
                 <ResolveWorkItems allContributions={contributions} showDay={showDay} />
                 <CloseWorkItems allContributions={contributions} showDay={showDay} />

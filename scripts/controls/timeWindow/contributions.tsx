@@ -12,6 +12,7 @@ import {
     ResolveWorkItemContribution,
     CloseWorkItemContribution,
     ChangesetContribution,
+    ReviewPullRequestContribution,
 } from "../../data/contracts";
 
 export class Commits extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
@@ -40,6 +41,16 @@ export class ClosePullRequests extends React.Component<{ allContributions: UserC
             noun={"Closed # pull request"}
             items={this.props.allContributions.filter(c => c instanceof ClosePullRequestContribution)}
             onRenderItem={(pr: ClosePullRequestContribution) => <PullRequest pullrequest={pr} showDay={this.props.showDay} />}
+        />;
+    }
+}
+
+export class ReviewPullRequests extends React.Component<{ allContributions: UserContribution[], showDay: boolean }, {}> {
+    render() {
+        return <Contributions
+            noun={"Reviewed # pull request"}
+            items={this.props.allContributions.filter(c => c instanceof ReviewPullRequestContribution)}
+            onRenderItem={(pr: ReviewPullRequestContribution) => <PullRequest pullrequest={pr} showDay={this.props.showDay} />}
         />;
     }
 }
