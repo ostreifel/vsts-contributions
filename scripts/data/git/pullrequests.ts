@@ -77,21 +77,22 @@ function getPullRequestsForRepository(repoId: string, searchCriteria: GitPullReq
 // }
 
 export async function getCreatedPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
-    const username = filter.identity.id || filter.identity.uniqueName || filter.identity.displayName;
-    if (!(username in createdPrs)) {
-        createdPrs[username] = {};
+    if (!filter.identity.id) return []; // requires userId to be able to do lookup
+    
+    if (!(filter.identity.id in createdPrs)) {
+        createdPrs[filter.identity.id] = {};
     }
 
     const prProms: Promise<GitPullRequest[]>[] = [];
     const searchCriteria = {
-        creatorId: username,
+        creatorId: filter.identity.id,
         status: PullRequestStatus.All
     } as GitPullRequestSearchCriteria;
     for (const { key: repoId } of filter.repositories) {
-        if (!(repoId in createdPrs[username])) {
-            createdPrs[username][repoId] = getPullRequestsForRepository(repoId, searchCriteria);
+        if (!(repoId in createdPrs[filter.identity.id])) {
+            createdPrs[filter.identity.id][repoId] = getPullRequestsForRepository(repoId, searchCriteria);
         }
-        prProms.push(createdPrs[username][repoId]);
+        prProms.push(createdPrs[filter.identity.id][repoId]);
     }
     const pullrequestsArr = await Promise.all(prProms);
     const pullrequests: GitPullRequest[] = [];
@@ -102,21 +103,22 @@ export async function getCreatedPullRequests(filter: IIndividualContributionFilt
 }
 
 export async function getReviewedPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
-    const username = filter.identity.id || filter.identity.uniqueName || filter.identity.displayName;
-    if (!(username in reviewedPrs)) {
-        reviewedPrs[username] = {};
+    if (!filter.identity.id) return []; // requires userId to be able to do lookup
+    
+    if (!(filter.identity.id in reviewedPrs)) {
+        reviewedPrs[filter.identity.id] = {};
     }
 
     const prProms: Promise<GitPullRequest[]>[] = [];
     const searchCriteria = {
-        reviewerId: username,
+        reviewerId: filter.identity.id,
         status: PullRequestStatus.All,
     } as GitPullRequestSearchCriteria;
     for (const { key: repoId } of filter.repositories) {
-        if (!(repoId in reviewedPrs[username])) {
-            reviewedPrs[username][repoId] = getPullRequestsForRepository(repoId, searchCriteria);
+        if (!(repoId in reviewedPrs[filter.identity.id])) {
+            reviewedPrs[filter.identity.id][repoId] = getPullRequestsForRepository(repoId, searchCriteria);
         }
-        prProms.push(reviewedPrs[username][repoId]);
+        prProms.push(reviewedPrs[filter.identity.id][repoId]);
     }
     const pullrequestsArr = await Promise.all(prProms);
     const pullrequests: GitPullRequest[] = [];
