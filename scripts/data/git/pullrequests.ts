@@ -77,8 +77,10 @@ function getPullRequestsForRepository(repoId: string, searchCriteria: GitPullReq
 // }
 
 export async function getCreatedPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
-    if (!filter.identity.id) return []; // requires userId to be able to do lookup
-    
+    if (!filter.identity.id) {
+        return []; // requires userId to be able to do lookup
+    }
+
     if (!(filter.identity.id in createdPrs)) {
         createdPrs[filter.identity.id] = {};
     }
@@ -103,8 +105,10 @@ export async function getCreatedPullRequests(filter: IIndividualContributionFilt
 }
 
 export async function getReviewedPullRequests(filter: IIndividualContributionFilter): Promise<GitPullRequest[]> {
-    if (!filter.identity.id) return []; // requires userId to be able to do lookup
-    
+    if (!filter.identity.id) {
+        return []; // requires userId to be able to do lookup
+    }
+
     if (!(filter.identity.id in reviewedPrs)) {
         reviewedPrs[filter.identity.id] = {};
     }
