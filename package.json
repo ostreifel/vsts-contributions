@@ -24,9 +24,9 @@
     "tslint": "^5.4.3",
     "typescript": "^3.1.6",
     "vss-web-extension-sdk": "^5.141.0",
-    "webpack": "^4.26.0",
+    "webpack": "^4.42.1",
     "webpack-bundle-analyzer": "^3.5.2",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.3.11"
   },
   "name": "contributions-graph",
   "private": true,
