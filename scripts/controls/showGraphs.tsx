@@ -21,6 +21,7 @@ export function renderGraphs(filter: IContributionFilter) {
             ReactDOM.render(<Graphs
                 contributions={loadingContributions}
                 loading={true}
+                sharedScale={false}
             />, graphParent,
             () => {
                 timings.measure("drawSpinner");
@@ -35,6 +36,7 @@ export function renderGraphs(filter: IContributionFilter) {
             ReactDOM.render(<Graphs
                 contributions={contributions}
                 loading={false}
+                sharedScale={filter.sharedScale}
             />, graphParent, () => {
                 timings.measure("drawGraph");
                 trackEvent("loadGraph", filterToIProperties(filter), timings.measurements);

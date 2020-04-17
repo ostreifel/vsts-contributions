@@ -22,6 +22,7 @@ export interface ISelectedRange {
 export interface IContributionFilter {
   identities: IIdentity[];
   allProjects: boolean;
+  sharedScale: boolean;
   enabledProviders: IEnabledProviders;
   repositories: { key: string; name: string }[];
 }
@@ -29,6 +30,7 @@ export interface IContributionFilter {
 export interface IIndividualContributionFilter {
   identity: IIdentity;
   allProjects: boolean;
+  sharedScale: boolean;
   enabledProviders: IEnabledProviders;
   repositories: { key: string; name: string }[];
 }
@@ -47,6 +49,7 @@ export function filterToIProperties(filter: IContributionFilter): IProperties {
     properties[providerKey] = String(filter.enabledProviders[providerKey]);
   }
   properties["allProjects"] = String(!!filter.allProjects);
+  properties["sharedScale"] = String(!!filter.sharedScale);
   properties["identityCount"] = filter.identities.length + "";
   properties["plainTextIdentityCount"] = filter.identities.filter(({ id }) => !id).length + "";
   return properties;
@@ -68,6 +71,7 @@ async function getDefaultFilter(): Promise<IContributionFilter> {
         .uri}_api/_common/identityImage?size=2&id=${VSS.getWebContext().user.id}`
     }],
     allProjects: false,
+    sharedScale: false,
     enabledProviders: {
       Commit: true,
       CreatePullRequest: true,
