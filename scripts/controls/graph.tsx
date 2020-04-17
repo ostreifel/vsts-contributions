@@ -8,7 +8,7 @@ import { ISelectedRange } from "../filter";
 import { Day } from "./Day";
 import { TimeWindow } from "./timeWindow/timeWindow";
 
-function getContributionClassDelegate(contributions: IUserContributions): (count: number) => string {
+function getContributionClassDelegate(contributions: IUserContributions, overrideLargest: number): (count: number) => string {
     const counts: number[] = Object.keys(contributions.data)
         .map(day => contributions.data[day].length);
     if (counts.length === 0) {
@@ -20,7 +20,7 @@ function getContributionClassDelegate(contributions: IUserContributions): (count
         [0.50, "work_50"],
         [0.75, "work_75"]
     ];
-    const largest = counts[counts.length - 1];
+    const largest = overrideLargest || counts[counts.length - 1];
     // convert the percentiles to their values for the inputs
     for (const threshold of thresholds) {
         threshold[0] = Math.floor(threshold[0] * largest);
@@ -57,6 +57,7 @@ const monthNames: string[] = [
 export class Graph extends React.Component<{
     contributions: IUserContributions,
     loading: boolean,
+    overrideLargest:number
 }, {
     selected?: ISelectedRange,
 }> {
@@ -65,7 +66,7 @@ export class Graph extends React.Component<{
         this.state = {};
     }
     render() {
-        const getWorkClass = getContributionClassDelegate(this.props.contributions);
+        const getWorkClass = getContributionClassDelegate(this.props.contributions, this.props.overrideLargest);
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         date.setDate(date.getDate() - date.getDay());

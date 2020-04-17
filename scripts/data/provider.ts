@@ -67,6 +67,7 @@ export function getContributions(filter: IContributionFilter): Promise<IUserCont
         const individualFilter: IIndividualContributionFilter = {
             identity,
             allProjects: filter.allProjects,
+            sharedScale: filter.sharedScale,
             enabledProviders: filter.enabledProviders,
             repositories: filter.repositories,
         };

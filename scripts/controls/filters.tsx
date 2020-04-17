@@ -68,6 +68,9 @@ class Filters extends React.Component<
           <FocusToggle checked={filter.allProjects} label={"All projects"} onChanged={checked => {
             this.updateFilter({ allProjects: checked });
           }} />
+          <FocusToggle checked={filter.sharedScale} label={"Shared Scale"} onChanged={checked => {
+            this.updateFilter({ sharedScale: checked });
+          }} />
           <ProviderToggle {...providerToggleProps} label={"Commits"} provider={"Commit"} />
           <ProviderToggle {...providerToggleProps} label={"Created pull requests"} provider={"CreatePullRequest"} />
           <ProviderToggle {...providerToggleProps} label={"Closed pull requests"} provider={"ClosePullRequest"} />
